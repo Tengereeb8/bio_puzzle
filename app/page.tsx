@@ -1,5 +1,10 @@
 import Image from "next/image";
+import KineticAnatomy from "./components/Game";
 
 export default function Home() {
-  return <div>End buh ymaa hiine</div>;
+  return (
+    <div>
+      <KineticAnatomy />
+    </div>
+  );
 }

@@ -31,7 +31,7 @@ const ORGANS: Record<string, Organ> = {
   heart: {
     id: "heart",
     label: "Heart",
-    emoji: "❤️",
+    emoji: "🫀",
     color: "#e05c6e",
     bg: "#fde8eb",
     border: "#f5aab8",
@@ -63,7 +63,7 @@ const ORGANS: Record<string, Organ> = {
   liver: {
     id: "liver",
     label: "Liver",
-    emoji: "🫀",
+    emoji: "",
     color: "#c0694e",
     bg: "#fae0d8",
     border: "#e5aa98",

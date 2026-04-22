@@ -1,0 +1,363 @@
+.app {
+  --primary: #6c5ce7;
+  --bg-light: #f8faff;
+  --text-dark: #2d3436;
+  --success: #00b894;
+  --error: #ff7675;
+
+  font-family: "Nunito", sans-serif;
+  background-color: var(--bg-light);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow-x: hidden;
+  color: var(--text-dark);
+}
+
+/* --- Header & Instructions --- */
+.header {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerTitle {
+  font-weight: 900;
+  font-size: 1.2rem;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.instruction {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0.5rem 0;
+  text-align: center;
+}
+
+/* --- Progress Bar --- */
+.progressRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 80%;
+  max-width: 400px;
+  margin-bottom: 2rem;
+}
+
+.progressTrack {
+  flex: 1;
+  height: 12px;
+  background: #dfe6e9;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--success);
+  transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.progressLabel {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #636e72;
+}
+
+/* --- The Stage & Human Silhouette --- */
+.stage {
+  position: relative;
+  width: 300px;
+  height: 450px;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.humanBody {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.05));
+}
+
+.cavityRing {
+  position: absolute;
+  top: 15%;
+  left: 15%;
+  right: 15%;
+  bottom: 25%;
+  border: 2px dashed rgba(108, 92, 231, 0.2);
+  border-radius: 50px;
+  z-index: 0;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+}
+
+/* --- Drop Zones --- */
+.dropZone {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: white;
+  border: 3px solid #dfe6e9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.isOver {
+  transform: translate(-50%, -50%) scale(1.2);
+  border-color: var(--primary);
+  background: #f0eeff;
+}
+
+.wrong {
+  border-color: var(--error);
+  animation: shake 0.4s ease-in-out;
+}
+
+.filled {
+  border-color: var(--success);
+  background: white;
+}
+
+.filledOrgan {
+  font-size: 2rem;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.dropZonePlus {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #b2bec3;
+}
+
+.dropZoneLabel {
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #b2bec3;
+}
+
+/* --- Organ Tray --- */
+.tray {
+  width: 100%;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 30px 30px 0 0;
+  box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.05);
+  z-index: 20;
+}
+
+.trayTitle {
+  font-weight: 800;
+  color: #636e72;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.trayOrgans {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.organCard {
+  background: white;
+  padding: 10px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: grab;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+  border: 2px solid transparent;
+  width: 80px;
+}
+
+.organCard:active {
+  cursor: grabbing;
+}
+
+.organIcon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  border: 2px solid;
+}
+
+.organLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.placed {
+  opacity: 0.3;
+  filter: grayscale(1);
+  pointer-events: none;
+}
+
+.isDragging {
+  opacity: 0.5;
+}
+
+/* --- Drag Overlay --- */
+.dragOverlayCard {
+  background: white;
+  padding: 12px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 15px 30px rgba(108, 92, 231, 0.3);
+  transform: scale(1.1);
+  cursor: grabbing;
+}
+
+/* --- Animations --- */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  25% {
+    transform: translate(-55%, -50%) rotate(-5deg);
+  }
+  75% {
+    transform: translate(-45%, -50%) rotate(5deg);
+  }
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+/* --- Win Overlay --- */
+.winOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(108, 92, 231, 0.95);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  padding: 2rem;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.winEmoji {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+}
+.winTitle {
+  font-size: 2rem;
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+}
+.winSub {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+.restartBtn {
+  background: white;
+  color: var(--primary);
+  border: none;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.restartBtn:hover {
+  transform: scale(1.05);
+}
+
+/* --- Bottom Nav --- */
+.bottomNav {
+  width: 100%;
+  background: white;
+  display: flex;
+  justify-content: space-around;
+  padding: 1rem 0;
+  border-top: 1px solid #f1f2f6;
+}
+
+.navItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: #b2bec3;
+}
+
+.activeNav {
+  color: var(--primary);
+}
+
+.navIcon {
+  font-size: 1.2rem;
+}
+.navLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+}
