@@ -26,7 +26,7 @@ const nodes: Node[] = [
     icon: Activity,
     status: "locked",
     color: "bg-gray-400",
-    x: 85,
+    x: 70,
     y: 300,
   },
   {
@@ -71,8 +71,8 @@ const nodes: Node[] = [
     icon: Bone,
     status: "completed",
     color: "bg-green-500",
-    x: 60,
-    y: 1100,
+    x: 30,
+    y: 1130,
   },
 ];
 
