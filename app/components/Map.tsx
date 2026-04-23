@@ -5,19 +5,10 @@ import {
   Bone,
   Brain,
   Shield,
-  Wind,
   Activity,
+  Syringe,
 } from "lucide-react";
 import { cn } from "../lib/utils";
-
-interface Node {
-  id: number;
-  label: string;
-  icon: React.ElementType;
-  status: "completed" | "current" | "locked";
-  color: string;
-  offset: number;
-}
 
 const nodes: Node[] = [
   {
@@ -26,7 +17,8 @@ const nodes: Node[] = [
     icon: Brain,
     status: "locked",
     color: "bg-gray-400",
-    offset: 0,
+    x: 50,
+    y: 100,
   },
   {
     id: 2,
@@ -34,7 +26,8 @@ const nodes: Node[] = [
     icon: Activity,
     status: "locked",
     color: "bg-gray-400",
-    offset: 1,
+    x: 85,
+    y: 300,
   },
   {
     id: 3,
@@ -42,15 +35,17 @@ const nodes: Node[] = [
     icon: Shield,
     status: "locked",
     color: "bg-gray-400",
-    offset: -1,
+    x: 15,
+    y: 400,
   },
   {
     id: 4,
     label: "АМЬСГАЛЫН СИСТЕМ",
-    icon: Wind,
+    icon: Syringe,
     status: "locked",
     color: "bg-gray-400",
-    offset: 0,
+    x: 50,
+    y: 600,
   },
   {
     id: 5,
@@ -58,7 +53,8 @@ const nodes: Node[] = [
     icon: Heart,
     status: "current",
     color: "bg-red-500",
-    offset: 0,
+    x: 70,
+    y: 750,
   },
   {
     id: 6,
@@ -66,7 +62,8 @@ const nodes: Node[] = [
     icon: Dumbbell,
     status: "completed",
     color: "bg-blue-400",
-    offset: -0.5,
+    x: 20,
+    y: 950,
   },
   {
     id: 7,
@@ -74,67 +71,97 @@ const nodes: Node[] = [
     icon: Bone,
     status: "completed",
     color: "bg-green-500",
-    offset: 0,
+    x: 60,
+    y: 1100,
   },
 ];
 
-export default function Map() {
+interface Node {
+  id: number;
+  label: string;
+  icon: React.ElementType;
+  status: "completed" | "current" | "locked";
+  color: string;
+  x: number;
+  y: number;
+}
+
+const createPath = (nodes: Node[]) => {
+  if (nodes.length === 0) return "";
+  let d = `M ${nodes[0].x} ${nodes[0].y}`;
+
+  for (let i = 1; i < nodes.length; i++) {
+    const prev = nodes[i - 1];
+    const curr = nodes[i];
+    const controlY = (prev.y + curr.y) / 2;
+    d += ` C ${prev.x} ${controlY}, ${curr.x} ${controlY}, ${curr.x} ${curr.y}`;
+  }
+  return d;
+};
+
+export default function LearningMap() {
+  const displayNodes = [...nodes].reverse();
+
   return (
-    <div className="relative flex flex-col items-center py-20 bg-gray-50 min-h-screen overflow-hidden w-110">
+    <div className="relative w-full max-w-md mx-auto bg-gray-50 min-h-screen overflow-x-hidden pb-20">
       <svg
-        className="absolute top-0 w-full h-full pointer-events-none"
-        viewBox="0 0 400 1200"
-        preserveAspectRatio="xMidYMin slice"
+        className="absolute top-0 left-0 w-full h-full pointer-events-none"
+        viewBox="0 0 100 1150"
+        preserveAspectRatio="none"
       >
         <path
-          d="M 200 100 Q 350 250 200 400 T 50 700 T 200 1000 T 200 1300"
+          d={createPath(nodes)}
           fill="none"
           stroke="#D1D5DB"
-          strokeWidth="12"
+          strokeWidth="3"
           strokeLinecap="round"
-          strokeDasharray="25 20"
+          strokeLinejoin="round"
+          strokeDasharray="7 8"
           className="animate-path-flow"
         />
       </svg>
 
-      <div className="flex flex-col-reverse gap-24 w-full max-w-md px-10">
-        {nodes.reverse().map((node) => (
+      <div className="relative h-287.5 w-full">
+        {nodes.map((node) => (
           <div
             key={node.id}
-            className="relative flex flex-col items-center transition-transform hover:scale-105"
-            style={{ transform: `translateX(${node.offset * 80}px)` }}
+            className="absolute flex flex-col items-center -translate-x-1/2 -translate-y-1/2"
+            style={{
+              left: `${node.x}%`,
+              top: `${node.y}px`,
+            }}
           >
             {node.status === "current" && (
-              <div className="absolute -top-16 bg-red-700 text-white px-4 py-2 rounded-xl font-bold animate-bounce shadow-lg">
-                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-8 border-t-red-700" />
-                Start Here
+              <div className="absolute -top-14 z-20 bg-red-600 text-white px-3 py-1.5 rounded-lg font-bold text-xs animate-bounce whitespace-nowrap shadow-md">
+                ЭНДЭЭС ЭХЭЛ!
+                <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-6 border-t-red-600" />
               </div>
             )}
 
             <button
               className={cn(
-                "relative z-10 w-24 h-24 rounded-full border-b-8 flex items-center justify-center transition-all active:border-b-0 active:translate-y-2",
+                "relative z-10 w-16 h-16 sm:w-20 sm:h-20 rounded-full border-b-[6px] sm:border-b-8 flex items-center justify-center transition-all active:border-b-0 active:translate-y-1",
                 node.status === "locked"
                   ? "bg-gray-200 border-gray-300"
-                  : `${node.color} border-black/20`,
-                node.status === "current" && "ring-8 ring-red-100",
+                  : `${node.color} border-black/10`,
+                node.status === "current" && "ring-4 ring-red-100",
               )}
             >
               <node.icon
                 className={cn(
-                  "w-12 h-12",
+                  "w-8 h-8 sm:w-10 sm:h-10",
                   node.status === "locked" ? "text-gray-400" : "text-white",
                 )}
               />
 
               {node.status === "completed" && (
-                <div className="absolute top-0 right-0 bg-green-500 rounded-full p-1 border-4 border-gray-50">
-                  <div className="w-3 h-3 bg-white rounded-full" />
+                <div className="absolute -top-1 -right-1 bg-green-500 rounded-full p-1 border-2 border-white shadow-sm">
+                  <div className="w-2 h-2 bg-white rounded-full" />
                 </div>
               )}
             </button>
 
-            <span className="mt-4 font-black text-gray-500 text-sm tracking-widest text-center uppercase">
+            <span className="mt-3 font-bold text-gray-500 text-[10px] sm:text-xs tracking-tighter text-center uppercase max-w-[80px]">
               {node.label}
             </span>
           </div>
