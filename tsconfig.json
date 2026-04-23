@@ -28,7 +28,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
+    "app/Droppable.js",
+    "app/Draggable.ts"
   ],
   "exclude": ["node_modules"]
 }

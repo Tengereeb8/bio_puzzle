@@ -1,10 +1,9 @@
-import Image from "next/image";
-import KineticAnatomy from "./components/Game";
+import { Drag } from "./Drag";
 
 export default function Home() {
   return (
-    <div>
-      <KineticAnatomy />
+    <div className="bg-white text-black h-screen flex justify-center items-center">
+      Map hiine
     </div>
   );
 }
