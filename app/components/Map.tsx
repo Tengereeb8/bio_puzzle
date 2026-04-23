@@ -1,5 +1,4 @@
 import React from "react";
-import { cn } from "@/lib/utils"; // standard shadcn utility
 import {
   Dumbbell,
   Heart,
@@ -9,6 +8,7 @@ import {
   Wind,
   Activity,
 } from "lucide-react";
+import { cn } from "../lib/utils";
 
 interface Node {
   id: number;
@@ -16,7 +16,7 @@ interface Node {
   icon: React.ElementType;
   status: "completed" | "current" | "locked";
   color: string;
-  offset: number; // Horizontal offset: -1 (left), 0 (center), 1 (right)
+  offset: number;
 }
 
 const nodes: Node[] = [
@@ -78,13 +78,12 @@ const nodes: Node[] = [
   },
 ];
 
-export default function LearningPath() {
+export default function Map() {
   return (
-    <div className="relative flex flex-col items-center py-20 bg-gray-50 min-h-screen overflow-hidden">
-      {/* 1. THE FLOWING SVG BACKGROUND */}
+    <div className="relative flex flex-col items-center py-20 bg-gray-50 min-h-screen overflow-hidden w-110">
       <svg
         className="absolute top-0 w-full h-full pointer-events-none"
-        viewBox="0 0 400 1200" // Adjust height based on your list length
+        viewBox="0 0 400 1200"
         preserveAspectRatio="xMidYMin slice"
       >
         <path
@@ -98,7 +97,6 @@ export default function LearningPath() {
         />
       </svg>
 
-      {/* 2. THE NODES */}
       <div className="flex flex-col-reverse gap-24 w-full max-w-md px-10">
         {nodes.reverse().map((node) => (
           <div
@@ -106,15 +104,13 @@ export default function LearningPath() {
             className="relative flex flex-col items-center transition-transform hover:scale-105"
             style={{ transform: `translateX(${node.offset * 80}px)` }}
           >
-            {/* Tooltip for Current Lesson */}
             {node.status === "current" && (
               <div className="absolute -top-16 bg-red-700 text-white px-4 py-2 rounded-xl font-bold animate-bounce shadow-lg">
-                ЭНДЭЭС ЭХЭЛ!
-                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-t-red-700" />
+                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-8 border-t-red-700" />
+                Start Here
               </div>
             )}
 
-            {/* The Button */}
             <button
               className={cn(
                 "relative z-10 w-24 h-24 rounded-full border-b-8 flex items-center justify-center transition-all active:border-b-0 active:translate-y-2",
@@ -131,7 +127,6 @@ export default function LearningPath() {
                 )}
               />
 
-              {/* Status Badge */}
               {node.status === "completed" && (
                 <div className="absolute top-0 right-0 bg-green-500 rounded-full p-1 border-4 border-gray-50">
                   <div className="w-3 h-3 bg-white rounded-full" />
