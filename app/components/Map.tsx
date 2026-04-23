@@ -35,7 +35,7 @@ const nodes: Node[] = [
     icon: Shield,
     status: "locked",
     color: "bg-gray-400",
-    x: 15,
+    x: 30,
     y: 400,
   },
   {
