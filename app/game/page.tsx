@@ -1,73 +1,3 @@
-// "use client";
-// import React, { useState } from "react";
-// import { DragDropProvider } from "@dnd-kit/react";
-// import { useDraggable, useDroppable } from "@dnd-kit/react";
-
-// interface DraggableProps {
-//   id: string;
-//   children?: React.ReactNode;
-// }
-
-// function Draggable({ id, children }: DraggableProps) {
-//   const { ref } = useDraggable({ id });
-
-//   return (
-//     <button
-//       ref={ref}
-//       style={{ cursor: "grab", padding: "10px", margin: "5px" }}
-//     >
-//       Zurh
-//     </button>
-//   );
-// }
-
-// interface DroppableProps {
-//   id: string;
-//   children?: React.ReactNode;
-// }
-
-// function Droppable({ id, children }: DroppableProps) {
-//   const { ref } = useDroppable({ id });
-
-//   return (
-//     <div
-//       ref={ref}
-//       className="w-37.5 h-37.5 border-2 border-dashed flex text-center items-center"
-//     >
-//       Tsus Shahdag erhten
-//     </div>
-//   );
-// }
-
-// export const Drag = () => {
-//   const targets = ["A", "B", "C"];
-//   const [target, setTarget] = useState<string | undefined>();
-
-//   const draggableInstance = <Draggable id="draggable-1">Drag me</Draggable>;
-
-//   return (
-//     <DragDropProvider
-//       onDragEnd={(event) => {
-//         if (event.canceled) return;
-
-//         setTarget(event.operation.target?.id as string);
-//       }}
-//     >
-//       <div style={{ padding: "20px" }}>
-//         {!target ? draggableInstance : <p>Item has been sorted!</p>}
-
-//         <div className="flex gap-5 mt-5">
-//           {targets.map((id) => (
-//             <Droppable key={id} id={id}>
-//               {target === id ? draggableInstance : `Drop zone ${id}`}
-//             </Droppable>
-//           ))}
-//         </div>
-//       </div>
-//     </DragDropProvider>
-//   );
-// };
-
 "use client";
 import React, { useState } from "react";
 import { DragDropProvider } from "@dnd-kit/react";
@@ -113,7 +43,7 @@ function Droppable({
   );
 }
 
-export const Drag = () => {
+const Drag = () => {
   const items = [
     { id: "heart", name: "Зүрх", description: "Цус шахах эрхтэн" },
     { id: "lungs", name: "Уушиг", description: "Амьсгалах эрхтэн" },
@@ -174,3 +104,5 @@ export const Drag = () => {
     </DragDropProvider>
   );
 };
+
+export default Drag;

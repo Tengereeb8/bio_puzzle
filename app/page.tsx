@@ -1,5 +1,4 @@
 import Map from "./components/Map";
-import { Drag } from "./Drag";
 
 export default function Home() {
   return (

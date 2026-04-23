@@ -9,6 +9,7 @@ import {
   Syringe,
 } from "lucide-react";
 import { cn } from "../lib/utils";
+import Link from "next/link";
 
 const nodes: Node[] = [
   {
@@ -120,53 +121,54 @@ export default function LearningMap() {
           className="animate-path-flow"
         />
       </svg>
-
-      <div className="relative h-287.5 w-full">
-        {nodes.map((node) => (
-          <div
-            key={node.id}
-            className="absolute flex flex-col items-center -translate-x-1/2 -translate-y-1/2"
-            style={{
-              left: `${node.x}%`,
-              top: `${node.y}px`,
-            }}
-          >
-            {node.status === "current" && (
-              <div className="absolute -top-14 z-20 bg-red-600 text-white px-3 py-1.5 rounded-lg font-bold text-xs animate-bounce whitespace-nowrap shadow-md">
-                ЭНДЭЭС ЭХЭЛ!
-                <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-6 border-t-red-600" />
-              </div>
-            )}
-
-            <button
-              className={cn(
-                "relative z-10 w-16 h-16 sm:w-20 sm:h-20 rounded-full border-b-[6px] sm:border-b-8 flex items-center justify-center transition-all active:border-b-0 active:translate-y-1",
-                node.status === "locked"
-                  ? "bg-gray-200 border-gray-300"
-                  : `${node.color} border-black/10`,
-                node.status === "current" && "ring-4 ring-red-100",
-              )}
+      <Link href={"/game"}>
+        <div className="relative h-287.5 w-full">
+          {nodes.map((node) => (
+            <div
+              key={node.id}
+              className="absolute flex flex-col items-center -translate-x-1/2 -translate-y-1/2"
+              style={{
+                left: `${node.x}%`,
+                top: `${node.y}px`,
+              }}
             >
-              <node.icon
-                className={cn(
-                  "w-8 h-8 sm:w-10 sm:h-10",
-                  node.status === "locked" ? "text-gray-400" : "text-white",
-                )}
-              />
-
-              {node.status === "completed" && (
-                <div className="absolute -top-1 -right-1 bg-green-500 rounded-full p-1 border-2 border-white shadow-sm">
-                  <div className="w-2 h-2 bg-white rounded-full" />
+              {node.status === "current" && (
+                <div className="absolute -top-14 z-20 bg-red-600 text-white px-3 py-1.5 rounded-lg font-bold text-xs animate-bounce whitespace-nowrap shadow-md">
+                  START HERE
+                  <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-6 border-t-red-600" />
                 </div>
               )}
-            </button>
 
-            <span className="mt-3 font-bold text-gray-500 text-[10px] sm:text-xs tracking-tighter text-center uppercase max-w-[80px]">
-              {node.label}
-            </span>
-          </div>
-        ))}
-      </div>
+              <button
+                className={cn(
+                  "relative z-10 w-16 h-16 sm:w-20 sm:h-20 rounded-full border-b-[6px] sm:border-b-8 flex items-center justify-center transition-all active:border-b-0 active:translate-y-1",
+                  node.status === "locked"
+                    ? "bg-gray-200 border-gray-300"
+                    : `${node.color} border-black/10`,
+                  node.status === "current" && "ring-4 ring-red-100",
+                )}
+              >
+                <node.icon
+                  className={cn(
+                    "w-8 h-8 sm:w-10 sm:h-10",
+                    node.status === "locked" ? "text-gray-400" : "text-white",
+                  )}
+                />
+
+                {node.status === "completed" && (
+                  <div className="absolute -top-1 -right-1 bg-green-500 rounded-full p-1 border-2 border-white shadow-sm">
+                    <div className="w-2 h-2 bg-white rounded-full" />
+                  </div>
+                )}
+              </button>
+
+              <span className="mt-3 font-bold text-gray-500 text-[10px] sm:text-xs tracking-tighter text-center uppercase max-w-[80px]">
+                {node.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </Link>
     </div>
   );
 }
