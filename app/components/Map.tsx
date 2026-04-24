@@ -169,6 +169,9 @@ export default function LearningMap() {
           ))}
         </div>
       </Link>
+      <Link href={"/game/match"}>
+        <button className="bg-black text-white rounded-full w-25">Match</button>
+      </Link>
     </div>
   );
 }

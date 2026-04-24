@@ -5,9 +5,6 @@ export default function Home() {
   return (
     <div className="bg-white text-black h-fit flex justify-center items-center">
       <Map />
-      <Link href={"/game/match"}>
-        <button>Match</button>
-      </Link>
     </div>
   );
 }
