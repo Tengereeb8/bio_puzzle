@@ -63,7 +63,7 @@ const nodes: Node[] = [
     icon: Dumbbell,
     status: "completed",
     color: "bg-blue-400",
-    x: 20,
+    x: 55,
     y: 950,
   },
   {
@@ -72,7 +72,7 @@ const nodes: Node[] = [
     icon: Bone,
     status: "completed",
     color: "bg-green-500",
-    x: 30,
+    x: 50,
     y: 1130,
   },
 ];
@@ -121,7 +121,7 @@ export default function LearningMap() {
           className="animate-path-flow"
         />
       </svg>
-      <Link href={"/game"}>
+      <Link href={"/game/drag&drop"}>
         <div className="relative h-287.5 w-full">
           {nodes.map((node) => (
             <div
