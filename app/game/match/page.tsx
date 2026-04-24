@@ -40,6 +40,19 @@ const MatchingGame = () => {
     setItems(sorted);
   }, []);
 
+  const restartGame = () => {
+    const shuffled = [...Data].sort(() => Math.random() - 0.5);
+    const sorted = shuffled.sort((a, b) => {
+      if (a.icon && !b.icon) return -1;
+      if (!a.icon && b.icon) return 1;
+      return 0;
+    });
+    setItems(sorted);
+    setSelection(null);
+    setWrongId(null);
+    setSolved([]);
+  };
+
   const handleSelect = (item: any, uniqueKey: string) => {
     if (solved.includes(item.id)) return;
 
@@ -111,6 +124,12 @@ const MatchingGame = () => {
           </button>
         );
       })}
+      <button
+        className="bg-black text-white w-99.5 px-5 py-4 rounded-full"
+        onClick={restartGame}
+      >
+        Restart Game
+      </button>
     </div>
   );
 };
