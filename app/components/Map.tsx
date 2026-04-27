@@ -36,7 +36,7 @@ const nodes: Node[] = [
     icon: Shield,
     status: "locked",
     color: "bg-gray-400",
-    x: 30,
+    x: 40,
     y: 400,
   },
   {
@@ -117,7 +117,7 @@ export default function LearningMap() {
           strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeDasharray="7 8"
+          strokeDasharray="6 7"
           className="animate-path-flow"
         />
       </svg>
@@ -162,7 +162,7 @@ export default function LearningMap() {
                 )}
               </button>
 
-              <span className="mt-3 font-bold text-gray-500 text-[10px] sm:text-xs tracking-tighter text-center uppercase max-w-[80px]">
+              <span className="mt-3 font-bold text-gray-500 text-[10px] sm:text-xs tracking-tighter text-center uppercase max-w-20">
                 {node.label}
               </span>
             </div>

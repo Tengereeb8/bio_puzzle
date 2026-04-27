@@ -85,7 +85,7 @@ const MatchingGame = () => {
             key={uniqueKey}
             onClick={() => handleSelect(item, uniqueKey)}
             className={cn(
-              "w-full p-4 text-left rounded-[40px] border-[3px] transition-all duration-200 font-bold text-lg shadow-sm flex items-center gap-4 min-h-[90px]",
+              "w-full p-4 text-left rounded-[40px] border-[3px] transition-all duration-200 font-bold text-lg shadow-sm flex items-center gap-4 min-h-22.5",
               "bg-white border-gray-200 text-gray-800",
               isSolved &&
                 "bg-gray-50 border-green-500 text-green-700 opacity-60",

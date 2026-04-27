@@ -1,108 +1,206 @@
 "use client";
 import React, { useState } from "react";
-import { DragDropProvider } from "@dnd-kit/react";
-import { useDraggable, useDroppable } from "@dnd-kit/react";
+import {
+  DndContext,
+  useDraggable,
+  useDroppable,
+  DragEndEvent,
+  TouchSensor,
+  MouseSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+  DragStartEvent,
+} from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 
 function Draggable({
   id,
-  children,
+  name,
+  emoji,
+  isPlaced,
 }: {
   id: string;
-  children: React.ReactNode;
+  name: string;
+  emoji: string;
+  isPlaced: boolean;
 }) {
-  const { ref } = useDraggable({ id });
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id,
+  });
+
   return (
-    <button
-      ref={ref}
-      className="bg-blue-500 text-white rounded shadow-md cursor-grab active:cursor-grabbing"
-      style={{ padding: "10px", margin: "5px" }}
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      className={`flex-shrink-0 bg-white border-2 border-blue-200 rounded-2xl shadow-sm flex flex-col items-center justify-center w-20 h-20 touch-none ${
+        isDragging || isPlaced ? "opacity-20" : "opacity-100"
+      }`}
     >
-      {children}
-    </button>
+      <span className="text-3xl">{emoji}</span>
+      <span className="text-[10px] font-bold text-blue-600 mt-1 uppercase">
+        {name}
+      </span>
+    </div>
+  );
+}
+
+function OrganOverlay({ emoji, name }: { emoji: string; name: string }) {
+  return (
+    <div className="bg-white border-4 border-yellow-400 rounded-2xl shadow-2xl flex flex-col items-center justify-center w-24 h-24 scale-110 rotate-3 opacity-90">
+      <span className="text-4xl">{emoji}</span>
+      <span className="text-xs font-bold text-blue-600 mt-1 uppercase">
+        {name}
+      </span>
+    </div>
   );
 }
 
 function Droppable({
   id,
-  label,
+  isPlaced,
   children,
+  positionClass,
 }: {
   id: string;
-  label: string;
+  isPlaced: boolean;
   children?: React.ReactNode;
+  positionClass: string;
 }) {
-  const { ref } = useDroppable({ id });
+  const { isOver, setNodeRef } = useDroppable({ id });
+
   return (
     <div
-      ref={ref}
-      className="w-48 h-48 border-2 border-dashed border-gray-400 flex flex-col items-center justify-center text-center p-2 rounded-lg"
+      ref={setNodeRef}
+      className={`absolute transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${positionClass} ${isPlaced ? "z-20" : "z-10"}`}
     >
-      <span className="text-xs text-gray-500 mb-2">{label}</span>
-      {children}
+      <div
+        className={`
+        relative flex items-center justify-center rounded-full border-2
+        ${isPlaced ? "w-16 h-16 border-transparent" : "w-10 h-10 border-dashed border-white bg-white/30 animate-pulse"}
+        ${isOver && !isPlaced ? "scale-150 border-yellow-400 bg-yellow-400/60" : ""}
+      `}
+      >
+        {children}
+      </div>
     </div>
   );
 }
 
-const Drag = () => {
+const MobileAnatomyGame = () => {
   const items = [
-    { id: "heart", name: "Зүрх", description: "Цус шахах эрхтэн" },
-    { id: "lungs", name: "Уушиг", description: "Амьсгалах эрхтэн" },
-    { id: "brain", name: "Тархи", description: "Удирдах эрхтэн" },
+    { id: "brain", name: "Тархи", emoji: "🧠", pos: "top-[11.5%] left-[50%]" },
+    { id: "lungs", name: "Уушиг", emoji: "🫁", pos: "top-[31%] left-[50%]" },
+    { id: "heart", name: "Зүрх", emoji: "🫀", pos: "top-[33%] left-[56%]" },
+    { id: "stomach", name: "Ходоод", emoji: "🥣", pos: "top-[46%] left-[48%]" },
+    { id: "liver", name: "Элэг", emoji: "🍷", pos: "top-[44%] left-[58%]" },
   ];
 
-  const [placements, setPlacements] = useState<Record<string, string>>({});
+  const [placements, setPlacements] = useState<Record<string, boolean>>({});
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(MouseSensor),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 100, tolerance: 5 },
+    }),
+  );
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id === over.id) {
+      setPlacements((prev) => ({ ...prev, [active.id]: true }));
+    }
+    setActiveId(null);
+  };
+
+  const activeItem = items.find((i) => i.id === activeId);
 
   return (
-    <DragDropProvider
-      onDragEnd={(event) => {
-        if (event.canceled || !event.operation.target) return;
-
-        const sourceId = event.operation.source?.id as string;
-        const targetId = event.operation.target.id as string;
-
-        if (sourceId === targetId) {
-          setPlacements((prev) => ({
-            ...prev,
-            [sourceId]: targetId,
-          }));
-        }
-      }}
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
     >
-      <div className="p-10">
-        <h2 className="text-xl font-bold mb-4">
-          Эрхтнүүдийг байранд нь тавина уу:
-        </h2>
-
-        <div className="flex gap-4 mb-10 p-4 bg-gray-100 rounded-xl min-h-20 justify-center">
-          {items.map(
-            (item) =>
-              !placements[item.id] && (
-                <Draggable key={item.id} id={item.id}>
-                  {item.name}
-                </Draggable>
-              ),
-          )}
+      <div className="fixed inset-0 bg-sky-100 flex flex-col items-center font-sans overflow-hidden select-none">
+        <div className="w-full pt-6 pb-2 text-center bg-white/90 backdrop-blur-md shadow-sm z-30">
+          <h1 className="text-xl font-black text-blue-600">
+            Хүний Биеийн Бүтэц
+          </h1>
         </div>
 
-        <div className="flex gap-10">
+        <div className="relative flex-1 w-full max-w-md bg-white overflow-hidden">
+          <img
+            src="https://images.imagerenderer.com/images/artworkimages/mediumlarge/2/1-childs-skeleton-growth-plates-monica-schroeder.jpg"
+            alt="Skeleton"
+            className="absolute inset-0 w-full h-full object-contain object-top mt-4 pointer-events-none"
+          />
+
           {items.map((item) => (
-            <Droppable key={item.id} id={item.id} label={item.description}>
-              {placements[item.id] ? (
-                <Draggable id={item.id}>{item.name}</Draggable>
-              ) : null}
+            <Droppable
+              key={item.id}
+              id={item.id}
+              isPlaced={!!placements[item.id]}
+              positionClass={item.pos}
+            >
+              {placements[item.id] && (
+                <span className="text-5xl drop-shadow-lg scale-110">
+                  {item.emoji}
+                </span>
+              )}
             </Droppable>
           ))}
         </div>
 
-        <button
-          onClick={() => setPlacements({})}
-          className="mt-10 px-4 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200 mx-auto"
-        >
-          Reset Game
-        </button>
+        <div className="w-full bg-slate-50 p-4 pb-10 rounded-t-[2.5rem] shadow-[0_-10px_30px_rgba(0,0,0,0.1)] z-30">
+          <div className="flex items-center justify-between mb-4 px-2">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+              Эрхтнээ сонгоно уу
+            </p>
+            <button
+              onClick={() => setPlacements({})}
+              className="text-[10px] font-bold text-red-400 border border-red-100 px-3 py-1 rounded-full active:bg-red-50"
+            >
+              Restart
+            </button>
+          </div>
+
+          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide px-2">
+            {items.map((item) => (
+              <Draggable
+                key={item.id}
+                id={item.id}
+                name={item.name}
+                emoji={item.emoji}
+                isPlaced={!!placements[item.id]}
+              />
+            ))}
+          </div>
+        </div>
+
+        <DragOverlay adjustScale={true}>
+          {activeId && activeItem ? (
+            <OrganOverlay emoji={activeItem.emoji} name={activeItem.name} />
+          ) : null}
+        </DragOverlay>
       </div>
-    </DragDropProvider>
+
+      <style jsx global>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
+    </DndContext>
   );
 };
 
-export default Drag;
+export default MobileAnatomyGame;
