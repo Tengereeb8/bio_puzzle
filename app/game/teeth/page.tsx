@@ -5,219 +5,127 @@ import {
   useDraggable,
   useDroppable,
   DragEndEvent,
-  TouchSensor,
-  MouseSensor,
-  useSensor,
-  useSensors,
-  DragOverlay,
-  DragStartEvent,
 } from "@dnd-kit/core";
 
-// --- Draggable Tooth ---
-function DraggableTooth({
-  id,
-  name,
-  emoji,
-  type,
-}: {
+interface ToothProps {
   id: string;
-  name: string;
-  emoji: string;
-  type: string;
-}) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-    id,
-  });
+  icon: string;
+}
+
+interface JobZoneProps {
+  id: string;
+  title: string;
+  matchedIcon: string | null;
+}
+
+const DraggableTooth: React.FC<ToothProps> = ({ id, icon }) => {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
+
+  const style = transform
+    ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        zIndex: 50,
+      }
+    : undefined;
 
   return (
     <div
       ref={setNodeRef}
+      style={style}
       {...listeners}
       {...attributes}
-      className={`flex-shrink-0 bg-white border-2 border-blue-100 rounded-xl shadow-sm flex flex-col items-center justify-center w-16 h-20 touch-none active:scale-110 ${isDragging ? "opacity-20" : "opacity-100"}`}
+      className="text-6xl p-4 bg-white border-4 border-slate-100 rounded-2xl shadow-lg cursor-grab active:cursor-grabbing hover:scale-105 transition-transform"
     >
-      <span className="text-2xl">{emoji}</span>
-      <span className="text-[8px] font-bold text-gray-400 mt-1 uppercase">
-        {type}
-      </span>
+      {icon}
     </div>
   );
-}
+};
 
-// --- Clinical Tooth Slot ---
-function ToothSlot({
-  id,
-  num,
-  isPlaced,
-  emoji,
-}: {
-  id: string;
-  num: string;
-  isPlaced: boolean;
-  emoji?: string;
-}) {
+const JobZone: React.FC<JobZoneProps> = ({ id, title, matchedIcon }) => {
   const { isOver, setNodeRef } = useDroppable({ id });
 
   return (
     <div
       ref={setNodeRef}
-      className={`relative w-12 h-14 border rounded-md flex flex-col items-center justify-center transition-all ${
-        isPlaced
-          ? "border-blue-500 bg-blue-50"
-          : "border-gray-200 bg-gray-50/50"
-      } ${isOver ? "bg-yellow-100 border-yellow-400 scale-110 z-10" : ""}`}
+      className={`w-32 h-40 flex flex-col items-center justify-center border-4 border-dashed rounded-3xl transition-colors ${
+        isOver ? "bg-blue-100 border-blue-400" : "bg-slate-50 border-slate-200"
+      }`}
     >
-      <span className="absolute top-0.5 right-1 text-[8px] font-mono text-gray-400">
-        {num}
-      </span>
-      {isPlaced ? (
-        <span className="text-xl animate-in zoom-in duration-200">{emoji}</span>
+      {matchedIcon ? (
+        <span className="text-6xl animate-bounce">{matchedIcon}</span>
       ) : (
-        <div className="w-4 h-4 rounded-full border border-gray-200" />
+        <span className="font-black text-slate-400 text-center px-2 uppercase text-sm">
+          {title}
+        </span>
       )}
     </div>
   );
-}
+};
 
-const ClinicalDentalGame = () => {
-  // Clinical Tooth Map based on the quadrant image
-  const teethData = [
-    { id: "t1", num: "1", quad: "UR", type: "Molar", emoji: "🧱" },
-    { id: "t5", num: "5", quad: "UR", type: "Premolar", emoji: "🦷" },
-    { id: "t8", num: "8", quad: "UR", type: "Incisor", emoji: "💎" },
-    { id: "t9", num: "9", quad: "UL", type: "Incisor", emoji: "💎" },
-    { id: "t12", num: "12", quad: "UL", type: "Premolar", emoji: "🦷" },
-    { id: "t16", num: "16", quad: "UL", type: "Molar", emoji: "🧱" },
-    { id: "t24", num: "24", quad: "LL", type: "Incisor", emoji: "💎" },
-    { id: "t32", num: "32", quad: "LR", type: "Molar", emoji: "🧱" },
-  ];
+const ToothGame: React.FC = () => {
+  const [matches, setMatches] = useState<Record<string, string | null>>({
+    cutting: null,
+    tearing: null,
+    grinding: null,
+  });
 
-  const [placements, setPlacements] = useState<Record<string, boolean>>({});
-  const [activeId, setActiveId] = useState<string | null>(null);
-
-  const sensors = useSensors(
-    useSensor(MouseSensor),
-    useSensor(TouchSensor, {
-      activationConstraint: { delay: 100, tolerance: 5 },
-    }),
-  );
-
-  const handleDragStart = (event: DragStartEvent) =>
-    setActiveId(event.active.id as string);
+  const teethData: Record<string, { icon: string; job: string }> = {
+    incisor: { icon: "🦷", job: "cutting" },
+    canine: { icon: "🧛", job: "tearing" },
+    molar: { icon: "🪨", job: "grinding" },
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    if (over && active.id === over.id) {
-      setPlacements((prev) => ({ ...prev, [active.id]: true }));
+    if (!over) return;
+
+    const toothId = active.id as string;
+    const dropZoneId = over.id as string;
+
+    if (teethData[toothId].job === dropZoneId) {
+      setMatches((prev) => ({
+        ...prev,
+        [dropZoneId]: teethData[toothId].icon,
+      }));
     }
-    setActiveId(null);
   };
 
-  const activeItem = teethData.find((i) => i.id === activeId);
-
-  // Helper to render quadrants
-  const renderQuadrant = (quadName: string) => (
-    <div className="flex-1 bg-white p-2 border-dashed border-gray-100 border">
-      <div className="text-[10px] font-black text-gray-300 mb-2">
-        {quadName}
-      </div>
-      <div className="flex flex-wrap gap-2 justify-center">
-        {teethData
-          .filter((t) => t.quad === quadName)
-          .map((tooth) => (
-            <ToothSlot
-              key={tooth.id}
-              id={tooth.id}
-              num={tooth.num}
-              isPlaced={!!placements[tooth.id]}
-              emoji={tooth.emoji}
-            />
-          ))}
-      </div>
-    </div>
-  );
-
   return (
-    <DndContext
-      sensors={sensors}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="fixed inset-0 bg-slate-50 flex flex-col font-sans select-none overflow-hidden">
-        {/* Clinical Header */}
-        <div className="bg-white px-6 py-4 border-b flex justify-between items-center">
-          <div>
-            <h1 className="text-lg font-bold text-slate-800">
-              Шүдний оношилгоо
-            </h1>
-            <p className="text-[10px] text-blue-500 font-bold uppercase">
-              Dental Charting v1.0
-            </p>
-          </div>
-          <button
-            onClick={() => setPlacements({})}
-            className="text-xs font-bold text-red-400 bg-red-50 px-3 py-1 rounded-md"
-          >
-            ШИНЭЧЛЭХ
-          </button>
-        </div>
+    <DndContext onDragEnd={handleDragEnd}>
+      <div className="p-8 bg-indigo-50 rounded-[2rem] flex flex-col items-center gap-10">
+        <h2 className="text-2xl font-black text-indigo-900 uppercase tracking-widest">
+          Match the Job!
+        </h2>
 
-        {/* Main Chart Area (The 2x2 Grid) */}
-        <div className="flex-1 p-4 grid grid-cols-2 grid-rows-2 gap-1 overflow-auto">
-          {renderQuadrant("UR")}
-          {renderQuadrant("UL")}
-          {renderQuadrant("LR")}
-          {renderQuadrant("LL")}
-        </div>
-
-        {/* Clinical Dock (Bottom) */}
-        <div className="bg-white border-t p-6 pb-10 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-4 bg-blue-500 rounded-full" />
-            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-              Тавигдаагүй шүднүүд
-            </p>
-          </div>
-
-          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-            {teethData.map(
-              (item) =>
-                !placements[item.id] && (
-                  <DraggableTooth
-                    key={item.id}
-                    id={item.id}
-                    name={item.num}
-                    emoji={item.emoji}
-                    type={item.type}
-                  />
-                ),
-            )}
-          </div>
-        </div>
-
-        <DragOverlay>
-          {activeId && activeItem && (
-            <div className="bg-white border-2 border-blue-500 rounded-xl shadow-2xl flex flex-col items-center justify-center w-16 h-20 scale-110 opacity-90">
-              <span className="text-2xl">{activeItem.emoji}</span>
-              <span className="text-[8px] font-bold text-blue-500 mt-1 uppercase">
-                {activeItem.type}
-              </span>
-            </div>
+        <div className="flex gap-6 min-h-[120px]">
+          {Object.entries(teethData).map(
+            ([id, data]) =>
+              !Object.values(matches).includes(data.icon) && (
+                <DraggableTooth key={id} id={id} icon={data.icon} />
+              ),
           )}
-        </DragOverlay>
-      </div>
+        </div>
 
-      <style jsx global>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
+        <div className="flex gap-4">
+          <JobZone
+            id="cutting"
+            title="Cutting ✂️"
+            matchedIcon={matches.cutting}
+          />
+          <JobZone
+            id="tearing"
+            title="Tearing 🗡️"
+            matchedIcon={matches.tearing}
+          />
+          <JobZone
+            id="grinding"
+            title="Grinding 🔨"
+            matchedIcon={matches.grinding}
+          />
+        </div>
+      </div>
     </DndContext>
   );
 };
 
-export default ClinicalDentalGame;
+export default ToothGame;
