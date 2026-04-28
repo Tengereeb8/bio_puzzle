@@ -8,6 +8,7 @@ import ImprovedMoreMenu from "./ImprovedMoreMenu";
 import LessonRoadmapScreen from "./LessonRoadmapScreen";
 import RoadmapScreen from "./RoadmapScreen";
 import FooterNav from "./FooterNav";
+import ToothGame from "./teeth-game/ToothGame";
 import { teethLessons } from "./data/ToothLessons";
 
 type TabType = "roadmap" | "game" | "more";
@@ -458,10 +459,7 @@ export default function App() {
   );
 
   return (
-    <div
-      className="min-h-screen bg-gray-50"
-      style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-    >
+    <div className="min-h-screen bg-gray-50 font-game">
       <AnimatePresence mode="wait">
         {state.currentView === "main-roadmap" && (
           <div key="main-roadmap">
@@ -499,22 +497,9 @@ export default function App() {
           </div>
         )}
 
-        {state.currentView === "game" && selectedChapterData && (
-          <div key="game-view">
-            <AdvancedGameScreen
-              chapterTitle={selectedChapterData.title}
-              chapterTitleMn={selectedChapterData.titleMn}
-              chapterColor={selectedChapterData.color}
-              bodyParts={teethGameParts}
-              onComplete={handleGameComplete}
-              onBack={() =>
-                setState({
-                  ...state,
-                  activeTab: "roadmap",
-                  currentView: "main-roadmap",
-                })
-              }
-            />
+        {state.currentView === "game" && (
+          <div key="game-view" className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-50 flex items-center justify-center p-6">
+            <ToothGame />
           </div>
         )}
 
