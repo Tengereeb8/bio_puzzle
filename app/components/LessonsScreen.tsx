@@ -37,26 +37,23 @@ export default function LessonsScreen({
   const progress = ((currentLessonIndex + 1) / lessons.length) * 100;
 
   const playAudio = (text: string) => {
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.85;
-      utterance.pitch = 1.1;
-      utterance.lang = "mn-MN";
-      window.speechSynthesis.speak(utterance);
-    }
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.85;
+    utterance.pitch = 1.1;
+    utterance.lang = "mn-MN";
+    window.speechSynthesis.speak(utterance);
   };
 
   const handleAnswerSelect = (index: number) => {
     if (showFeedback) return;
-
     setSelectedAnswer(index);
     setShowFeedback(true);
 
     const correct = index === currentLesson.correctAnswer;
-
     if (correct) {
-      setCorrectCount(correctCount + 1);
+      setCorrectCount((n) => n + 1);
       confetti({
         particleCount: 100,
         spread: 70,
@@ -65,21 +62,22 @@ export default function LessonsScreen({
       });
       playAudio("Зөв! Маш сайн!");
     } else {
-      setHearts(Math.max(0, hearts - 1));
+      setHearts((h) => Math.max(0, h - 1));
       playAudio("Буруу. Дахин оролдоорой.");
     }
   };
 
   const handleNext = () => {
     if (currentLessonIndex < lessons.length - 1) {
-      setCurrentLessonIndex(currentLessonIndex + 1);
+      setCurrentLessonIndex((n) => n + 1);
       setSelectedAnswer(null);
       setShowFeedback(false);
     } else {
-      const points = correctCount * 10;
-      onComplete(points);
+      onComplete(correctCount * 10);
     }
   };
+
+  const isLast = currentLessonIndex === lessons.length - 1;
 
   return (
     <div className="min-h-screen pb-24 bg-linear-to-br from-blue-50 to-purple-50 overflow-auto">
@@ -126,19 +124,11 @@ export default function LessonsScreen({
         </div>
       </div>
 
-      {/* Question Content */}
+      {/* Question */}
       <div className="max-w-2xl mx-auto px-6 pt-8">
         <div className="mb-6">
           <div className="flex items-start justify-between mb-6">
-            <h2
-              className="flex-1 text-xl"
-              style={{
-                fontFamily: "Noto Sans Mongolian, Nunito",
-                fontWeight: 700,
-              }}
-            >
-              {currentLesson.question}
-            </h2>
+            <h2 className="flex-1 text-xl font-game-bold">{currentLesson.question}</h2>
             <button
               onClick={() => playAudio(currentLesson.audioText)}
               className="ml-4 p-4 bg-linear-to-br from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 rounded-2xl shadow-lg transition-all"
@@ -153,14 +143,12 @@ export default function LessonsScreen({
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
             >
-              <div className="text-9xl filter drop-shadow-2xl">
-                {currentLesson.image}
-              </div>
+              <div className="text-9xl filter drop-shadow-2xl">{currentLesson.image}</div>
             </motion.div>
           )}
         </div>
 
-        {/* Answer Options */}
+        {/* Answer options */}
         <div className="space-y-4">
           {currentLesson.options.map((option, index) => {
             const isSelected = selectedAnswer === index;
@@ -189,17 +177,13 @@ export default function LessonsScreen({
                 transition={{ delay: index * 0.1 }}
               >
                 <span
-                  className={`text-lg ${
+                  className={`text-lg font-game-bold ${
                     showCorrect
                       ? "text-green-700"
                       : showIncorrect
                         ? "text-red-700"
                         : "text-gray-800"
                   }`}
-                  style={{
-                    fontFamily: "Noto Sans Mongolian, Nunito",
-                    fontWeight: 600,
-                  }}
                 >
                   {option}
                 </span>
@@ -209,15 +193,15 @@ export default function LessonsScreen({
         </div>
       </div>
 
-      {/* Feedback Drawer */}
+      {/* Feedback drawer */}
       <AnimatePresence>
         {showFeedback && (
           <motion.div
-            className={`fixed bottom-20 left-0 right-0 ${
+            className={`fixed bottom-20 left-0 right-0 border-t-4 shadow-2xl ${
               isCorrect
                 ? "bg-linear-to-r from-green-400 to-emerald-500 border-green-600"
                 : "bg-linear-to-r from-red-400 to-rose-500 border-red-600"
-            } border-t-4 shadow-2xl`}
+            }`}
             initial={{ y: 300 }}
             animate={{ y: 0 }}
             exit={{ y: 300 }}
@@ -226,48 +210,31 @@ export default function LessonsScreen({
             <div className="max-w-2xl mx-auto p-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 text-white">
-                  <h3
-                    className="text-2xl mb-3"
-                    style={{
-                      fontFamily: "Noto Sans Mongolian, Nunito",
-                      fontWeight: 800,
-                    }}
-                  >
+                  <h3 className="text-2xl mb-3 font-game-black">
                     {isCorrect ? "Гайхалтай! 🎉" : "Буруу байна!"}
                   </h3>
-                  <p
-                    className="text-lg leading-relaxed"
-                    style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-                  >
+                  <p className="text-lg leading-relaxed font-game">
                     {currentLesson.explanation}
                   </p>
                 </div>
 
                 <motion.button
                   onClick={handleNext}
-                  className={`px-8 py-4 ${
+                  className={`px-8 py-4 text-white rounded-2xl shadow-2xl flex items-center gap-3 ${
                     isCorrect
                       ? "bg-green-600 hover:bg-green-700"
                       : "bg-gray-600 hover:bg-gray-700"
-                  } text-white rounded-2xl shadow-2xl flex items-center gap-3`}
+                  }`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <span
-                    style={{
-                      fontFamily: "Noto Sans Mongolian, Nunito",
-                      fontWeight: 700,
-                      fontSize: "18px",
-                    }}
-                  >
-                    {currentLessonIndex < lessons.length - 1
-                      ? "Дараах"
-                      : "Дуусгах"}
+                  <span className="text-lg font-game-bold">
+                    {isLast ? "Дуусгах" : "Дараах"}
                   </span>
-                  {currentLessonIndex < lessons.length - 1 ? (
-                    <ArrowRight size={24} strokeWidth={3} />
-                  ) : (
+                  {isLast ? (
                     <Trophy size={24} />
+                  ) : (
+                    <ArrowRight size={24} strokeWidth={3} />
                   )}
                 </motion.button>
               </div>
