@@ -266,7 +266,7 @@ export default function ImprovedMoreMenu({
                         </motion.div>
 
                         <motion.div
-                          className={`bg-linear-to-br ${grad} rounded-t-2xl px-6 pt-4 pb-2 text-white text-center shadow-xl min-w-[5rem]`}
+                          className={`bg-linear-to-br ${grad} rounded-t-2xl px-6 pt-4 pb-2 text-white text-center shadow-xl min-w-20`}
                           style={{ height: big ? "120px" : idx === 0 ? "100px" : "80px" }}
                           initial={{ height: 0 }}
                           animate={{ height: big ? "120px" : idx === 0 ? "100px" : "80px" }}

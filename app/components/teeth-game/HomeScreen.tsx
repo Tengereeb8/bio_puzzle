@@ -11,37 +11,47 @@ export default function HomeScreen({
 }) {
   return (
     <div className="text-center py-2">
-      <div className="text-5xl mb-3">🦷</div>
+      <div className="text-6xl mb-4">🦷</div>
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Tooth Explorer!</h1>
-      <p className="text-gray-500 mb-8">Learn all about your amazing teeth</p>
+      <p className="text-gray-500 mb-8 text-sm">Learn all about your amazing teeth</p>
 
-      <div className="grid grid-cols-2 gap-4 mb-8">
+      <div className="flex flex-col gap-4 mb-8">
         <button
           onClick={() => onSelectMode("quiz")}
-          className={`rounded-2xl border-2 p-6 text-center transition-all hover:-translate-y-1 ${
-            selectedMode === "quiz" ? "border-blue-500 bg-blue-50" : "border-gray-200 bg-white hover:border-gray-400"
+          className={`rounded-2xl border-2 p-5 text-left transition-all active:scale-95 touch-manipulation flex items-center gap-4 ${
+            selectedMode === "quiz"
+              ? "border-blue-500 bg-blue-50"
+              : "border-gray-200 bg-white"
           }`}
         >
-          <div className="text-4xl mb-3">🧠</div>
-          <div className="font-semibold text-gray-900">Teeth Quiz</div>
-          <div className="text-sm text-gray-500 mt-1">Answer fun questions about teeth</div>
+          <div className="text-4xl flex-shrink-0">🧠</div>
+          <div>
+            <div className="font-bold text-gray-900 text-base">Teeth Quiz</div>
+            <div className="text-sm text-gray-500 mt-0.5">8 multiple-choice questions</div>
+          </div>
+          {selectedMode === "quiz" && <span className="ml-auto text-blue-500 text-xl">✓</span>}
         </button>
 
         <button
           onClick={() => onSelectMode("label")}
-          className={`rounded-2xl border-2 p-6 text-center transition-all hover:-translate-y-1 ${
-            selectedMode === "label" ? "border-blue-500 bg-blue-50" : "border-gray-200 bg-white hover:border-gray-400"
+          className={`rounded-2xl border-2 p-5 text-left transition-all active:scale-95 touch-manipulation flex items-center gap-4 ${
+            selectedMode === "label"
+              ? "border-blue-500 bg-blue-50"
+              : "border-gray-200 bg-white"
           }`}
         >
-          <div className="text-4xl mb-3">🔍</div>
-          <div className="font-semibold text-gray-900">Label a Tooth</div>
-          <div className="text-sm text-gray-500 mt-1">Match the parts to their names</div>
+          <div className="text-4xl flex-shrink-0">🔍</div>
+          <div>
+            <div className="font-bold text-gray-900 text-base">Label a Tooth</div>
+            <div className="text-sm text-gray-500 mt-0.5">Match parts to their names</div>
+          </div>
+          {selectedMode === "label" && <span className="ml-auto text-blue-500 text-xl">✓</span>}
         </button>
       </div>
 
       <button
         onClick={onStart}
-        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold text-lg px-10 py-3 rounded-xl transition-colors"
+        className="w-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white font-bold text-lg py-4 rounded-2xl transition-colors touch-manipulation"
       >
         Let&apos;s Go! ▶
       </button>

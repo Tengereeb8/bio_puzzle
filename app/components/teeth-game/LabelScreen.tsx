@@ -7,11 +7,11 @@ import ToothDiagram from "./ToothDiagram";
 const NUMBERS = ["①", "②", "③", "④", "⑤"];
 
 function zoneClass(dz: DropZone) {
-  const base = "border rounded-xl px-3 py-2.5 min-h-[44px] flex items-center justify-between text-sm transition-all cursor-pointer ";
+  const base = "border-2 rounded-xl px-3 py-3 min-h-[48px] flex items-center justify-between text-sm transition-all active:scale-95 ";
   if (dz.state === "correct") return base + "border-green-400 bg-green-50 text-green-800";
   if (dz.state === "wrong") return base + "border-red-400 bg-red-50 text-red-800";
-  if (dz.state === "filled") return base + "border-gray-400 bg-gray-50 text-gray-800";
-  return base + "border-dashed border-gray-300 text-gray-400 hover:border-blue-400 hover:bg-blue-50";
+  if (dz.state === "filled") return base + "border-blue-400 bg-blue-50 text-blue-800";
+  return base + "border-dashed border-gray-300 text-gray-400 bg-white";
 }
 
 export default function LabelScreen({
@@ -61,32 +61,11 @@ export default function LabelScreen({
 
   return (
     <div>
-      <h2 className="text-base font-semibold text-gray-900 mb-1">Label the Tooth Parts!</h2>
-      <p className="text-sm text-gray-500 mb-4">Tap a word from the bank, then tap the matching number slot.</p>
+      <h2 className="text-lg font-bold text-gray-900 mb-1">Label the Tooth Parts!</h2>
+      <p className="text-sm text-gray-500 mb-4">Tap a word, then tap the matching slot.</p>
 
-      <div className="flex gap-4 items-start">
-        <div className="flex-shrink-0">
-          <ToothDiagram />
-        </div>
-
-        <div className="flex-1 flex flex-col gap-2.5">
-          {parts.map((part, i) => {
-            const z = zones[i];
-            return (
-              <div key={part.id} className={zoneClass(z)} onClick={() => placeWord(i)}>
-                <span>
-                  <span className="text-gray-400 mr-1">{NUMBERS[i]}</span>
-                  {z.placed ?? <span className="text-gray-300 italic">tap to place...</span>}
-                </span>
-                {z.state === "correct" && <span>✓</span>}
-                {z.state === "wrong" && <span>✗</span>}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="flex flex-wrap gap-2 mt-4">
+      {/* Word bank — prominent on mobile, shown first */}
+      <div className="flex flex-wrap gap-2 mb-5">
         {shuffled.map((part) => {
           const isUsed = used.includes(part.name);
           const isSel = selected === part.name;
@@ -95,10 +74,10 @@ export default function LabelScreen({
               key={part.name}
               onClick={() => pickWord(part.name)}
               disabled={checked}
-              className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-all
-                ${isUsed ? "opacity-30 pointer-events-none border-gray-200 bg-gray-50 text-gray-400" : ""}
-                ${isSel ? "border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-300" : ""}
-                ${!isUsed && !isSel ? "border-gray-200 bg-gray-100 text-gray-700 hover:bg-white hover:border-gray-400 cursor-pointer" : ""}
+              className={`rounded-full border-2 px-4 py-2 text-sm font-semibold transition-all active:scale-95 touch-manipulation
+                ${isUsed ? "opacity-25 pointer-events-none border-gray-200 bg-gray-50 text-gray-400" : ""}
+                ${isSel ? "border-blue-500 bg-blue-500 text-white shadow-lg scale-105" : ""}
+                ${!isUsed && !isSel ? "border-gray-300 bg-white text-gray-700" : ""}
               `}
             >
               {part.name}
@@ -107,16 +86,46 @@ export default function LabelScreen({
         })}
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-2">
-        {parts.map((part, i) => (
-          <span key={i} className="text-xs text-gray-400">{NUMBERS[i]} {part.hint}</span>
-        ))}
+      {/* Diagram + drop zones stacked on mobile */}
+      <div className="flex flex-col items-center gap-4">
+        <ToothDiagram />
+
+        <div className="w-full flex flex-col gap-3">
+          {parts.map((part, i) => {
+            const z = zones[i];
+            return (
+              <div
+                key={part.id}
+                className={zoneClass(z)}
+                onClick={() => placeWord(i)}
+              >
+                <span className="flex items-center gap-2">
+                  <span className="text-gray-400 text-base font-bold">{NUMBERS[i]}</span>
+                  <span className={z.placed ? "" : "text-gray-300 italic text-sm"}>
+                    {z.placed ?? "tap to place..."}
+                  </span>
+                </span>
+                <span className="text-lg">
+                  {z.state === "correct" && "✓"}
+                  {z.state === "wrong" && "✗"}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Hints */}
+        <div className="w-full grid grid-cols-2 gap-x-4 gap-y-1">
+          {parts.map((part, i) => (
+            <span key={i} className="text-xs text-gray-400">{NUMBERS[i]} {part.hint}</span>
+          ))}
+        </div>
       </div>
 
       <button
         onClick={check}
         disabled={!allFilled || checked}
-        className="mt-4 w-full py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className="mt-6 w-full py-4 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white font-bold text-base rounded-2xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed touch-manipulation"
       >
         Check My Answers!
       </button>

@@ -18,9 +18,9 @@ export default function ResultScreen({
   const { emoji, title, message } = pct === 1
     ? {
         emoji: "🏆",
-        title: mode === "quiz" ? "PERFECT! You're a Tooth Expert!" : "Perfect labelling!",
+        title: mode === "quiz" ? "PERFECT! Tooth Expert!" : "Perfect labelling!",
         message: mode === "quiz"
-          ? "Incredible! You got every question right. Your teeth are lucky to have such a smart owner!"
+          ? "You got every question right. Your teeth are lucky to have such a smart owner!"
           : "You named every part of the tooth correctly! Amazing!",
       }
     : pct >= 0.75
@@ -30,10 +30,14 @@ export default function ResultScreen({
         : { emoji: "🦷", title: "Keep learning!", message: "Every expert started as a beginner! Try again and learn something new each time." };
 
   return (
-    <div className="text-center py-4">
-      <div className="text-6xl mb-3">{emoji}</div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">{title}</h2>
-      <div className="text-4xl font-bold text-blue-500 mb-2">{score}/{total} ⭐</div>
+    <div className="text-center py-2">
+      <div className="text-7xl mb-4">{emoji}</div>
+      <h2 className="text-2xl font-bold text-gray-900 mb-3">{title}</h2>
+
+      <div className="bg-linear-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-3xl py-6 mb-5">
+        <div className="text-5xl font-bold text-blue-500">{score}/{total}</div>
+        <div className="text-yellow-500 text-2xl mt-1">{"⭐".repeat(score)}</div>
+      </div>
 
       <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 mb-4 text-sm text-gray-600 leading-relaxed text-left">
         <span className="font-semibold text-gray-800">Did you know? </span>
@@ -42,10 +46,10 @@ export default function ResultScreen({
 
       <p className="text-gray-500 text-sm mb-6">{message}</p>
 
-      <div className="flex gap-3 justify-center">
+      <div className="flex flex-col gap-3">
         <button
           onClick={onPlayAgain}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors"
+          className="w-full py-4 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white font-bold text-base rounded-2xl transition-colors touch-manipulation"
         >
           Play Again
         </button>
@@ -53,7 +57,7 @@ export default function ResultScreen({
           href="https://www.nhs.uk/live-well/healthy-teeth-and-gums/"
           target="_blank"
           rel="noopener noreferrer"
-          className="border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium px-6 py-3 rounded-xl transition-colors text-sm flex items-center gap-1"
+          className="w-full py-4 border-2 border-gray-200 bg-white text-gray-700 font-medium text-base rounded-2xl transition-colors text-center touch-manipulation"
         >
           Learn More ↗
         </a>
