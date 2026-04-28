@@ -32,38 +32,11 @@ export default function RoadmapScreen({
   chapters,
   onChapterClick,
 }: RoadmapScreenProps) {
+  const completedCount = chapters.filter((c) => c.isCompleted).length;
+
   return (
     <div className="min-h-screen pb-24 overflow-auto relative bg-linear-to-br from-indigo-50 via-purple-50 to-pink-50">
-      {/* Animated flowing background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-10">
-        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern
-              id="bones"
-              x="0"
-              y="0"
-              width="100"
-              height="100"
-              patternUnits="userSpaceOnUse"
-            >
-              <motion.g
-                animate={{ x: [0, 100], y: [0, 100] }}
-                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-              >
-                <path
-                  d="M20 30 Q30 20 40 30 Q50 40 40 50 Q30 60 20 50 Q10 40 20 30"
-                  fill="#6366f1"
-                  opacity="0.3"
-                />
-                <circle cx="70" cy="70" r="8" fill="#8b5cf6" opacity="0.4" />
-              </motion.g>
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#bones)" />
-        </svg>
-      </div>
-
-      {/* Header with stats */}
+      {/* Header */}
       <div className="relative bg-linear-to-br from-indigo-600 via-purple-600 to-pink-600 text-white px-6 pt-8 pb-16">
         <div className="max-w-2xl mx-auto">
           <motion.div
@@ -72,17 +45,14 @@ export default function RoadmapScreen({
             className="flex items-center justify-between mb-6"
           >
             <div>
-              <h1
-                className="text-3xl mb-1"
-                style={{
-                  fontFamily: "Noto Sans Mongolian, Nunito",
-                  fontWeight: 800,
-                }}
-              >
+              <h1 className="text-3xl mb-1 font-game-black">
                 Бие Махбодын Аялал
               </h1>
-              <p className="text-purple-100 text-sm">Өөрийнхөө биеийг судал!</p>
+              <p className="text-purple-100 text-sm font-game">
+                Өөрийнхөө биеийг судал!
+              </p>
             </div>
+
             <motion.div
               className="bg-white/20 backdrop-blur-md rounded-2xl px-4 py-3"
               whileHover={{ scale: 1.05 }}
@@ -90,7 +60,7 @@ export default function RoadmapScreen({
               <div className="flex items-center gap-2">
                 <Trophy className="text-yellow-300" size={24} />
                 <div>
-                  <p className="text-xs opacity-80">Нийт оноо</p>
+                  <p className="text-xs opacity-80 font-game">Нийт оноо</p>
                   <p className="font-bold text-lg">850</p>
                 </div>
               </div>
@@ -108,24 +78,22 @@ export default function RoadmapScreen({
               <div className="flex justify-center mb-1">
                 <Sparkles size={20} className="text-yellow-300" />
               </div>
-              <p className="text-2xl font-bold">
-                {chapters.filter((c) => c.isCompleted).length}
-              </p>
-              <p className="text-xs opacity-90">Дууссан</p>
+              <p className="text-2xl font-bold">{completedCount}</p>
+              <p className="text-xs opacity-90 font-game">Дууссан</p>
             </div>
             <div className="bg-white/15 backdrop-blur-md rounded-xl p-3 text-center">
               <div className="flex justify-center mb-1">
                 <Star size={20} className="text-blue-300" />
               </div>
               <p className="text-2xl font-bold">5</p>
-              <p className="text-xs opacity-90">Түвшин</p>
+              <p className="text-xs opacity-90 font-game">Түвшин</p>
             </div>
             <div className="bg-white/15 backdrop-blur-md rounded-xl p-3 text-center">
               <div className="flex justify-center mb-1">
                 <span className="text-xl">🔥</span>
               </div>
               <p className="text-2xl font-bold">7</p>
-              <p className="text-xs opacity-90">Өдөр</p>
+              <p className="text-xs opacity-90 font-game">Өдөр</p>
             </div>
           </motion.div>
         </div>
@@ -134,7 +102,7 @@ export default function RoadmapScreen({
       {/* Roadmap Path */}
       <div className="relative px-6 -mt-8">
         <div className="relative max-w-2xl mx-auto">
-          {/* Animated SVG Path */}
+          {/* Animated SVG path connecting the nodes */}
           <svg
             className="absolute left-1/2 top-0 bottom-0 w-32 -ml-16 pointer-events-none"
             style={{ height: `${chapters.length * 200}px` }}
@@ -152,48 +120,18 @@ export default function RoadmapScreen({
                 <stop offset="100%" stopColor="#6366f1" stopOpacity="0.3" />
               </linearGradient>
             </defs>
-
-            {/* Flowing river path */}
             <motion.path
-              d={`M 64 0 Q 40 50 64 100 Q 88 150 64 200 Q 40 250 64 300 Q 88 350 64 400 Q 40 450 64 500 Q 88 550 64 600 Q 40 650 64 700 Q 88 750 64 800 Q 40 850 64 900 Q 88 950 64 1000 Q 40 1050 64 1100 Q 88 1150 64 1200 Q 40 1250 64 1300 Q 88 1350 64 1400 Q 40 1450 64 1500 Q 88 1550 64 1600`}
+              d="M 64 0 Q 40 50 64 100 Q 88 150 64 200 Q 40 250 64 300 Q 88 350 64 400 Q 40 450 64 500 Q 88 550 64 600 Q 40 650 64 700 Q 88 750 64 800 Q 40 850 64 900 Q 88 950 64 1000 Q 40 1050 64 1100 Q 88 1150 64 1200 Q 40 1250 64 1300 Q 88 1350 64 1400 Q 40 1450 64 1500 Q 88 1550 64 1600"
               stroke="url(#pathGradient)"
               strokeWidth="8"
               fill="none"
               strokeDasharray="20 15"
-              animate={{
-                strokeDashoffset: [0, -35],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "linear",
-              }}
+              animate={{ strokeDashoffset: [0, -35] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
             />
-
-            {/* Animated particles */}
-            {[...Array(5)].map((_, i) => (
-              <motion.circle
-                key={i}
-                r="4"
-                fill="#8b5cf6"
-                opacity="0.6"
-                animate={{
-                  offsetDistance: ["0%", "100%"],
-                }}
-                transition={{
-                  duration: 6,
-                  repeat: Infinity,
-                  delay: i * 1.2,
-                  ease: "linear",
-                }}
-                style={{
-                  offsetPath: `path("M 64 0 Q 40 50 64 100 Q 88 150 64 200 Q 40 250 64 300 Q 88 350 64 400 Q 40 450 64 500 Q 88 550 64 600 Q 40 650 64 700 Q 88 750 64 800 Q 40 850 64 900 Q 88 950 64 1000 Q 40 1050 64 1100 Q 88 1150 64 1200 Q 40 1250 64 1300 Q 88 1350 64 1400 Q 40 1450 64 1500 Q 88 1550 64 1600")`,
-                }}
-              />
-            ))}
           </svg>
 
-          {/* Chapter Nodes */}
+          {/* Chapter nodes */}
           <div className="relative z-10 space-y-16 pt-8 pb-8">
             {chapters.map((chapter, index) => (
               <motion.div
@@ -208,9 +146,11 @@ export default function RoadmapScreen({
                 }}
               >
                 <div
-                  className={`flex items-center gap-6 ${index % 2 === 0 ? "flex-row" : "flex-row-reverse"}`}
+                  className={`flex items-center gap-6 ${
+                    index % 2 === 0 ? "flex-row" : "flex-row-reverse"
+                  }`}
                 >
-                  {/* Chapter Circle */}
+                  {/* Chapter circle button */}
                   <motion.button
                     onClick={() =>
                       chapter.isUnlocked && onChapterClick(chapter.id)
@@ -222,7 +162,7 @@ export default function RoadmapScreen({
                     }
                     whileTap={chapter.isUnlocked ? { scale: 0.95 } : {}}
                   >
-                    {/* Outer glow ring */}
+                    {/* Pulsing glow ring */}
                     {chapter.isUnlocked && !chapter.isCompleted && (
                       <motion.div
                         className="absolute inset-0 rounded-full blur-2xl opacity-60"
@@ -321,34 +261,33 @@ export default function RoadmapScreen({
                     </div>
                   </motion.button>
 
-                  {/* Chapter Info Card */}
+                  {/* Chapter info card */}
                   <motion.div
-                    className={`flex-1 bg-white rounded-2xl p-5 shadow-xl border-2 border-gray-100 ${
+                    className={`flex-1 bg-white rounded-2xl p-5 shadow-xl border-2 border-gray-100 game-card ${
                       !chapter.isUnlocked && "opacity-60"
                     } ${index % 2 === 0 ? "text-left" : "text-right"}`}
-                    whileHover={
-                      chapter.isUnlocked
-                        ? { y: -4, boxShadow: "0 20px 40px rgba(0,0,0,0.15)" }
-                        : {}
-                    }
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div className={index % 2 === 0 ? "" : "order-2"}>
                         <h3
-                          className="text-xl mb-1"
-                          style={{
-                            fontFamily: "Noto Sans Mongolian, Nunito",
-                            fontWeight: 700,
-                            color: chapter.isUnlocked ? "#1F2937" : "#9CA3AF",
-                          }}
+                          className={`text-xl mb-1 font-game-bold ${
+                            chapter.isUnlocked
+                              ? "text-gray-800"
+                              : "text-gray-400"
+                          }`}
                         >
                           {chapter.titleMn}
                         </h3>
-                        <p className="text-sm text-gray-500">{chapter.title}</p>
+                        <p className="text-sm text-gray-500 font-game">
+                          {chapter.title}
+                        </p>
                       </div>
+
                       {chapter.isUnlocked && (
                         <div
-                          className={`px-3 py-1 rounded-full text-xs font-bold ${index % 2 === 0 ? "" : "order-1"}`}
+                          className={`px-3 py-1 rounded-full text-xs font-bold ${
+                            index % 2 === 0 ? "" : "order-1"
+                          }`}
                           style={{
                             backgroundColor: `${chapter.color}20`,
                             color: chapter.color,
@@ -382,7 +321,7 @@ export default function RoadmapScreen({
                             Дууслаа!
                           </p>
                         ) : (
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-500 font-game">
                             {chapter.completedLessons > 0
                               ? "Үргэлжлүүлэх..."
                               : "Эхлүүлэх"}
@@ -392,7 +331,7 @@ export default function RoadmapScreen({
                     )}
 
                     {!chapter.isUnlocked && (
-                      <p className="text-xs text-gray-400 flex items-center gap-1">
+                      <p className="text-xs text-gray-400 flex items-center gap-1 font-game">
                         <Lock size={12} />
                         Өмнөх бүлгийг дуусгана уу
                       </p>
@@ -404,29 +343,6 @@ export default function RoadmapScreen({
           </div>
         </div>
       </div>
-
-      {/* Floating achievement notification */}
-      <motion.div
-        className="fixed top-24 right-6 bg-white rounded-2xl shadow-2xl p-4 border-2 border-green-400 max-w-xs"
-        initial={{ x: 400, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ delay: 1, type: "spring", stiffness: 200 }}
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-linear-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center">
-            <Trophy size={24} color="white" />
-          </div>
-          <div>
-            <p
-              className="font-bold text-sm"
-              style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-            >
-              Шинэ түвшин!
-            </p>
-            <p className="text-xs text-gray-600">Та түвшин 5-д хүрлээ 🎉</p>
-          </div>
-        </div>
-      </motion.div>
     </div>
   );
 }

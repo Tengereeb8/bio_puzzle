@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "tw-animate-css";
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap");
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
@@ -10,6 +10,8 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
+  /* Game font used throughout the bio-puzzle UI */
+  --font-game: "Noto Sans Mongolian", "Nunito", sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -179,4 +181,31 @@
   html {
     @apply font-sans;
   }
+}
+
+/* Shared utility classes — replaces the inline style={{ fontFamily }} pattern */
+.font-game {
+  font-family: var(--font-game);
+}
+
+.font-game-bold {
+  font-family: var(--font-game);
+  font-weight: 700;
+}
+
+.font-game-black {
+  font-family: var(--font-game);
+  font-weight: 800;
+}
+
+/* Smooth hover transitions for interactive game cards */
+.game-card {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.game-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.12);
 }

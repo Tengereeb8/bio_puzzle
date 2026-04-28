@@ -29,7 +29,6 @@ interface AppState {
   showMoreMenu: boolean;
 }
 
-// Teeth game parts with realistic positioning
 const teethGameParts = [
   {
     id: "incisor-1",
