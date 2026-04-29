@@ -60,7 +60,7 @@ export default function LessonRoadmapScreen({
   const allDone = lessons.every((l) => l.isCompleted);
 
   return (
-    <div className="min-h-screen pb-24 overflow-auto relative bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen  pb-24 overflow-auto relative bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {PARTICLES.map((p, i) => (
           <motion.div

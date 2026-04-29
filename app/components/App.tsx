@@ -77,7 +77,7 @@ export default function App() {
         )}
 
         {state.currentView === "game" && (
-          <div key="game-view">
+          <div key="game-view" >
             <GameView />
           </div>
         )}
