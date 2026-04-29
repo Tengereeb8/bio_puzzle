@@ -1,4 +1,5 @@
 export interface LessonNode {
+  questions: Question[];
   id: string;
   type: "lesson" | "quiz" | "game" | "story" | "practice";
   title: string;
@@ -210,7 +211,7 @@ export const teethLessons: LessonNode[] = [
       "Шүдний үндэс дээр",
       "Буйлны доор",
     ],
-    correctAnswer: 1,
+    correctAnswer: 2,
     explanation:
       "Дентин нь пааланы доор байрладаг шар өнгөтэй давхарга юм. Энэ нь пааланаас зөөлөн боловч шүдний бүтцийг тогтоодог.",
     audioText:

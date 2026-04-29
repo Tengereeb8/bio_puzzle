@@ -1,3 +1,4 @@
+
 "use client";
 
 import { AnimatePresence } from "motion/react";
@@ -5,12 +6,12 @@ import { teethLessons } from "./data/ToothLessons";
 
 import RoadmapScreen from "./RoadmapScreen";
 import LessonRoadmapScreen from "./LessonRoadmapScreen";
-import LessonsScreen from "./LessonsScreen";
 import ImprovedMoreMenu from "./ImprovedMoreMenu";
 import FooterNav from "./FooterNav";
 import { useAppState } from "./hooks/useAppState";
 import { BASE_LEADERBOARD, BASE_USER_PROFILE, chapters } from "./data/appData";
 import GameView from "./GameView";
+import QuizScreen from "../teeth-game/src/components/QuizScreen";
 
 export default function App() {
   const { state, handlers } = useAppState();
@@ -28,6 +29,10 @@ export default function App() {
     (c) => c.id === state.selectedChapter,
   );
 
+  const currentLessonData = teethLessons.find(
+    (l) => l.id === state.selectedLesson
+  );
+
   const userProfile = {
     ...BASE_USER_PROFILE,
     totalPoints: state.userPoints,
@@ -40,6 +45,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-50 font-game">
       <AnimatePresence mode="wait">
+        {/* ... other views remain the same ... */}
         {state.currentView === "main-roadmap" && (
           <div key="main-roadmap">
             <RoadmapScreen
@@ -63,19 +69,36 @@ export default function App() {
           </div>
         )}
 
-        {state.currentView === "lesson-content" && state.selectedLesson && (
-          <div key={`lesson-${state.selectedLesson}`}>
-            <LessonsScreen
-              chapterTitle={selectedChapterData?.title ?? "Teeth"}
-              lessons={teethLessons.filter(
-                (l) => l.id === state.selectedLesson,
-              )}
-              onComplete={handleLessonComplete}
-              onExit={handleBackToChapterRoadmap}
+        {/* 3. Replaced LessonsScreen with QuizScreen */}
+        {state.currentView === "lesson-content" && currentLessonData && (
+          <div key={`quiz-${state.selectedLesson}`} className="max-w-md mx-auto p-4">
+            <QuizScreen
+              // We wrap the single lesson's question data into an array 
+              // and rename the properties to match what QuizScreen wants.
+              questions={[
+                {
+                  id: currentLessonData.id,
+                  text: currentLessonData.question,      // Map 'question' to 'text'
+                  options: currentLessonData.options,
+                  answer: currentLessonData.correctAnswer, // Map 'correctAnswer' to 'answer'
+                  fact: currentLessonData.explanation,    // Map 'explanation' to 'fact'
+                  visual: "🦷", // You can use a default or logic to pick an emoji
+                },
+              ]}
+              onComplete={(score) => {
+                handleLessonComplete(score);
+              }}
             />
+
+            {/* Helpful Back Button */}
+            <button
+              onClick={handleBackToChapterRoadmap}
+              className="mt-6 text-gray-400 text-sm w-full text-center hover:text-gray-600 transition-colors"
+            >
+              ← Буцах (Back)
+            </button>
           </div>
         )}
-
         {state.currentView === "game" && (
           <div key="game-view" >
             <GameView />
