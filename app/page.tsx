@@ -1,8 +1,10 @@
-import Link from "next/link";
-import Map from "./components/Map";
+import { getUsers } from "./actions/users";
 import App from "./components/App";
 
-export default function Home() {
+export default async function Home() {
+  const users = await getUsers();
+
+  console.log(users);
   return (
     <div className="bg-white text-black h-fit flex justify-center items-center">
       <App />
