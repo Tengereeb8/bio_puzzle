@@ -1,3 +1,5 @@
+import { Footer } from "react-day-picker";
+
 export default function DashboardLayout({
   children,
 }: Readonly<{
@@ -6,9 +8,6 @@ export default function DashboardLayout({
   return (
     <div className="flex flex-col w-full">
       <main>{children}</main>
-      {/* <div className="w-full sticky ">
-        <Footer />
-      </div> */}
     </div>
   );
 }
