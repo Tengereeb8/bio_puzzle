@@ -3,21 +3,22 @@
 import { motion, AnimatePresence } from "motion/react";
 import { Map, Gamepad2, Menu } from "lucide-react";
 
+type TabId = "roadmap" | "game" | "more";
+
 interface FooterNavProps {
-  activeTab: "roadmap" | "game" | "more";
-  onTabChange: (tab: "roadmap" | "game" | "more") => void;
+  activeTab: TabId;
+  onTabChange: (tab: TabId) => void;
 }
 
-export default function FooterNav({ activeTab, onTabChange }: FooterNavProps) {
-  const tabs = [
-    { id: "roadmap" as const, label: "Roadmap", icon: Map },
-    { id: "game" as const, label: "Game", icon: Gamepad2 },
-    { id: "more" as const, label: "More", icon: Menu },
-  ];
+const TABS = [
+  { id: "roadmap" as const, label: "Roadmap", icon: Map },
+  { id: "game" as const, label: "Game", icon: Gamepad2 },
+  { id: "more" as const, label: "More", icon: Menu },
+] as const;
 
+export default function FooterNav({ activeTab, onTabChange }: FooterNavProps) {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
-      {/* Frosted glass top border */}
       <div className="h-px bg-linear-to-r from-transparent via-gray-200 to-transparent" />
 
       <div
@@ -27,28 +28,21 @@ export default function FooterNav({ activeTab, onTabChange }: FooterNavProps) {
           paddingBottom: "env(safe-area-inset-bottom, 0px)",
         }}
       >
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-
+        {TABS.map(({ id, label, icon: Icon }) => {
+          const isActive = activeTab === id;
           return (
             <motion.button
-              key={tab.id}
-              onClick={() => onTabChange(tab.id)}
+              key={id}
+              onClick={() => onTabChange(id)}
               className="relative flex flex-col items-center justify-center gap-1 flex-1 outline-none"
               whileTap={{ scale: 0.9 }}
               transition={{ type: "spring", stiffness: 500, damping: 30 }}
             >
-              {/* Pill background */}
               <AnimatePresence>
                 {isActive && (
                   <motion.div
                     layoutId="activeTabBg"
-                    className="absolute inset-x-2 inset-y-2 rounded-2xl"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #e8fde7 0%, #d4f5d0 100%)",
-                    }}
+                    className="absolute inset-x-2 inset-y-2 rounded-2xl bg-green-50"
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
@@ -57,13 +51,11 @@ export default function FooterNav({ activeTab, onTabChange }: FooterNavProps) {
                 )}
               </AnimatePresence>
 
-              {/* Top indicator dot */}
               <AnimatePresence>
                 {isActive && (
                   <motion.div
                     layoutId="activeTabDot"
-                    className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1 rounded-b-full"
-                    style={{ background: "#58CC02" }}
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1 rounded-b-full bg-green-500"
                     initial={{ scaleX: 0, opacity: 0 }}
                     animate={{ scaleX: 1, opacity: 1 }}
                     exit={{ scaleX: 0, opacity: 0 }}
@@ -72,7 +64,6 @@ export default function FooterNav({ activeTab, onTabChange }: FooterNavProps) {
                 )}
               </AnimatePresence>
 
-              {/* Icon */}
               <motion.div
                 className="relative z-10"
                 animate={isActive ? { y: -1, scale: 1.1 } : { y: 0, scale: 1 }}
@@ -81,33 +72,22 @@ export default function FooterNav({ activeTab, onTabChange }: FooterNavProps) {
                 <Icon
                   size={22}
                   strokeWidth={isActive ? 2.5 : 2}
-                  style={{
-                    color: isActive ? "#58CC02" : "#9CA3AF",
-                    filter: isActive
-                      ? "drop-shadow(0 2px 4px rgba(88,204,2,0.35))"
-                      : "none",
-                    transition: "color 0.2s, filter 0.2s",
-                  }}
+                  className={`transition-colors duration-200 ${
+                    isActive ? "text-green-500" : "text-gray-400"
+                  }`}
                 />
               </motion.div>
 
               {/* Label */}
-              <motion.span
-                className="relative z-10 text-xs leading-none"
-                animate={
+              <span
+                className={`relative z-10 text-[11px] leading-none font-game transition-all duration-150 ${
                   isActive
-                    ? { color: "#3a9a00", fontWeight: 700 }
-                    : { color: "#9CA3AF", fontWeight: 600 }
-                }
-                transition={{ duration: 0.15 }}
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: "11px",
-                  letterSpacing: isActive ? "0.01em" : "0",
-                }}
+                    ? "text-green-700 font-bold"
+                    : "text-gray-400 font-semibold"
+                }`}
               >
-                {tab.label}
-              </motion.span>
+                {label}
+              </span>
             </motion.button>
           );
         })}
