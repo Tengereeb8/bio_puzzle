@@ -23,7 +23,10 @@ export default function FooterNav({ activeTab, onTabChange }: FooterNavProps) {
 
       <div
         className="flex items-stretch justify-between px-4 bg-white/90 backdrop-blur-xl"
-        style={{ height: "72px", paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+        style={{
+          height: "72px",
+          paddingBottom: "env(safe-area-inset-bottom, 0px)",
+        }}
       >
         {TABS.map(({ id, label, icon: Icon }) => {
           const isActive = activeTab === id;
@@ -35,7 +38,6 @@ export default function FooterNav({ activeTab, onTabChange }: FooterNavProps) {
               whileTap={{ scale: 0.9 }}
               transition={{ type: "spring", stiffness: 500, damping: 30 }}
             >
-              {/* Active pill background */}
               <AnimatePresence>
                 {isActive && (
                   <motion.div
@@ -49,7 +51,6 @@ export default function FooterNav({ activeTab, onTabChange }: FooterNavProps) {
                 )}
               </AnimatePresence>
 
-              {/* Top indicator bar */}
               <AnimatePresence>
                 {isActive && (
                   <motion.div
@@ -63,7 +64,6 @@ export default function FooterNav({ activeTab, onTabChange }: FooterNavProps) {
                 )}
               </AnimatePresence>
 
-              {/* Icon */}
               <motion.div
                 className="relative z-10"
                 animate={isActive ? { y: -1, scale: 1.1 } : { y: 0, scale: 1 }}
@@ -81,7 +81,9 @@ export default function FooterNav({ activeTab, onTabChange }: FooterNavProps) {
               {/* Label */}
               <span
                 className={`relative z-10 text-[11px] leading-none font-game transition-all duration-150 ${
-                  isActive ? "text-green-700 font-bold" : "text-gray-400 font-semibold"
+                  isActive
+                    ? "text-green-700 font-bold"
+                    : "text-gray-400 font-semibold"
                 }`}
               >
                 {label}

@@ -13,7 +13,9 @@ export default function HomeScreen({
     <div className="text-center py-2">
       <div className="text-6xl mb-4">🦷</div>
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Tooth Explorer!</h1>
-      <p className="text-gray-500 mb-8 text-sm">Learn all about your amazing teeth</p>
+      <p className="text-gray-500 mb-8 text-sm">
+        Learn all about your amazing teeth
+      </p>
 
       <div className="flex flex-col gap-4 mb-8">
         <button
@@ -24,12 +26,16 @@ export default function HomeScreen({
               : "border-gray-200 bg-white"
           }`}
         >
-          <div className="text-4xl flex-shrink-0">🧠</div>
+          <div className="text-4xl shrink-0">🧠</div>
           <div>
             <div className="font-bold text-gray-900 text-base">Teeth Quiz</div>
-            <div className="text-sm text-gray-500 mt-0.5">8 multiple-choice questions</div>
+            <div className="text-sm text-gray-500 mt-0.5">
+              8 multiple-choice questions
+            </div>
           </div>
-          {selectedMode === "quiz" && <span className="ml-auto text-blue-500 text-xl">✓</span>}
+          {selectedMode === "quiz" && (
+            <span className="ml-auto text-blue-500 text-xl">✓</span>
+          )}
         </button>
 
         <button
@@ -40,12 +46,18 @@ export default function HomeScreen({
               : "border-gray-200 bg-white"
           }`}
         >
-          <div className="text-4xl flex-shrink-0">🔍</div>
+          <div className="text-4xl shrink-0">🔍</div>
           <div>
-            <div className="font-bold text-gray-900 text-base">Label a Tooth</div>
-            <div className="text-sm text-gray-500 mt-0.5">Match parts to their names</div>
+            <div className="font-bold text-gray-900 text-base">
+              Label a Tooth
+            </div>
+            <div className="text-sm text-gray-500 mt-0.5">
+              Match parts to their names
+            </div>
           </div>
-          {selectedMode === "label" && <span className="ml-auto text-blue-500 text-xl">✓</span>}
+          {selectedMode === "label" && (
+            <span className="ml-auto text-blue-500 text-xl">✓</span>
+          )}
         </button>
       </div>
 
