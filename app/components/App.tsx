@@ -13,6 +13,7 @@ import GameView from "./GameView";
 import QuizScreen from "../teeth-game/src/components/QuizScreen";
 import { useState } from "react";
 import { Question } from "./teeth-game/types";
+import { useRouter } from "next/navigation";
 
 const allQuestions: Question[] = teethLessons.map((lesson) => ({
   id: lesson.id,
@@ -20,20 +21,18 @@ const allQuestions: Question[] = teethLessons.map((lesson) => ({
   options: lesson.options,
   answer: lesson.correctAnswer,
   fact: lesson.explanation,
-  visual: "🦷", // You can add custom icons here
+  visual: "🦷",
 }));
 
 export default function App() {
+  const router = useRouter();
   const { state, handlers } = useAppState();
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
 
   const handleQuizComplete = (score: number) => {
-    if (currentLessonIndex < teethLessons.length - 1) {
-      setTimeout(() => {
-        setCurrentLessonIndex((prev) => prev + 1);
-      }, 1500);
-    }
+    router.push("./teeth-game/result");
   };
+
   const {
     handleTabChange,
     handleChapterClick,
@@ -62,7 +61,7 @@ export default function App() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 font-game">
+    <div className="min-h-screen w-125 bg-gray-50 font-game">
       <AnimatePresence mode="wait">
         {state.currentView === "main-roadmap" && (
           <div key="main-roadmap">
@@ -93,7 +92,7 @@ export default function App() {
               {currentLessonData.titleMn}
             </h1>
             <QuizScreen
-              key={currentLessonData.id} // Essential: Resets QuizScreen state (qIndex, answered)
+              key={currentLessonData.id}
               questions={allQuestions}
               onComplete={handleQuizComplete}
             />

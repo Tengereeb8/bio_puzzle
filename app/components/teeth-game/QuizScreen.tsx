@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import type { Question } from "./types";
+import { useRouter } from "next/router";
 
 export default function QuizScreen({
   questions,
@@ -30,6 +31,7 @@ export default function QuizScreen({
       setAnswered(false);
     }
   }
+  const router = useRouter();
 
   function pick(i: number) {
     if (answered) return;
@@ -67,14 +69,13 @@ export default function QuizScreen({
 
   return (
     <div className="max-w-md mx-auto">
-      {/* Header Info */}
       <div className="flex justify-between items-end mb-3 px-1">
         <div className="flex flex-col">
           <span className="text-[10px] uppercase tracking-widest text-gray-400 font-black">
             Progress
           </span>
           <span className="text-sm text-gray-700 font-bold">
-            {qIndex + 1} of {questions.length}
+            {qIndex + 1} of {questions.length - 1}
           </span>
         </div>
         <div className="bg-yellow-100 px-3 py-1 rounded-full">
@@ -82,7 +83,6 @@ export default function QuizScreen({
         </div>
       </div>
 
-      {/* Progress Bar */}
       <div className="bg-gray-100 rounded-full h-3 mb-8 p-1 shadow-inner">
         <div
           className="bg-linear-to-r from-blue-400 to-blue-600 h-full rounded-full transition-all duration-700 ease-out"
@@ -90,7 +90,6 @@ export default function QuizScreen({
         />
       </div>
 
-      {/* Question Card */}
       <div className="relative bg-white border-2 border-gray-100 rounded-[2rem] p-6 mb-6 shadow-xl shadow-blue-900/5 overflow-hidden">
         <div className="absolute -top-6 -right-6 w-24 h-24 bg-blue-50 rounded-full opacity-50" />
         <div className="text-center text-6xl mb-4 drop-shadow-sm">
@@ -101,7 +100,6 @@ export default function QuizScreen({
         </h2>
       </div>
 
-      {/* Options */}
       <div className="flex flex-col gap-4 mb-8">
         {q.options.map((opt, i) => (
           <button
@@ -130,7 +128,6 @@ export default function QuizScreen({
         ))}
       </div>
 
-      {/* Feedback/Fact Section */}
       <div
         className={`transition-all duration-500 transform ${answered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
       >
