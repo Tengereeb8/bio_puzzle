@@ -27,7 +27,6 @@ const allQuestions: Question[] = teethLessons.map((lesson) => ({
 export default function App() {
   const router = useRouter();
   const { state, handlers } = useAppState();
-  const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
 
   const handleQuizComplete = (score: number) => {
     router.push("./teeth-game/result");
@@ -37,8 +36,6 @@ export default function App() {
     handleTabChange,
     handleChapterClick,
     handleLessonClick,
-    handleLessonComplete,
-    handleBackToChapterRoadmap,
     handleBackToMainRoadmap,
     handleCloseMoreMenu,
   } = handlers;
