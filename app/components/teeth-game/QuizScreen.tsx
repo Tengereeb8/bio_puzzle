@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { Question } from "./types";
+import { useRouter } from "next/router";
 
 export default function QuizScreen({
   questions,
@@ -20,16 +21,6 @@ export default function QuizScreen({
   const progress = (qIndex / questions.length) * 100;
   const isLast = qIndex + 1 >= questions.length;
 
-  function pick(i: number) {
-    if (answered) return;
-    setSelected(i);
-    setAnswered(true);
-    if (i === q.answer) {
-      scoreRef.current += 1;
-      setScore(scoreRef.current);
-    }
-  }
-
   function next() {
     const nextIdx = qIndex + 1;
     if (nextIdx >= questions.length) {
@@ -40,44 +31,95 @@ export default function QuizScreen({
       setAnswered(false);
     }
   }
+  const router = useRouter();
+
+  function pick(i: number) {
+    if (answered) return;
+
+    setSelected(i);
+    setAnswered(true);
+
+    if (i === q.answer) {
+      scoreRef.current += 1;
+      setScore(scoreRef.current);
+    }
+
+    setTimeout(() => {
+      next();
+    }, 1500);
+  }
 
   function btnClass(i: number) {
-    const base = "border-2 rounded-2xl py-4 px-4 text-sm text-left transition-all w-full font-medium touch-manipulation active:scale-95 ";
-    if (!answered) return base + "border-gray-200 bg-white text-gray-800";
-    if (i === q.answer) return base + "border-green-400 bg-green-50 text-green-800";
-    if (i === selected) return base + "border-red-400 bg-red-50 text-red-800";
-    return base + "border-gray-100 bg-white text-gray-300";
+    const base =
+      "relative border-2 rounded-2xl py-4 px-4 text-sm text-left transition-all w-full font-bold touch-manipulation shadow-sm ";
+    if (!answered)
+      return (
+        base +
+        "border-gray-200 bg-white text-gray-700 hover:border-blue-400 active:scale-95"
+      );
+
+    if (i === q.answer)
+      return (
+        base + "border-green-500 bg-green-50 text-green-700 scale-[1.02] z-10"
+      );
+    if (i === selected) return base + "border-red-500 bg-red-50 text-red-700";
+
+    return base + "border-gray-100 bg-white text-gray-300 opacity-50";
   }
 
   return (
-    <div>
-      {/* Progress row */}
-      <div className="flex justify-between items-center mb-2">
-        <span className="text-sm text-gray-500 font-medium">{qIndex + 1} / {questions.length}</span>
-        <span className="text-sm font-bold text-yellow-500">⭐ {score}</span>
+    <div className="max-w-md mx-auto">
+      <div className="flex justify-between items-end mb-3 px-1">
+        <div className="flex flex-col">
+          <span className="text-[10px] uppercase tracking-widest text-gray-400 font-black">
+            Progress
+          </span>
+          <span className="text-sm text-gray-700 font-bold">
+            {qIndex + 1} of {questions.length - 1}
+          </span>
+        </div>
+        <div className="bg-yellow-100 px-3 py-1 rounded-full">
+          <span className="text-sm font-black text-yellow-600">⭐ {score}</span>
+        </div>
       </div>
 
-      <div className="bg-gray-200 rounded-full h-2.5 mb-5 overflow-hidden">
-        <div className="bg-blue-500 h-full rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
+      <div className="bg-gray-100 rounded-full h-3 mb-8 p-1 shadow-inner">
+        <div
+          className="bg-linear-to-r from-blue-400 to-blue-600 h-full rounded-full transition-all duration-700 ease-out"
+          style={{ width: `${progress}%` }}
+        />
       </div>
 
-      {/* Question card */}
-      <div className="bg-linear-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-3xl p-5 mb-5">
-        <div className="text-center text-6xl mb-4">{q.visual}</div>
-        <p className="text-base font-semibold text-gray-900 leading-relaxed text-center">{q.text}</p>
+      <div className="relative bg-white border-2 border-gray-100 rounded-[2rem] p-6 mb-6 shadow-xl shadow-blue-900/5 overflow-hidden">
+        <div className="absolute -top-6 -right-6 w-24 h-24 bg-blue-50 rounded-full opacity-50" />
+        <div className="text-center text-6xl mb-4 drop-shadow-sm">
+          {q.visual}
+        </div>
+        <h2 className="text-xl font-black text-gray-800 leading-tight text-center">
+          {q.text}
+        </h2>
       </div>
 
-      {/* Options — single column on mobile */}
-      <div className="flex flex-col gap-3 mb-4">
+      <div className="flex flex-col gap-4 mb-8">
         {q.options.map((opt, i) => (
-          <button key={i} className={btnClass(i)} onClick={() => pick(i)} disabled={answered}>
-            <span className="flex items-center gap-3">
-              <span className={`w-7 h-7 rounded-full border-2 shrink-0 flex items-center justify-center text-xs font-bold ${
-                !answered ? "border-gray-300 text-gray-500"
-                : i === q.answer ? "border-green-500 bg-green-500 text-white"
-                : i === selected ? "border-red-400 bg-red-400 text-white"
-                : "border-gray-200 text-gray-300"
-              }`}>
+          <button
+            key={i}
+            className={btnClass(i)}
+            onClick={() => pick(i)}
+            disabled={answered}
+          >
+            <span className="flex items-center gap-4">
+              <span
+                className={`w-8 h-8 rounded-xl border-2 shrink-0 flex items-center justify-center text-sm font-black transition-colors ${
+                  !answered
+                    ? "border-gray-200 text-gray-400"
+                    : i === q.answer
+                      ? "border-green-500 bg-green-500 text-white"
+                      : i === selected
+                        ? "border-red-500 bg-red-500 text-white"
+                        : "border-gray-100 text-gray-200"
+                }`}
+              >
                 {String.fromCharCode(65 + i)}
               </span>
               {opt}
@@ -86,25 +128,26 @@ export default function QuizScreen({
         ))}
       </div>
 
-      {/* Fact box */}
-      <div className="bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 mb-5 min-h-[56px] text-sm text-gray-600 leading-relaxed">
-        {answered ? (
-          <>
-            {selected === q.answer ? "✅ Correct! " : `❌ Answer: "${q.options[q.answer]}". `}
-            {q.fact}
-          </>
-        ) : (
-          <span className="text-gray-400">Choose your answer above!</span>
-        )}
-      </div>
-
-      <button
-        onClick={next}
-        disabled={!answered}
-        className="w-full py-4 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white font-bold text-base rounded-2xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed touch-manipulation"
+      <div
+        className={`transition-all duration-500 transform ${answered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
       >
-        {isLast ? "See Results 🎉" : "Next →"}
-      </button>
+        <div
+          className={`rounded-3xl p-5 border-b-4 ${
+            selected === q.answer
+              ? "bg-green-100 border-green-200 text-green-800"
+              : "bg-red-100 border-red-200 text-red-800"
+          }`}
+        >
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-lg font-black">
+              {selected === q.answer ? "Awesome!" : "Not quite!"}
+            </span>
+          </div>
+          <p className="text-sm font-medium leading-snug opacity-90">
+            {q.fact}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

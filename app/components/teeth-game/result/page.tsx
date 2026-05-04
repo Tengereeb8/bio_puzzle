@@ -1,4 +1,4 @@
-import type { GameMode } from "./types";
+import type { GameMode } from "../types";
 
 export default function ResultScreen({
   score,
@@ -15,19 +15,35 @@ export default function ResultScreen({
 }) {
   const pct = score / total;
 
-  const { emoji, title, message } = pct === 1
-    ? {
-        emoji: "🏆",
-        title: mode === "quiz" ? "PERFECT! Tooth Expert!" : "Perfect labelling!",
-        message: mode === "quiz"
-          ? "You got every question right. Your teeth are lucky to have such a smart owner!"
-          : "You named every part of the tooth correctly! Amazing!",
-      }
-    : pct >= 0.75
-      ? { emoji: "⭐", title: "Brilliant work!", message: "You really know your teeth! Keep brushing and learning!" }
-      : pct >= 0.5
-        ? { emoji: "😊", title: "Good effort!", message: "Nice job! Try playing again to beat your score!" }
-        : { emoji: "🦷", title: "Keep learning!", message: "Every expert started as a beginner! Try again and learn something new each time." };
+  const { emoji, title, message } =
+    pct === 1
+      ? {
+          emoji: "🏆",
+          title:
+            mode === "quiz" ? "PERFECT! Tooth Expert!" : "Perfect labelling!",
+          message:
+            mode === "quiz"
+              ? "You got every question right. Your teeth are lucky to have such a smart owner!"
+              : "You named every part of the tooth correctly! Amazing!",
+        }
+      : pct >= 0.75
+        ? {
+            emoji: "⭐",
+            title: "Brilliant work!",
+            message: "You really know your teeth! Keep brushing and learning!",
+          }
+        : pct >= 0.5
+          ? {
+              emoji: "😊",
+              title: "Good effort!",
+              message: "Nice job! Try playing again to beat your score!",
+            }
+          : {
+              emoji: "🦷",
+              title: "Keep learning!",
+              message:
+                "Every expert started as a beginner! Try again and learn something new each time.",
+            };
 
   return (
     <div className="text-center py-2">
@@ -35,8 +51,12 @@ export default function ResultScreen({
       <h2 className="text-2xl font-bold text-gray-900 mb-3">{title}</h2>
 
       <div className="bg-linear-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-3xl py-6 mb-5">
-        <div className="text-5xl font-bold text-blue-500">{score}/{total}</div>
-        <div className="text-yellow-500 text-2xl mt-1">{"⭐".repeat(score)}</div>
+        <div className="text-5xl font-bold text-blue-500">
+          {score}/{total}
+        </div>
+        <div className="text-yellow-500 text-2xl mt-1">
+          {"⭐".repeat(score)}
+        </div>
       </div>
 
       <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 mb-4 text-sm text-gray-600 leading-relaxed text-left">

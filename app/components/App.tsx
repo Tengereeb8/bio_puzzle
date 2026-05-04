@@ -5,27 +5,47 @@ import { teethLessons } from "./data/ToothLessons";
 
 import RoadmapScreen from "./RoadmapScreen";
 import LessonRoadmapScreen from "./LessonRoadmapScreen";
-import LessonsScreen from "./LessonsScreen";
 import ImprovedMoreMenu from "./ImprovedMoreMenu";
 import FooterNav from "./FooterNav";
 import { useAppState } from "./hooks/useAppState";
 import { BASE_LEADERBOARD, BASE_USER_PROFILE, chapters } from "./data/appData";
 import GameView from "./GameView";
+import QuizScreen from "../teeth-game/src/components/QuizScreen";
+import { useState } from "react";
+import { Question } from "./teeth-game/types";
+import { useRouter } from "next/navigation";
+
+const allQuestions: Question[] = teethLessons.map((lesson) => ({
+  id: lesson.id,
+  text: lesson.question,
+  options: lesson.options,
+  answer: lesson.correctAnswer,
+  fact: lesson.explanation,
+  visual: "🦷",
+}));
 
 export default function App() {
+  const router = useRouter();
   const { state, handlers } = useAppState();
+
+  const handleQuizComplete = (score: number) => {
+    router.push("./teeth-game/result");
+  };
+
   const {
     handleTabChange,
     handleChapterClick,
     handleLessonClick,
-    handleLessonComplete,
-    handleBackToChapterRoadmap,
     handleBackToMainRoadmap,
     handleCloseMoreMenu,
   } = handlers;
 
   const selectedChapterData = chapters.find(
     (c) => c.id === state.selectedChapter,
+  );
+
+  const currentLessonData = teethLessons.find(
+    (l) => l.id === state.selectedLesson,
   );
 
   const userProfile = {
@@ -38,7 +58,7 @@ export default function App() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 font-game">
+    <div className="min-h-screen w-125 bg-gray-50 font-game">
       <AnimatePresence mode="wait">
         {state.currentView === "main-roadmap" && (
           <div key="main-roadmap">
@@ -63,21 +83,20 @@ export default function App() {
           </div>
         )}
 
-        {state.currentView === "lesson-content" && state.selectedLesson && (
-          <div key={`lesson-${state.selectedLesson}`}>
-            <LessonsScreen
-              chapterTitle={selectedChapterData?.title ?? "Teeth"}
-              lessons={teethLessons.filter(
-                (l) => l.id === state.selectedLesson,
-              )}
-              onComplete={handleLessonComplete}
-              onExit={handleBackToChapterRoadmap}
+        {state.currentView === "lesson-content" && currentLessonData && (
+          <div className="p-4">
+            <h1 className="text-center font-bold mb-4">
+              {currentLessonData.titleMn}
+            </h1>
+            <QuizScreen
+              key={currentLessonData.id}
+              questions={allQuestions}
+              onComplete={handleQuizComplete}
             />
           </div>
         )}
-
         {state.currentView === "game" && (
-          <div key="game-view" >
+          <div key="game-view">
             <GameView />
           </div>
         )}
