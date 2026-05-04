@@ -141,7 +141,7 @@ const MobileAnatomyGame = () => {
           <img
             src="https://images.imagerenderer.com/images/artworkimages/mediumlarge/2/1-childs-skeleton-growth-plates-monica-schroeder.jpg"
             alt="Skeleton"
-            className="absolute inset-0 w-full h-[90%] object-contain object-top mt-4 pointer-events-none"
+            className="absolute inset-0 w-full h-full object-contain object-top mt-4 pointer-events-none"
           />
 
           {items.map((item) => (
