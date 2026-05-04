@@ -10,10 +10,9 @@ import FooterNav from "./FooterNav";
 import { useAppState } from "./hooks/useAppState";
 import { BASE_LEADERBOARD, BASE_USER_PROFILE, chapters } from "./data/appData";
 import GameView from "./GameView";
-import QuizScreen from "../teeth-game/src/components/QuizScreen";
-import { useState } from "react";
 import { Question } from "./teeth-game/types";
 import { useRouter } from "next/navigation";
+import QuizScreen from "./teeth-game/QuizScreen";
 
 const allQuestions: Question[] = teethLessons.map((lesson) => ({
   id: lesson.id,
