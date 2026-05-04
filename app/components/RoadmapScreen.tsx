@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { Lock, CheckCircle, Star, Trophy, Sparkles } from "lucide-react";
+import { Lock, CheckCircle, Star, Trophy, Sparkles, Flame } from "lucide-react";
 import ToothSVG, { BodyPartIcon } from "./ToothSVG";
 
 interface Chapter {
@@ -33,8 +33,8 @@ export default function RoadmapScreen({
   const completedCount = chapters.filter((c) => c.isCompleted).length;
 
   return (
-    <div className="min-h-full pb-24 overflow-auto relative bg-linear-to-br from-indigo-50 via-purple-50 to-pink-50">
-      <div className="relative bg-linear-to-br from-indigo-600 via-purple-600 to-pink-600 text-white px-6 pt-8 pb-16">
+    <div className="min-h-full pb-24 overflow-auto relative bg-orange-50">
+      <div className="relative bg-[#fa8e1b] text-white px-6 pt-8 pb-10 rounded-b-full">
         <div className="max-w-2xl  mx-auto">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -47,47 +47,27 @@ export default function RoadmapScreen({
               </h1>
               <p className="text-purple-100 text-sm">Өөрийнхөө биеийг судал!</p>
             </div>
-            <motion.div
-              className="bg-white/20 backdrop-blur-md rounded-2xl px-4 py-3"
-              whileHover={{ scale: 1.05 }}
-            >
-              <div className="flex items-center gap-2">
-                <Trophy className="text-yellow-300" size={24} />
-                <div>
-                  <p className="text-xs opacity-80">Нийт оноо</p>
-                  <p className="font-bold text-lg">850</p>
-                </div>
-              </div>
-            </motion.div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="grid grid-cols-3 gap-3"
+            className="flex justify-center items-center-safe gap-15"
           >
             {[
               {
-                icon: <Sparkles size={20} className="text-yellow-300" />,
+                icon: <Sparkles size={23} className="text-yellow-300" />,
                 value: completedCount,
                 label: "Дууссан",
               },
               {
-                icon: <Star size={20} className="text-blue-300" />,
-                value: 5,
-                label: "Түвшин",
-              },
-              {
-                icon: <span className="text-xl">🔥</span>,
+                icon: <Flame className="text-base"></Flame>,
                 value: 7,
                 label: "Өдөр",
               },
             ].map(({ icon, value, label }) => (
-              <div
-                key={label}
-                className="bg-white/15 backdrop-blur-md rounded-xl p-3 text-center"
-              >
+              <div key={label} className=" rounded-xl p-3 text-center">
                 <div className="flex justify-center mb-1">{icon}</div>
                 <p className="text-2xl font-bold">{value}</p>
                 <p className="text-xs opacity-90">{label}</p>
@@ -97,7 +77,7 @@ export default function RoadmapScreen({
         </div>
       </div>
 
-      <div className="relative px-6">
+      <div className="relative px-6 bg-orange-50">
         <div className="relative max-w-2xl mx-auto">
           <svg
             className="absolute left-1/2 top-0 bottom-0 w-32 -ml-16 pointer-events-none"
@@ -106,12 +86,12 @@ export default function RoadmapScreen({
             <defs>
               <linearGradient
                 id="pathGradient"
-                x1="0%"
+                x1="20%"
                 y1="0%"
-                x2="0%"
-                y2="100%"
+                x2="60%"
+                y2="80%"
               >
-                <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.3" />
+                <stop offset="0%" stopColor="#f5c118" stopOpacity="0.3" />
                 <stop offset="50%" stopColor="#ec4899" stopOpacity="0.3" />
                 <stop offset="100%" stopColor="#6366f1" stopOpacity="0.3" />
               </linearGradient>
@@ -154,22 +134,6 @@ export default function RoadmapScreen({
                     }
                     whileTap={chapter.isUnlocked ? { scale: 0.95 } : {}}
                   >
-                    {chapter.isUnlocked && !chapter.isCompleted && (
-                      <motion.div
-                        className="absolute inset-0 rounded-full blur-2xl opacity-60"
-                        style={{ backgroundColor: chapter.color }}
-                        animate={{
-                          scale: [1, 1.4, 1],
-                          opacity: [0.4, 0.8, 0.4],
-                        }}
-                        transition={{
-                          duration: 2.5,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                        }}
-                      />
-                    )}
-
                     <div
                       className={`relative w-32 h-32 rounded-full flex flex-col items-center justify-center shadow-2xl border-4 ${
                         chapter.isUnlocked
@@ -226,22 +190,6 @@ export default function RoadmapScreen({
                               strokeWidth="6"
                               fill="none"
                               opacity="0.3"
-                            />
-                            <motion.circle
-                              cx="64"
-                              cy="64"
-                              r="68"
-                              stroke="white"
-                              strokeWidth="6"
-                              fill="none"
-                              strokeLinecap="round"
-                              initial={{ pathLength: 0 }}
-                              animate={{ pathLength: chapter.progress / 100 }}
-                              transition={{ duration: 1.5, ease: "easeOut" }}
-                              style={{
-                                strokeDasharray: "427",
-                                strokeDashoffset: 0,
-                              }}
                             />
                           </svg>
                         )}
