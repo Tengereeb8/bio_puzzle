@@ -296,25 +296,23 @@ export default function FullBodySkeletonGame({
 
     setActiveId(null); // Reset active draggable
 
-    if (over && over.id === organId && organ && info) {
-      // Logic for successful drop (organ dropped on its own target zone)
-      // The current drag-and-drop system doesn't directly give final dropped coordinates relative to parent
-      // For now, we'll assume a successful drop means it's correctly placed if 'over.id' matches.
-      // A more robust solution might involve custom collision detection or coordinate tracking.
+    console.log("Drag Ended:");
+    console.log("Active ID:", active.id);
+    console.log("Over:", over);
+    console.log("Delta:", delta);
 
-      // For simplicity, we'll use the current logic which relies on a checkPlacement function.
-      // We need to pass the actual drop coordinates for checkPlacement.
-      // Since dnd-kit gives delta, we need to calculate the final position
-      // For now, let's simplify and assume the 'over' means correct placement if ID matches.
-      // Or, we need to compute the final absolute coordinates based on active.rect.current.initial + delta
+    // Recalculate drop position based on initial position of draggable and delta
+    const initialRect = active.rect.current.translated;
+    const dropX = initialRect.left + delta.x + initialRect.width / 2; // Center of the dropped organ
+    const dropY = initialRect.top + delta.y + initialRect.height / 2;
 
-      // Recalculate drop position based on initial position of draggable and delta
-      const initialRect = event.active.rect.current.translated;
-      const dropX = initialRect.left + delta.x + initialRect.width / 2; // Center of the dropped organ
-      const dropY = initialRect.top + delta.y + initialRect.height / 2;
+    console.log("Calculated DropX:", dropX, "DropY:", dropY);
 
-      const isCorrect = checkPlacement(organId, dropX, dropY);
+    const isCorrect = checkPlacement(organId, dropX, dropY);
+    console.log("Is Correct Placement:", isCorrect);
 
+    // Temporarily simplify condition for debugging
+    if (over && organ && info) {
       if (isCorrect) {
         setPlacedOrgans(
           new Map(placedOrgans.set(organId, { x: dropX, y: dropY })),
@@ -494,7 +492,7 @@ export default function FullBodySkeletonGame({
                       key={organ.id}
                       organ={organ}
                       isPlaced={placedOrgans.has(organ.id)}
-                      onDragEnd={handleDragEnd}
+                      activeId={activeId}
                     />
                   ))}
                 </div>
