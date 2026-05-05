@@ -33,8 +33,8 @@ export default function RoadmapScreen({
   const completedCount = chapters.filter((c) => c.isCompleted).length;
 
   return (
-    <div className="min-h-full pb-24 overflow-auto relative bg-orange-50">
-      <div className="relative bg-[#fa8e1b] text-white px-6 pt-8 pb-10 rounded-b-full">
+    <div className="min-h-full pb-14 overflow-auto relative bg-orange-50">
+      <div className="relative bg-[#fa8e1b] text-white px-6 pt-6 pb-10 rounded-b-full">
         <div className="max-w-2xl  mx-auto">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -81,7 +81,7 @@ export default function RoadmapScreen({
         <div className="relative max-w-2xl mx-auto">
           <svg
             className="absolute left-1/2 top-0 bottom-0 w-32 -ml-16 pointer-events-none"
-            style={{ height: `${chapters.length * 200}px` }}
+            style={{ height: `${chapters.length * 204}px` }}
           >
             <defs>
               <linearGradient
@@ -97,7 +97,7 @@ export default function RoadmapScreen({
               </linearGradient>
             </defs>
             <motion.path
-              d="M 64 0 Q 40 50 64 100 Q 88 150 64 200 Q 40 250 64 300 Q 88 350 64 400 Q 40 450 64 500 Q 88 550 64 600 Q 40 650 64 700 Q 88 750 64 800 Q 40 850 64 900 Q 88 950 64 1000 Q 40 1050 64 1100 Q 88 1150 64 1200 Q 40 1250 64 1300 Q 88 1350 64 1400"
+              d="M 64 0 Q 40 50 64 100 Q 88 150 64 200 Q 40 250 64 300 Q 88 350 64 400 Q 40 450 64 500 Q 88 550 64 600 Q 40 650 64 700 Q 88 750 64 800 Q 40 850 64 900 Q 88 950 64 1000 Q 40 1050 64 1100 Q 88 1150 64 1200 Q 40 1250 64 1300 Q 88 1350 64 1400 Q 40 1450 64 1500 Q 88 1550 64 1600"
               stroke="url(#pathGradient)"
               strokeWidth="8"
               fill="none"
@@ -181,17 +181,7 @@ export default function RoadmapScreen({
                           <svg
                             className="absolute inset-0 w-full h-full -rotate-90"
                             style={{ overflow: "visible" }}
-                          >
-                            <circle
-                              cx="64"
-                              cy="64"
-                              r="68"
-                              stroke="white"
-                              strokeWidth="6"
-                              fill="none"
-                              opacity="0.3"
-                            />
-                          </svg>
+                          ></svg>
                         )}
                     </div>
                   </motion.button>
