@@ -40,10 +40,8 @@ export default function FooterNav() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
-      <div className="h-px bg-linear-to-r from-transparent via-gray-200 to-transparent" />
-
       <div
-        className="flex items-stretch justify-between px-4 bg-white/90 backdrop-blur-xl "
+        className="flex items-stretch justify-between px-4 bg-white/50 backdrop-blur-md "
         style={{
           height: "72px",
           paddingBottom: "env(safe-area-inset-bottom, 0px)",

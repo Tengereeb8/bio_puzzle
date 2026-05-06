@@ -5,15 +5,25 @@ import {
   BASE_USER_PROFILE,
 } from "@/app/components/data/appData";
 import { useProgress } from "@/app/components/context/ProgressContext";
-import { useRouter } from "next/navigation";
-import LeaderboardTab from "@/app/components/Leaderboard";
+import LeaderboardScreen from "@/app/components/Leaderboard";
 
 export default function MoreView() {
   const { userPoints } = useProgress();
 
-  const leaderboard = BASE_LEADERBOARD.map((entry) =>
-    entry.isCurrentUser ? { ...entry, points: userPoints } : entry,
-  );
+  const leaderboardData = BASE_LEADERBOARD.map((entry: any) => ({
+    ...entry,
 
-  return <LeaderboardTab leaderboard={leaderboard} />;
+    time: entry.time ?? (entry.isCurrentUser ? 0 : undefined),
+    date: (entry as any).date ?? new Date().toISOString(),
+    userId: (entry as any).userId ?? (entry as any).id ?? entry.name,
+    userName: entry.name,
+    userNameMn: entry.nameMn,
+  }));
+
+  return (
+    <LeaderboardScreen
+      gameTimes={leaderboardData}
+      currentUserId="some-user-id"
+    />
+  );
 }
