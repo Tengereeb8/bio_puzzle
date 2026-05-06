@@ -33,7 +33,7 @@ export default function FooterNav() {
       <div className="h-px bg-linear-to-r from-transparent via-gray-200 to-transparent" />
 
       <div
-        className="flex items-stretch justify-between px-4 bg-white/90 backdrop-blur-xl max-w-lg mx-auto"
+        className="flex items-stretch justify-between px-4 bg-white/90 backdrop-blur-xl w-full"
         style={{
           height: "72px",
           paddingBottom: "env(safe-area-inset-bottom, 0px)",

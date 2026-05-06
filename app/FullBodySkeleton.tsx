@@ -671,6 +671,12 @@ export default function FullBodySkeletonGame({
                         </p>
                       </div>
                     </div>
+                    <button
+                      onClick={handleReset}
+                      className="mt-8 px-8 py-4 bg-white/30 backdrop-blur-xl rounded-xl font-bold text-white text-2xl hover:bg-white/50 transition-all shadow-lg"
+                    >
+                      Restart Game
+                    </button>
                   </div>
                 )}
               </div>
