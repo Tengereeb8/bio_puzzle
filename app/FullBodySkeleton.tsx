@@ -27,6 +27,8 @@ import {
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 
 import OrganSVG, { organInfo } from "./OrganSVG";
+import SkeletonIcon from "../assets/icons/skeleton.svg"; // New import for skeleton icon
+
 
 interface Organ {
   id: string;
@@ -55,12 +57,13 @@ interface FullBodySkeletonGameProps {
 type DraggableOrganProps = { organ: Organ; isPlaced: boolean };
 
 function DraggableOrgan({ organ, isPlaced }: DraggableOrganProps) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: organ.id,
-    data: {
-      organType: organ.type,
-    },
-  });
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: organ.id,
+      data: {
+        organType: organ.type,
+      },
+    });
 
   const style = transform
     ? {
@@ -330,8 +333,6 @@ export default function FullBodySkeletonGame({
     }
   };
 
-
-
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id);
   };
@@ -355,9 +356,7 @@ export default function FullBodySkeletonGame({
 
     if (isCorrect && organ && info && !placedOrgans.has(organId)) {
       // Successful placement
-      setPlacedOrgans(
-        new Map(placedOrgans.set(organId, { x: 0, y: 0 }))
-      );
+      setPlacedOrgans(new Map(placedOrgans.set(organId, { x: 0, y: 0 })));
       setShowFeedback({
         correct: true,
         text: `Perfect! ${info.name} is in the right place!`,
@@ -379,7 +378,7 @@ export default function FullBodySkeletonGame({
       }
     } else if (organ && info) {
       // Incorrect placement
-      setIncorrectAttempts(prev => prev + 1);
+      setIncorrectAttempts((prev) => prev + 1);
       setShowFeedback({
         correct: false,
         text: "That's not the right spot! Try again!",
@@ -415,206 +414,173 @@ export default function FullBodySkeletonGame({
     >
       <>
         <div className="min-h-screen pb-24 bg-linear-to-br from-indigo-50 via-purple-50 to-pink-50 overflow-hidden">
-        {/* Header */}
-        <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b-2 border-gray-200 shadow-xl">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={onBack}
-                  className="p-3 hover:bg-gray-100 rounded-xl transition-colors"
-                >
-                  <ArrowLeft size={24} color="#1F2937" strokeWidth={2.5} />
-                </button>
-
-                <div>
-                  <h2
-                    className="font-bold text-xl"
-                    style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
+          {/* Header */}
+          <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b-2 border-gray-200 shadow-xl">
+            <div className="max-w-7xl mx-auto px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={onBack}
+                    className="p-3 hover:bg-gray-100 rounded-xl transition-colors"
                   >
-                    Биеийн бүтэц тоглоом
-                  </h2>
-                  <p className="text-sm text-gray-600">
-                    Full Body Anatomy Challenge
-                  </p>
-                </div>
-              </div>
+                    <ArrowLeft size={24} color="#1F2937" strokeWidth={2.5} />
+                  </button>
 
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-3 bg-linear-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-2xl shadow-lg">
-                  <Clock size={24} />
                   <div>
-                    <p className="text-xs opacity-90">Цаг</p>
-                    <p className="text-2xl font-bold font-mono">
-                      {formatTime(elapsedTime)}
+                    <h2
+                      className="font-bold text-xl"
+                      style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
+                    >
+                      Биеийн бүтэц тоглоом
+                    </h2>
+                    <p className="text-sm text-gray-600">
+                      Full Body Anatomy Challenge
                     </p>
                   </div>
                 </div>
 
-                <button
-                  onClick={() =>
-                    playAudio(
-                      "Эрхтнүүдийг зөв байрлалд чирж байрлуулна уу. Та хурдан дуусгахыг оролдоорой!",
-                    )
-                  }
-                  className="p-3 bg-linear-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 rounded-xl shadow-lg transition-all"
-                >
-                  <Volume2 size={22} color="white" />
-                </button>
-                <button
-                  onClick={handleReset}
-                  className="p-3 bg-linear-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 rounded-xl shadow-lg transition-all flex items-center gap-2"
-                >
-                  <RotateCcw size={22} color="white" />
-                  <span className="text-white">Restart</span>
-                </button>
-              </div>
-            </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 bg-linear-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-2xl shadow-lg">
+                    <Clock size={24} />
+                    <div>
+                      <p className="text-2xl font-bold font-mono">
+                        {formatTime(elapsedTime)}
+                      </p>
+                    </div>
+                  </div>
 
-            {/* Progress Bar */}
-            <div className="mt-4">
-              <div className="flex items-center justify-between mb-2">
-                <span
-                  className="font-bold text-gray-800"
-                  style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-                >
-                  Явц: {completedCount}/{totalCount} эрхтэн
-                </span>
-                <span className="text-sm text-gray-600">
-                  Алдаа: {incorrectAttempts}
-                </span>
+                  <button
+                    onClick={() =>
+                      playAudio(
+                        "Эрхтнүүдийг зөв байрлалд чирж байрлуулна уу. Та хурдан дуусгахыг оролдоорой!",
+                      )
+                    }
+                    className="p-3 bg-linear-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 rounded-xl shadow-lg transition-all"
+                  >
+                    <Volume2 size={22} color="white" />
+                  </button>
+                  <button
+                    onClick={handleReset}
+                    className="p-3 bg-linear-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 rounded-xl shadow-lg transition-all flex items-center gap-2"
+                  >
+                    <RotateCcw size={22} color="white" />
+                    <span className="text-white">Restart</span>
+                  </button>
+                </div>
               </div>
-              <div className="h-4 bg-gray-200 rounded-full overflow-hidden shadow-inner">
-                <div
-                  className="h-full rounded-full shadow-lg transition-all duration-300"
-                  style={{
-                    background:
-                      "linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899)",
-                    width: `${progress}%`,
-                  }}
-                />
+
+              {/* Progress Bar */}
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span
+                    className="font-bold text-gray-800"
+                    style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
+                  >
+                    Явц: {completedCount}/{totalCount} эрхтэн
+                  </span>
+                  <span className="text-sm text-gray-600">
+                    Алдаа: {incorrectAttempts}
+                  </span>
+                </div>
+                <div className="h-4 bg-gray-200 rounded-full overflow-hidden shadow-inner">
+                  <div
+                    className="h-full rounded-full shadow-lg transition-all duration-300"
+                    style={{
+                      background:
+                        "linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899)",
+                      width: `${progress}%`,
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Game Area */}
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* Organs Panel */}
-            <div className="lg:col-span-1">
-              <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-2xl sticky top-32 border-2 border-indigo-200">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-                    <Award size={24} color="white" />
-                  </div>
-                  <h3
-                    className="font-bold text-lg"
-                    style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-                  >
-                    Эрхтнүүд
-                  </h3>
-                </div>
-
-                <div className="space-y-3 max-h-150 overflow-y-auto pr-2">
-                  {organs.map((organ) => (
-                    <div key={organ.id} data-draggable-id={organ.id}>
-                      <DraggableOrgan
-                        organ={organ}
-                        isPlaced={placedOrgans.has(organ.id)}
-                      />
+          {/* Game Area */}
+          <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              {/* Organs Panel */}
+              <div className="lg:col-span-1 h-190">
+                <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-2xl sticky top-32 border-2 border-indigo-200">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-12 h-12 rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
+                      <Award size={24} color="white" />
                     </div>
-                  ))}
+                    <h3
+                      className="font-bold text-lg"
+                      style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
+                    >
+                      Эрхтнүүд
+                    </h3>
+                  </div>
+
+                  <div className="space-y-3 max-h-150 overflow-y-auto pr-2">
+                    {organs.map((organ) => (
+                      <div key={organ.id} data-draggable-id={organ.id}>
+                        <DraggableOrgan
+                          organ={organ}
+                          isPlaced={placedOrgans.has(organ.id)}
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Skeleton Canvas */}
-            <div className="lg:col-span-3">
-              <div
-                ref={canvasRef}
-                className="relative rounded-3xl shadow-2xl overflow-hidden border-4 border-indigo-300"
-                style={{
-                  aspectRatio: "2/3",
-                  minHeight: "800px",
-                  background:
-                    "linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 50%, #f0f9ff 100%)",
-                }}
-              >
-                {/* Anatomical Region Labels */}
-                <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-none z-10">
-                  <div className="bg-white/80 backdrop-blur-sm rounded-xl px-3 py-2 shadow-md border border-indigo-200">
-                    <p
-                      className="text-xs font-bold text-indigo-700"
-                      style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-                    >
-                      Толгой
-                    </p>
-                    <p className="text-[10px] text-indigo-600">Head</p>
+              {/* Skeleton Canvas */}
+              <div className="lg:col-span-3">
+                <div
+                  ref={canvasRef}
+                  className="relative rounded-3xl shadow-2xl overflow-hidden border-4 border-indigo-300"
+                  style={{
+                    aspectRatio: "2/3",
+                    minHeight: "800px",
+                    background:
+                      "linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 50%, #f0f9ff 100%)",
+                  }}
+                >
+                  {/* Anatomical Region Labels */}
+                  <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-none z-10">
+                    <div className="bg-white/80 backdrop-blur-sm rounded-xl px-3 py-2 shadow-md border border-indigo-200">
+                      <p
+                        className="text-xs font-bold text-indigo-700"
+                        style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
+                      >
+                        Толгой
+                      </p>
+                      <p className="text-[10px] text-indigo-600">Head</p>
+                    </div>
+                    <div className="bg-white/80 backdrop-blur-sm rounded-xl px-3 py-2 shadow-md border border-red-200">
+                      <p
+                        className="text-xs font-bold text-red-700"
+                        style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
+                      >
+                        Цээж
+                      </p>
+                      <p className="text-[10px] text-red-600">Chest</p>
+                    </div>
+                    <div className="bg-white/80 backdrop-blur-sm rounded-xl px-3 py-2 shadow-md border border-orange-200">
+                      <p
+                        className="text-xs font-bold text-orange-700"
+                        style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
+                      >
+                        Хэвлий
+                      </p>
+                      <p className="text-[10px] text-orange-600">Abdomen</p>
+                    </div>
                   </div>
-                  <div className="bg-white/80 backdrop-blur-sm rounded-xl px-3 py-2 shadow-md border border-red-200">
-                    <p
-                      className="text-xs font-bold text-red-700"
-                      style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-                    >
-                      Цээж
-                    </p>
-                    <p className="text-[10px] text-red-600">Chest</p>
-                  </div>
-                  <div className="bg-white/80 backdrop-blur-sm rounded-xl px-3 py-2 shadow-md border border-orange-200">
-                    <p
-                      className="text-xs font-bold text-orange-700"
-                      style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-                    >
-                      Хэвлий
-                    </p>
-                    <p className="text-[10px] text-orange-600">Abdomen</p>
-                  </div>
-                </div>
 
-                {/* Detailed Skeleton SVG Background */}
-                <div className="absolute inset-0 p-8">
-                  <svg
-                    viewBox="0 0 300 450"
-                    className="w-full h-full opacity-20"
-                  >
-                    {/* Skull */}
-                    <g id="skull">
-                      <ellipse cx="150" cy="32" rx="38" ry="42" fill="none" stroke="#1F2937" strokeWidth="4"/>
-                      <ellipse cx="138" cy="28" rx="8" ry="10" fill="#1F2937" opacity="0.3"/>
-                      <ellipse cx="162" cy="28" rx="8" ry="10" fill="#1F2937" opacity="0.3"/>
-                      <path d="M 145 38 L 150 45 L 155 38 Z" fill="#1F2937" opacity="0.3"/>
-                      <path d="M 118 48 Q 150 65 182 48" stroke="#1F2937" strokeWidth="4" fill="none"/>
-                      <ellipse cx="150" cy="52" rx="32" ry="18" fill="none" stroke="#1F2937" strokeWidth="3"/>
-                      <line x1="135" y1="60" x2="135" y2="65" stroke="#1F2937" strokeWidth="2"/>
-                      <line x1="145" y1="60" x2="145" y2="65" stroke="#1F2937" strokeWidth="2"/>
-                      <line x1="155" y1="60" x2="155" y2="65" stroke="#1F2937" strokeWidth="2"/>
-                      <line x1="165" y1="60" x2="165" y2="65" stroke="#1F2937" strokeWidth="2"/>
-                    </g>
-                    {/* Spine and Ribs simplified for performance */}
-                    <rect x="147" y="70" width="6" height="8" rx="2" fill="none" stroke="#1F2937" strokeWidth="2.5"/>
-                    <rect x="147" y="80" width="6" height="8" rx="2" fill="none" stroke="#1F2937" strokeWidth="2.5"/>
-                    <path d="M 150 90 Q 130 88 110 95" stroke="#1F2937" strokeWidth="4" fill="none" strokeLinecap="round"/>
-                    <path d="M 150 90 Q 170 88 190 95" stroke="#1F2937" strokeWidth="4" fill="none" strokeLinecap="round"/>
-                    <rect x="147" y="95" width="6" height="65" rx="3" fill="none" stroke="#1F2937" strokeWidth="3"/>
-                    <path d="M 153 100 Q 185 105 195 120 Q 195 125 185 130 Q 175 133 153 135" stroke="#1F2937" strokeWidth="3" fill="none"/>
-                    <path d="M 147 100 Q 115 105 105 120 Q 105 125 115 130 Q 125 133 147 135" stroke="#1F2937" strokeWidth="3" fill="none"/>
-                    <path d="M 153 120 Q 195 125 205 140 Q 205 145 195 150 Q 185 153 153 155" stroke="#1F2937" strokeWidth="3" fill="none"/>
-                    <path d="M 147 120 Q 105 125 95 140 Q 95 145 105 150 Q 115 153 147 155" stroke="#1F2937" strokeWidth="3" fill="none"/>
-                    <ellipse cx="150" cy="235" rx="55" ry="30" fill="none" stroke="#1F2937" strokeWidth="4"/>
-                    <line x1="110" y1="100" x2="75" y2="175" stroke="#1F2937" strokeWidth="5" strokeLinecap="round"/>
-                    <line x1="190" y1="100" x2="225" y2="175" stroke="#1F2937" strokeWidth="5" strokeLinecap="round"/>
-                    <line x1="75" y1="175" x2="55" y2="240" stroke="#1F2937" strokeWidth="4" strokeLinecap="round"/>
-                    <line x1="225" y1="175" x2="245" y2="240" stroke="#1F2937" strokeWidth="4" strokeLinecap="round"/>
-                    <line x1="120" y1="255" x2="115" y2="330" stroke="#1F2937" strokeWidth="6" strokeLinecap="round"/>
-                    <line x1="180" y1="255" x2="185" y2="330" stroke="#1F2937" strokeWidth="6" strokeLinecap="round"/>
-                    <line x1="115" y1="335" x2="110" y2="410" stroke="#1F2937" strokeWidth="5" strokeLinecap="round"/>
-                    <line x1="185" y1="335" x2="190" y2="410" stroke="#1F2937" strokeWidth="5" strokeLinecap="round"/>
-                  </svg>
+                  {/* Detailed Skeleton SVG Background */}
+                  <div className="absolute inset-0 p-8">
+                    <SkeletonIcon className="w-full h-full opacity-20" />
+                  </div>
 
                   {/* Drop Zones - With data attributes for easier detection */}
                   {organs.map((organ) => (
-                    <div key={`zone-${organ.id}`} data-droppable-id={organ.id}>
+                    <div
+                      key={`zone-${organ.id}`}
+                      data-droppable-id={organ.id}
+                    >
                       <OrganDropZone
                         organ={organ}
                         activeId={activeId}
@@ -624,144 +590,99 @@ export default function FullBodySkeletonGame({
                     </div>
                   ))}
                 </div>
-
-                {/* Celebration Overlay */}
-                {showCelebration && (
-                  <div
-                    className="absolute inset-0 flex flex-col items-center justify-center z-20 backdrop-blur-md"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, rgba(99, 102, 241, 0.97), rgba(139, 92, 246, 0.97), rgba(236, 72, 153, 0.97))",
-                    }}
-                  >
-                    <div className="relative mb-8 animate-bounce">
-                      <Trophy size={120} color="#fbbf24" fill="#fbbf24" />
-                      <div className="absolute inset-0 bg-yellow-400 rounded-full blur-3xl" />
-                    </div>
-                    <h2
-                      className="text-6xl font-bold mb-4 text-white"
-                      style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-                    >
-                      Гайхалтай!
-                    </h2>
-                    <p className="text-2xl mb-8 text-white text-center">
-                      Та бүх эрхтнийг зөв байрлууллаа!
-                    </p>
-                    <div className="bg-white/25 backdrop-blur-xl rounded-3xl px-14 py-8 mb-8 border-4 border-white/30 shadow-2xl">
-                      <div className="flex items-center gap-6">
-                        <Clock size={56} color="white" strokeWidth={2.5} />
-                        <div>
-                          <p className="text-white/90 text-base mb-2">Таны хугацаа</p>
-                          <p className="text-6xl font-bold text-white font-mono">
-                            {formatTime(elapsedTime)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-8">
-                      <div className="text-center">
-                        <p className="text-white/80 text-sm mb-1">Алдаа</p>
-                        <p className="text-3xl font-bold text-white">{incorrectAttempts}</p>
-                      </div>
-                      <div className="w-px h-12 bg-white/30" />
-                      <div className="text-center">
-                        <p className="text-white/80 text-sm mb-1">Амжилт</p>
-                        <p className="text-3xl font-bold text-white">
-                          {Math.round((totalCount / (totalCount + incorrectAttempts)) * 100)}%
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={handleReset}
-                      className="mt-8 px-8 py-4 bg-white/30 backdrop-blur-xl rounded-xl font-bold text-white text-2xl hover:bg-white/50 transition-all shadow-lg"
-                    >
-                      Restart Game
-                    </button>
-                  </div>
-                )}
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Floating Feedback */}
-        {showFeedback && (
-          <div
-            className={`fixed top-32 right-6 px-8 py-5 rounded-2xl shadow-2xl border-4 z-40 animate-in slide-in-from-right-5 ${
-              showFeedback.correct
-                ? "bg-linear-to-r from-green-400 to-emerald-500 border-green-600"
-                : "bg-linear-to-r from-orange-400 to-red-500 border-orange-600"
-            } text-white max-w-sm`}
-          >
-            <p
-              className="font-bold text-xl mb-1"
-              style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-            >
-              {showFeedback.textMn}
-            </p>
-            <p className="text-sm opacity-90">{showFeedback.text}</p>
-          </div>
-        )}
-
-        {/* Info Modal */}
-        {selectedInfo && (
-          <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6"
-            onClick={() => setSelectedInfo(null)}
-          >
+          {/* Floating Feedback */}
+          {showFeedback && (
             <div
-              className="bg-white rounded-3xl p-8 max-w-md shadow-2xl animate-in zoom-in-95"
-              onClick={(e) => e.stopPropagation()}
+              className={`fixed top-32 right-6 px-8 py-5 rounded-2xl shadow-2xl border-4 z-40 animate-in slide-in-from-right-5 ${
+                showFeedback.correct
+                  ? "bg-linear-to-r from-green-400 to-emerald-500 border-green-600"
+                  : "bg-linear-to-r from-orange-400 to-red-500 border-orange-600"
+              } text-white max-w-sm`}
             >
-              <div className="flex justify-center mb-6">
-                <OrganSVG type={selectedInfo.type} size={140} />
-              </div>
-              <h3
-                className="text-2xl font-bold mb-3 text-center"
-                style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-              >
-                {organInfo[selectedInfo.type].nameMn}
-              </h3>
-              <p className="text-center text-gray-600 mb-2">
-                {organInfo[selectedInfo.type].name}
-              </p>
               <p
-                className="text-gray-700 leading-relaxed mb-4 text-center"
+                className="font-bold text-xl mb-1"
                 style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
               >
-                {organInfo[selectedInfo.type].descriptionMn}
+                {showFeedback.textMn}
               </p>
-              <button
-                onClick={() => setSelectedInfo(null)}
-                className="w-full py-3 bg-linear-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-bold hover:opacity-90 transition-all"
-              >
-                Ойлголоо
-              </button>
+              <p className="text-sm opacity-90">{showFeedback.text}</p>
             </div>
-          </div>
-        )}
-      </div>
-      <DragOverlay modifiers={[restrictToWindowEdges]}>
-        {activeId ? (
-          <div className="bg-white rounded-2xl p-3 shadow-2xl border-4 border-indigo-400 relative overflow-hidden opacity-90 rotate-3 scale-105">
-            <div className="relative z-10 flex justify-center mb-2">
-              <OrganSVG
-                type={organs.find((o) => o.id === activeId)?.type || "brain"}
-                size={90}
-              />
-            </div>
-            <p
-              className="text-center font-bold text-sm relative z-10"
-              style={{ fontFamily: "Noto Sans Mongolian, Nunito", color: "#1F2937" }}
+          )}
+
+          {/* Info Modal */}
+          {selectedInfo && (
+            <div
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+              onClick={() => setSelectedInfo(null)}
             >
-              {organInfo[organs.find((o) => o.id === activeId)?.type || "brain"].nameMn}
-            </p>
-            <p className="text-center text-xs text-gray-600 relative z-10">
-              {organInfo[organs.find((o) => o.id === activeId)?.type || "brain"].name}
-            </p>
-          </div>
-        ) : null}
-</DragOverlay>
+              <div
+                className="bg-white rounded-3xl p-8 max-w-md shadow-2xl animate-in zoom-in-95"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex justify-center mb-6">
+                  <OrganSVG type={selectedInfo.type} size={140} />
+                </div>
+                <h3
+                  className="text-2xl font-bold mb-3 text-center"
+                  style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
+                >
+                  {organInfo[selectedInfo.type].nameMn}
+                </h3>
+                <p className="text-center text-gray-600 mb-2">
+                  {organInfo[selectedInfo.type].name}
+                </p>
+                <p
+                  className="text-gray-700 leading-relaxed mb-4 text-center"
+                  style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
+                >
+                  {organInfo[selectedInfo.type].descriptionMn}
+                </p>
+                <button
+                  onClick={() => setSelectedInfo(null)}
+                  className="w-full py-3 bg-linear-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-bold hover:opacity-90 transition-all"
+                >
+                  Ойлголоо
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+        <DragOverlay modifiers={[restrictToWindowEdges]}>
+          {activeId ? (
+            <div className="bg-white rounded-2xl p-3 shadow-2xl border-4 border-indigo-400 relative overflow-hidden opacity-90 rotate-3 scale-105">
+              <div className="relative z-10 flex justify-center mb-2">
+                <OrganSVG
+                  type={organs.find((o) => o.id === activeId)?.type || "brain"}
+                  size={90}
+                />
+              </div>
+              <p
+                className="text-center font-bold text-sm relative z-10"
+                style={{
+                  fontFamily: "Noto Sans Mongolian, Nunito",
+                  color: "#1F2937",
+                }}
+              >
+                {
+                  organInfo[
+                    organs.find((o) => o.id === activeId)?.type || "brain"
+                  ].nameMn
+                }
+              </p>
+              <p className="text-center text-xs text-gray-600 relative z-10">
+                {
+                  organInfo[
+                    organs.find((o) => o.id === activeId)?.type || "brain"
+                  ].name
+                }
+              </p>
+            </div>
+          ) : null}
+        </DragOverlay>
       </>
     </DndContext>
   );
