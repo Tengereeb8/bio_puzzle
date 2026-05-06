@@ -19,10 +19,12 @@ function HomeRoadmap() {
     // />
     <FullBodySkeletonGame
       onComplete={function (completionTime: number): void {
-        throw new Error("Function not implemented.");
+        console.log(`Full Body Skeleton Game Completed on Homepage in ${completionTime} seconds!`);
+        alert(`Homepage Game Completed! Time: ${completionTime} seconds`);
       }}
       onBack={function (): void {
-        throw new Error("Function not implemented.");
+        console.log("Navigating back from Full Body Skeleton Game on Homepage.");
+        alert("Going back from Homepage Game!");
       }}
     />
   );
