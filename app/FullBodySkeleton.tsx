@@ -81,16 +81,13 @@ function DraggableOrgan({ organ, isPlaced }: DraggableOrganProps) {
       className="cursor-grab relative"
     >
       <div className="bg-white rounded-2xl p-3 shadow-2xl border-4 border-indigo-400 relative overflow-hidden">
-        {/* Animated gradient background */}
         <div className="absolute inset-0 bg-linear-to-br from-indigo-100 via-purple-100 to-pink-100" />
 
-        {/* Shine effect */}
         <div
           className="absolute inset-0 bg-linear-to-br from-white/60 via-transparent to-transparent"
           style={{ transform: "translateX(-100%) rotate(45deg)" }}
         />
 
-        {/* Organ SVG */}
         <div className="relative z-10 flex justify-center mb-2">
           <OrganSVG type={organ.type} size={90} />
         </div>
@@ -107,8 +104,6 @@ function DraggableOrgan({ organ, isPlaced }: DraggableOrganProps) {
         <p className="text-center text-xs text-gray-600 relative z-10">
           {info.name}
         </p>
-
-        {/* Drag indicator dots */}
         <div className="absolute top-2 right-2 flex gap-0.5 z-10">
           <div className="w-1 h-1 rounded-full bg-indigo-400" />
           <div className="w-1 h-1 rounded-full bg-indigo-400" />
@@ -250,11 +245,7 @@ function OrganDropZone({
           />
           <div className="absolute -top-2 -right-2">
             <div className="relative">
-              <CheckCircle2
-                size={32}
-                fill="#22c55e"
-                color="white"
-              />
+              <CheckCircle2 size={32} fill="#22c55e" color="white" />
               <div className="absolute inset-0 bg-green-400 rounded-full" />
             </div>
           </div>
@@ -344,15 +335,13 @@ export default function FullBodySkeletonGame({
     const organ = organs.find((o) => o.id === organId);
     if (!organ) return false;
 
-    // dnd-kit gives coordinates relative to the viewport.
-    // We need to convert organ target percentages to absolute pixel values within the canvas.
     const targetAbsX = rect.left + (organ.targetX / 100) * rect.width;
     const targetAbsY = rect.top + (organ.targetY / 100) * rect.height;
 
     const distance = Math.sqrt(
       Math.pow(dropX - targetAbsX, 2) + Math.pow(dropY - targetAbsY, 2),
     );
-    const threshold = Math.max(organ.targetWidth, organ.targetHeight) * 0.65; // Adjust threshold as needed
+    const threshold = Math.max(organ.targetWidth, organ.targetHeight) * 0.65;
 
     return distance < threshold;
   };
@@ -367,17 +356,15 @@ export default function FullBodySkeletonGame({
     const organ = organs.find((o) => o.id === organId);
     const info = organ ? organInfo[organ.type] : null;
 
-    setActiveId(null); // Reset active draggable
+    setActiveId(null);
 
     console.log("Drag Ended:");
     console.log("Active ID:", active.id);
     console.log("Over:", over);
     console.log("Delta:", delta);
-
-    // Recalculate drop position based on initial position of draggable and delta
     const initialRect = active.rect.current.translated;
     if (!initialRect) return;
-    const dropX = initialRect.left + delta.x + initialRect.width / 2; // Center of the dropped organ
+    const dropX = initialRect.left + delta.x + initialRect.width / 2;
     const dropY = initialRect.top + delta.y + initialRect.height / 2;
 
     console.log("Calculated DropX:", dropX, "DropY:", dropY);
@@ -385,7 +372,6 @@ export default function FullBodySkeletonGame({
     const isCorrect = checkPlacement(organId, dropX, dropY);
     console.log("Is Correct Placement:", isCorrect);
 
-    // Temporarily simplify condition for debugging
     if (over && organ && info) {
       if (isCorrect) {
         setPlacedOrgans(
@@ -410,7 +396,6 @@ export default function FullBodySkeletonGame({
           }, 3500);
         }
       } else {
-        // Dropped on a target, but incorrect organ or position
         setIncorrectAttempts(incorrectAttempts + 1);
         setShowFeedback({
           correct: false,
@@ -421,7 +406,6 @@ export default function FullBodySkeletonGame({
         setTimeout(() => setShowFeedback(null), 1200);
       }
     } else if (info) {
-      // Dropped outside any valid target or wrong target
       setIncorrectAttempts(incorrectAttempts + 1);
       setShowFeedback({
         correct: false,
@@ -453,10 +437,8 @@ export default function FullBodySkeletonGame({
       collisionDetection={closestCenter}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      // modifiers={[restrictToWindowEdges]} // Use if drag should be restricted to window boundaries
     >
       <div className="min-h-screen pb-24 bg-linear-to-br from-indigo-50 via-purple-50 to-pink-50 overflow-hidden">
-        {/* Header */}
         <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b-2 border-gray-200 shadow-xl">
           <div className="max-w-7xl mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
@@ -511,7 +493,6 @@ export default function FullBodySkeletonGame({
               </div>
             </div>
 
-            {/* Progress Bar */}
             <div className="mt-4">
               <div className="flex items-center justify-between mb-2">
                 <span
@@ -538,10 +519,8 @@ export default function FullBodySkeletonGame({
           </div>
         </div>
 
-        {/* Game Area */}
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* Organs Panel */}
             <div className="lg:col-span-1">
               <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-2xl sticky top-32 border-2 border-indigo-200">
                 <div className="flex items-center gap-3 mb-6">

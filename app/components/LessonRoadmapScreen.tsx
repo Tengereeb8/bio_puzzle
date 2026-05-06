@@ -1,7 +1,14 @@
 import { motion } from "motion/react";
 import {
-  ArrowLeft, Star, Lock, Play, CheckCircle2,
-  Trophy, BookOpen, Gamepad2, Zap,
+  ArrowLeft,
+  Star,
+  Lock,
+  Play,
+  CheckCircle2,
+  Trophy,
+  BookOpen,
+  Gamepad2,
+  Zap,
 } from "lucide-react";
 import ToothSVG, { BodyPartIcon } from "./ToothSVG";
 
@@ -52,7 +59,15 @@ export default function LessonRoadmapScreen({
   chapterTitle: string;
   chapterTitleMn: string;
   chapterColor: string;
-  chapterIconType: "molar" | "heart" | "brain" | "lungs" | "stomach" | "muscles" | "bones" | "blood";
+  chapterIconType:
+    | "molar"
+    | "heart"
+    | "brain"
+    | "lungs"
+    | "stomach"
+    | "muscles"
+    | "bones"
+    | "blood";
   lessons: LessonNode[];
   onLessonClick: (id: string) => void;
   onBack: () => void;
@@ -66,9 +81,23 @@ export default function LessonRoadmapScreen({
           <motion.div
             key={i}
             className="absolute w-2 h-2 rounded-full"
-            style={{ backgroundColor: chapterColor, opacity: 0.15, left: `${p.left}%`, top: `${p.top}%` }}
-            animate={{ y: [0, -30, 0], x: [0, p.xOffset, 0], scale: [1, 1.5, 1] }}
-            transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: "easeInOut" }}
+            style={{
+              backgroundColor: chapterColor,
+              opacity: 0.15,
+              left: `${p.left}%`,
+              top: `${p.top}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              x: [0, p.xOffset, 0],
+              scale: [1, 1.5, 1],
+            }}
+            transition={{
+              duration: p.duration,
+              repeat: Infinity,
+              delay: p.delay,
+              ease: "easeInOut",
+            }}
           />
         ))}
       </div>
@@ -92,10 +121,11 @@ export default function LessonRoadmapScreen({
               className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg"
               style={{ backgroundColor: chapterColor }}
             >
-              {chapterIconType === "molar"
-                ? <ToothSVG type="molar" size={40} color="white" />
-                : <BodyPartIcon type={chapterIconType} size={40} />
-              }
+              {chapterIconType === "molar" ? (
+                <ToothSVG type="molar" size={40} color="white" />
+              ) : (
+                <BodyPartIcon type={chapterIconType} size={40} />
+              )}
             </div>
             <div>
               <h2 className="font-bold text-lg font-game">{chapterTitleMn}</h2>
@@ -107,23 +137,32 @@ export default function LessonRoadmapScreen({
             <p className="text-xs text-gray-500">Явц</p>
             <div className="flex items-center gap-1">
               {[...Array(3)].map((_, i) => (
-                <Star key={i} size={16} fill={i < 2 ? "#FFB800" : "none"} color="#FFB800" />
+                <Star
+                  key={i}
+                  size={16}
+                  fill={i < 2 ? "#FFB800" : "none"}
+                  color="#FFB800"
+                />
               ))}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="relative px-6 py-12">
+      <div className="relative px-6 pt-4">
         <div className="max-w-xl mx-auto relative">
           <svg
             className="absolute left-1/2 top-0 w-24 -ml-12 pointer-events-none"
-            style={{ height: `${lessons.length * 180}px` }}
+            style={{ height: `${lessons.length * 120}px` }}
           >
             <defs>
               <linearGradient id="lessonPath" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor={chapterColor} stopOpacity="0.5" />
-                <stop offset="100%" stopColor={chapterColor} stopOpacity="0.2" />
+                <stop
+                  offset="100%"
+                  stopColor={chapterColor}
+                  stopOpacity="0.2"
+                />
               </linearGradient>
             </defs>
             <motion.path
@@ -148,10 +187,16 @@ export default function LessonRoadmapScreen({
                   className={`flex items-center ${left ? "flex-row" : "flex-row-reverse"}`}
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1, type: "spring", stiffness: 100 }}
+                  transition={{
+                    delay: index * 0.1,
+                    type: "spring",
+                    stiffness: 100,
+                  }}
                 >
                   <motion.button
-                    onClick={() => lesson.isUnlocked && onLessonClick(lesson.id)}
+                    onClick={() =>
+                      lesson.isUnlocked && onLessonClick(lesson.id)
+                    }
                     disabled={!lesson.isUnlocked}
                     className="relative group"
                     whileHover={lesson.isUnlocked ? { scale: 1.1 } : {}}
@@ -161,7 +206,10 @@ export default function LessonRoadmapScreen({
                       <motion.div
                         className="absolute inset-0 rounded-full blur-xl"
                         style={{ backgroundColor: chapterColor, opacity: 0.4 }}
-                        animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }}
+                        animate={{
+                          scale: [1, 1.3, 1],
+                          opacity: [0.3, 0.6, 0.3],
+                        }}
                         transition={{ duration: 2, repeat: Infinity }}
                       />
                     )}
@@ -170,12 +218,18 @@ export default function LessonRoadmapScreen({
                       className={`relative w-24 h-24 rounded-full flex flex-col items-center justify-center shadow-xl border-4 border-white ${!lesson.isUnlocked && "opacity-50 grayscale"}`}
                       style={{
                         backgroundColor: lesson.isUnlocked
-                          ? lesson.isCompleted ? "#22c55e" : chapterColor
+                          ? lesson.isCompleted
+                            ? "#22c55e"
+                            : chapterColor
                           : "#E5E7EB",
                       }}
                     >
                       <div className="mb-1">
-                        <ToothSVG type={toothType(lesson.id)} size={45} color="white" />
+                        <ToothSVG
+                          type={toothType(lesson.id)}
+                          size={45}
+                          color="white"
+                        />
                       </div>
 
                       {!lesson.isUnlocked && (
@@ -191,7 +245,11 @@ export default function LessonRoadmapScreen({
                           animate={{ scale: 1 }}
                           transition={{ type: "spring", stiffness: 400 }}
                         >
-                          <CheckCircle2 size={20} color="#22c55e" fill="#22c55e" />
+                          <CheckCircle2
+                            size={20}
+                            color="#22c55e"
+                            fill="#22c55e"
+                          />
                         </motion.div>
                       )}
 
@@ -201,7 +259,11 @@ export default function LessonRoadmapScreen({
                           animate={{ y: [0, -4, 0] }}
                           transition={{ duration: 1.5, repeat: Infinity }}
                         >
-                          <Play size={12} color={chapterColor} fill={chapterColor} />
+                          <Play
+                            size={12}
+                            color={chapterColor}
+                            fill={chapterColor}
+                          />
                         </motion.div>
                       )}
                     </div>
@@ -218,11 +280,17 @@ export default function LessonRoadmapScreen({
                     className={`flex-1 max-w-xs ${left ? "ml-6" : "mr-6"}`}
                     whileHover={lesson.isUnlocked ? { x: left ? 4 : -4 } : {}}
                   >
-                    <div className={`bg-white rounded-2xl p-4 shadow-lg border-2 ${lesson.isUnlocked ? "border-gray-100" : "border-gray-200 opacity-60"}`}>
-                      <h3 className={`font-game-bold mb-1 ${lesson.isUnlocked ? "text-gray-800" : "text-gray-400"}`}>
+                    <div
+                      className={`bg-white rounded-2xl p-4 shadow-lg border-2 ${lesson.isUnlocked ? "border-gray-100" : "border-gray-200 opacity-60"}`}
+                    >
+                      <h3
+                        className={`font-game-bold mb-1 ${lesson.isUnlocked ? "text-gray-800" : "text-gray-400"}`}
+                      >
                         {lesson.titleMn}
                       </h3>
-                      <p className="text-xs text-gray-500 mb-2">{lesson.title}</p>
+                      <p className="text-xs text-gray-500 mb-2">
+                        {lesson.title}
+                      </p>
 
                       {lesson.isUnlocked ? (
                         <div className="flex items-center justify-between">
@@ -236,8 +304,19 @@ export default function LessonRoadmapScreen({
                               />
                             ))}
                           </div>
-                          <span className="text-xs font-semibold" style={{ color: lesson.isCompleted ? "#16a34a" : chapterColor }}>
-                            {lesson.isCompleted ? "Дууслаа" : lesson.stars > 0 ? "Үргэлжлүүлэх" : "Эхлэх"}
+                          <span
+                            className="text-xs font-semibold"
+                            style={{
+                              color: lesson.isCompleted
+                                ? "#16a34a"
+                                : chapterColor,
+                            }}
+                          >
+                            {lesson.isCompleted
+                              ? "Дууслаа"
+                              : lesson.stars > 0
+                                ? "Үргэлжлүүлэх"
+                                : "Эхлэх"}
                           </span>
                         </div>
                       ) : (
@@ -267,8 +346,12 @@ export default function LessonRoadmapScreen({
               >
                 🏆
               </motion.div>
-              <h2 className="text-2xl font-black mb-2 font-game">Баяр хүргэе!</h2>
-              <p className="text-white/90 font-game">Та {chapterTitleMn} бүлгийг дууслаа!</p>
+              <h2 className="text-2xl font-black mb-2 font-game">
+                Баяр хүргэе!
+              </h2>
+              <p className="text-white/90 font-game">
+                Та {chapterTitleMn} бүлгийг дууслаа!
+              </p>
             </motion.div>
           )}
         </div>

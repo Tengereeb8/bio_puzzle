@@ -1,20 +1,30 @@
 "use client";
 
 import { motion, AnimatePresence } from "motion/react";
-import { Map, Gamepad2, Menu } from "lucide-react";
+import { Map, Gamepad2, Menu, Trophy, User } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+import { useProgress } from "@/app/components/context/ProgressContext";
 
-type TabId = "roadmap" | "game" | "more";
+type TabId = "roadmap" | "game" | "leaderboard" | "profile";
 
 const TABS = [
   { id: "roadmap" as const, label: "Roadmap", icon: Map, href: "/" },
   { id: "game" as const, label: "Game", icon: Gamepad2, href: "/game" },
-  { id: "more" as const, label: "More", icon: Menu, href: "/more" },
+  {
+    id: "leaderboard" as const,
+    label: "Leaderboard",
+    icon: Trophy,
+    href: "/leaderboard",
+  },
+  { id: "profile" as const, label: "Profile", icon: User, href: "/profile" },
 ] as const;
 
 function activeTabFromPath(pathname: string): TabId {
   if (pathname === "/game" || pathname.startsWith("/game/")) return "game";
-  if (pathname === "/more" || pathname.startsWith("/more/")) return "more";
+  if (pathname === "/leaderboard" || pathname.startsWith("/leaderboard/"))
+    return "leaderboard";
+  if (pathname === "/profile" || pathname.startsWith("/profile/"))
+    return "profile";
   return "roadmap";
 }
 
@@ -33,7 +43,7 @@ export default function FooterNav() {
       <div className="h-px bg-linear-to-r from-transparent via-gray-200 to-transparent" />
 
       <div
-        className="flex items-stretch justify-between px-4 bg-white/90 backdrop-blur-xl max-w-lg mx-auto"
+        className="flex items-stretch justify-between px-4 bg-white/90 backdrop-blur-xl "
         style={{
           height: "72px",
           paddingBottom: "env(safe-area-inset-bottom, 0px)",

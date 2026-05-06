@@ -36,7 +36,7 @@ export default function RoadmapScreen({
   const completedCount = chapters.filter((c) => c.isCompleted).length;
 
   return (
-    <div className="min-h-full pb-14 overflow-auto relative bg-orange-50">
+    <div className="min-h-full overflow-auto relative bg-orange-50">
       <div className="relative bg-[#fa8e1b] text-white px-6 pt-6 pb-10 rounded-b-full">
         <div className="max-w-2xl  mx-auto">
           <motion.div
@@ -110,7 +110,7 @@ export default function RoadmapScreen({
             />
           </svg>
 
-          <div className="relative z-10 space-y-16 pt-8 pb-8">
+          <div className="relative z-10 space-y-16 pt-8">
             {chapters.map((chapter, index) => (
               <motion.div
                 key={chapter.id}
