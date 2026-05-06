@@ -18,7 +18,6 @@ export default function QuizScreen({
 
   const q = questions[qIndex];
   const progress = (qIndex / questions.length) * 100;
-  const isLast = qIndex + 1 >= questions.length;
 
   function next() {
     const nextIdx = qIndex + 1;

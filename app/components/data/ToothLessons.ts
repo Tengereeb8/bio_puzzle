@@ -8,8 +8,6 @@ export interface LessonNode {
   titleMn: string;
   isUnlocked: boolean;
   isCompleted: boolean;
-  stars: number;
-  maxStars: number;
   question: string;
   options: string[];
   correctAnswer: number;
@@ -18,7 +16,6 @@ export interface LessonNode {
 }
 
 export const teethLessons: LessonNode[] = [
-  // Introduction
   {
     id: "teeth-1",
     type: "lesson",
@@ -26,8 +23,6 @@ export const teethLessons: LessonNode[] = [
     titleMn: "Шүдний танилцуулга",
     isUnlocked: true,
     isCompleted: false,
-    stars: 0,
-    maxStars: 3,
     question: "Хүн бүр өөрийн шүдтэй төрдөг үү?",
     options: [
       "Тийм, бүгд шүдтэй төрдөг",
@@ -49,8 +44,6 @@ export const teethLessons: LessonNode[] = [
     titleMn: "Шүдний төрөл - Хадаас",
     isUnlocked: true,
     isCompleted: false,
-    stars: 0,
-    maxStars: 3,
     question: "Хадаас ямар ажил хийдэг вэ?",
     options: ["Хоол нунтаглах", "Хоол зүсэх, хазах", "Хоол урах", "Хоол барих"],
     correctAnswer: 1,
@@ -67,8 +60,6 @@ export const teethLessons: LessonNode[] = [
     titleMn: "Хадаасны асуулт",
     isUnlocked: true,
     isCompleted: false,
-    stars: 0,
-    maxStars: 3,
     question: "Хэдэн хадаас шүдтэй вэ?",
     options: ["4 хадаас", "6 хадаас", "8 хадаас", "12 хадаас"],
     correctAnswer: 2,
@@ -85,8 +76,6 @@ export const teethLessons: LessonNode[] = [
     titleMn: "Шүдний төрөл - Соёо шүд",
     isUnlocked: false,
     isCompleted: false,
-    stars: 0,
-    maxStars: 3,
     question: "Соёо шүд яагаад хурц байдаг вэ?",
     options: [
       "Гоо үзэсгэлэнтэй харагдахын тулд",
@@ -108,8 +97,7 @@ export const teethLessons: LessonNode[] = [
     titleMn: "Соёо шүдний дадлага",
     isUnlocked: false,
     isCompleted: false,
-    stars: 0,
-    maxStars: 3,
+
     question: "Хэдэн соёо шүдтэй вэ?",
     options: ["2 соёо", "4 соёо", "6 соёо", "8 соёо"],
     correctAnswer: 1,
@@ -126,8 +114,7 @@ export const teethLessons: LessonNode[] = [
     titleMn: "Шүдний төрөл - Өмнөх арааны шүд",
     isUnlocked: false,
     isCompleted: false,
-    stars: 0,
-    maxStars: 3,
+
     question: "Өмнөх арааны шүд ямар үүрэгтэй вэ?",
     options: [
       "Зөвхөн гоо үзэсгэлэн",
@@ -149,8 +136,7 @@ export const teethLessons: LessonNode[] = [
     titleMn: "Шүдний төрөл - Арааны шүд",
     isUnlocked: false,
     isCompleted: false,
-    stars: 0,
-    maxStars: 3,
+
     question: "Арааны шүд хамгийн том шүд үү?",
     options: [
       "Үгүй, хадаас том",
@@ -172,8 +158,7 @@ export const teethLessons: LessonNode[] = [
     titleMn: "Арааны шүдний асуулт",
     isUnlocked: false,
     isCompleted: false,
-    stars: 0,
-    maxStars: 3,
+
     question: "Насанд хүрэгчид хэдэн арааны шүдтэй байдаг вэ?",
     options: ["4 арааны шүд", "8 арааны шүд", "12 арааны шүд", "16 арааны шүд"],
     correctAnswer: 2,
@@ -190,8 +175,7 @@ export const teethLessons: LessonNode[] = [
     titleMn: "Шүдний бүтэц - Паалан",
     isUnlocked: false,
     isCompleted: false,
-    stars: 0,
-    maxStars: 3,
+
     question: "Паалан яагаад чухал вэ?",
     options: [
       "Зөвхөн шүдийг цагаан болгодог",
@@ -213,8 +197,7 @@ export const teethLessons: LessonNode[] = [
     titleMn: "Шүдний бүтэц - Дентин",
     isUnlocked: false,
     isCompleted: false,
-    stars: 0,
-    maxStars: 3,
+
     question: "Дентин хаана байрладаг вэ?",
     options: [
       "Шүдний хамгийн гадна",
@@ -236,8 +219,7 @@ export const teethLessons: LessonNode[] = [
     titleMn: "Шүдний целлюлоз",
     isUnlocked: false,
     isCompleted: false,
-    stars: 0,
-    maxStars: 3,
+
     question: "Шүдний целлюлоз юу агуулдаг вэ?",
     options: [
       "Зөвхөн цусны судас",
@@ -259,8 +241,7 @@ export const teethLessons: LessonNode[] = [
     titleMn: "Сүүн шүд ба насанд хүрэгчдийн шүд",
     isUnlocked: false,
     isCompleted: false,
-    stars: 0,
-    maxStars: 3,
+
     question: "Сүүн шүд хэзээ унадаг вэ?",
     options: ["1-2 нас", "3-4 нас", "6-12 нас", "15-18 нас"],
     correctAnswer: 2,
@@ -277,8 +258,7 @@ export const teethLessons: LessonNode[] = [
     titleMn: "Шүдний тооны асуулт",
     isUnlocked: false,
     isCompleted: false,
-    stars: 0,
-    maxStars: 3,
+
     question: "Насанд хүрэгчдэд нийт хэдэн шүд байдаг вэ?",
     options: ["20 шүд", "24 шүд", "28 шүд", "32 шүд"],
     correctAnswer: 3,
@@ -295,8 +275,7 @@ export const teethLessons: LessonNode[] = [
     titleMn: "Шүдний эрүүл ахуй - Угаах",
     isUnlocked: false,
     isCompleted: false,
-    stars: 0,
-    maxStars: 3,
+
     question: "Өдөрт хэдэн удаа шүдээ угаах ёстой вэ?",
     options: ["Нэг удаа", "Хоёр удаа", "Гурван удаа", "Хоол идэх бүрт"],
     correctAnswer: 1,
@@ -313,8 +292,7 @@ export const teethLessons: LessonNode[] = [
     titleMn: "Угаах арга",
     isUnlocked: false,
     isCompleted: false,
-    stars: 0,
-    maxStars: 3,
+
     question: "Шүдээ хэр удаан угаах ёстой вэ?",
     options: ["30 секунд", "1 минут", "2 минут", "5 минут"],
     correctAnswer: 2,

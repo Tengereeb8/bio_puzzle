@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
-import { isClerkFullyConfigured } from "@/lib/clerkConfigured";
+import { AuthProvider } from "@/lib/auth-context";
 import "./globals.css";
 import DashboardLayout from "./dashboard/layout";
 
@@ -25,20 +24,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const tree = (
+  return (
     <html
       lang="mn"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col w-full">
-        <DashboardLayout>{children}</DashboardLayout>
+      <body className="min-h-full flex flex-col w-full bg-background text-foreground">
+        <AuthProvider>
+          <DashboardLayout>{children}</DashboardLayout>
+        </AuthProvider>
       </body>
     </html>
-  );
-
-  return isClerkFullyConfigured() ? (
-    <ClerkProvider>{tree}</ClerkProvider>
-  ) : (
-    tree
   );
 }

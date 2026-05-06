@@ -1,10 +1,8 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
 import { useCallback, useMemo } from "react";
-
-export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+import { API_URL } from "@/lib/api-url";
+import { useAuthContext } from "@/lib/auth-context";
 
 type Json = Record<string, unknown> | unknown[];
 
@@ -17,15 +15,11 @@ async function parseError(res: Response): Promise<string> {
   }
 }
 
-/**
- * Client-side API hook. Automatically attaches the Clerk JWT to every request.
- *
- * Example:
- *   const api = useApi();
- *   const me = await api.get<User>("/users/me");
- */
+/** Backend руу Bearer JWT залгана (local auth). */
+export { API_URL };
+
 export function useApi() {
-  const { getToken, isSignedIn } = useAuth();
+  const { token, isHydrated } = useAuthContext();
 
   const request = useCallback(
     async <T = unknown>(
@@ -35,9 +29,8 @@ export function useApi() {
       const headers = new Headers(options.headers);
       headers.set("Content-Type", "application/json");
 
-      if (isSignedIn) {
-        const token = await getToken();
-        if (token) headers.set("Authorization", `Bearer ${token}`);
+      if (isHydrated && token) {
+        headers.set("Authorization", `Bearer ${token}`);
       }
 
       const res = await fetch(`${API_URL}${path}`, { ...options, headers });
@@ -46,7 +39,7 @@ export function useApi() {
       if (res.status === 204) return undefined as T;
       return (await res.json()) as T;
     },
-    [getToken, isSignedIn],
+    [isHydrated, token],
   );
 
   return useMemo(

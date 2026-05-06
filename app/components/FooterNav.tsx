@@ -56,7 +56,7 @@ export default function FooterNav() {
                 {isActive && (
                   <motion.div
                     layoutId="activeTabBg"
-                    className="absolute inset-x-2 inset-y-2 rounded-2xl bg-green-50"
+                    className="absolute inset-x-2 inset-y-2 rounded-2xl bg-orange-50"
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
@@ -69,7 +69,7 @@ export default function FooterNav() {
                 {isActive && (
                   <motion.div
                     layoutId="activeTabDot"
-                    className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1 rounded-b-full bg-green-500"
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-9 h-1 rounded-b-full bg-orange-500"
                     initial={{ scaleX: 0, opacity: 0 }}
                     animate={{ scaleX: 1, opacity: 1 }}
                     exit={{ scaleX: 0, opacity: 0 }}
@@ -80,24 +80,21 @@ export default function FooterNav() {
 
               <motion.div
                 className="relative z-10"
-                animate={
-                  isActive ? { y: -1, scale: 1.1 } : { y: 0, scale: 1 }
-                }
+                animate={isActive ? { y: -1, scale: 1.1 } : { y: 0, scale: 1 }}
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
               >
                 <Icon
                   size={22}
                   strokeWidth={isActive ? 2.5 : 2}
                   className={`transition-colors duration-200 ${
-                    isActive ? "text-green-500" : "text-gray-400"
+                    isActive ? "text-orange-400" : "text-gray-400"
                   }`}
                 />
               </motion.div>
-
               <span
                 className={`relative z-10 text-[11px] leading-none font-game transition-all duration-150 ${
                   isActive
-                    ? "text-green-700 font-bold"
+                    ? "text-orange-400 font-bold"
                     : "text-gray-400 font-semibold"
                 }`}
               >

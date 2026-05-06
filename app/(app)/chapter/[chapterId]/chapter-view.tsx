@@ -10,13 +10,24 @@ export default function ChapterView({ chapterId }: { chapterId: string }) {
   const chapter = chapters.find((c) => c.id === chapterId);
   if (!chapter) return null;
 
+  const roadmapLessons = teethLessons.map((l) => ({
+    id: l.id,
+    type: l.type,
+    title: l.title,
+    titleMn: l.titleMn,
+    isUnlocked: l.isUnlocked,
+    isCompleted: l.isCompleted,
+    stars: 0,
+    maxStars: 3,
+  }));
+
   return (
     <LessonRoadmapScreen
       chapterTitle={chapter.title}
       chapterTitleMn={chapter.titleMn}
       chapterColor={chapter.color}
       chapterIconType={chapter.iconType}
-      lessons={teethLessons}
+      lessons={roadmapLessons}
       onLessonClick={(lessonId) =>
         router.push(
           `/chapter/${encodeURIComponent(chapterId)}/lesson/${encodeURIComponent(lessonId)}`,

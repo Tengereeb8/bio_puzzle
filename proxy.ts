@@ -1,21 +1,8 @@
 import { NextResponse } from "next/server";
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-import { isClerkFullyConfigured } from "@/lib/clerkConfigured";
-
-const isProtectedRoute = createRouteMatcher(["/dashboard(.*)"]);
-
-const noopMiddleware = () => NextResponse.next();
-
-const middleware = isClerkFullyConfigured()
-  ? clerkMiddleware(async (auth, req) => {
-      if (isProtectedRoute(req)) {
-        await auth.protect();
-      }
-    })
-  : noopMiddleware;
-
-export default middleware;
+export default function middleware() {
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: [
