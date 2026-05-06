@@ -1,25 +1,29 @@
 "use client";
-import App from "next/app";
-import FullBodySkeletonGame from "./FullBodySkeleton";
 
-export default function Home() {
-  const handleGameComplete = (completionTime: number) => {
-    console.log(
-      `Full Body Skeleton Game Completed in ${completionTime} seconds!`,
-    );
-  };
+import RoadmapScreen from "@/app/components/RoadmapScreen";
+import { chapters } from "@/app/components/data/appData";
+import { useProgress } from "@/app/components/context/ProgressContext";
+import { useRouter } from "next/navigation";
+import { AppShell } from "@/app/(app)/app-shell";
 
-  const handleGameBack = () => {
-    console.log("Navigating back from Full Body Skeleton Game.");
-  };
+function HomeRoadmap() {
+  const router = useRouter();
+  const { userPoints } = useProgress();
 
   return (
-    <div className="bg-white text-black h-fit flex justify-center items-center">
-      {/* <FullBodySkeletonGame
-        onComplete={handleGameComplete}
-        onBack={handleGameBack}
-      /> */}
-      <App />
-    </div>
+    <RoadmapScreen
+      chapters={chapters}
+      totalPoints={userPoints}
+      onChapterClick={(id) => router.push(`/chapter/${encodeURIComponent(id)}`)}
+    />
+  );
+}
+
+/** Нүүр (`/`). `(app)` layout энд үл хамаарах тул AppShell-ийг энд оруулна. */
+export default function HomePage() {
+  return (
+    <AppShell>
+      <HomeRoadmap />
+    </AppShell>
   );
 }
