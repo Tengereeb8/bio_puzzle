@@ -6,7 +6,7 @@ import { questions, labelParts, funFacts } from "./gameData";
 import HomeScreen from "./HomeScreen";
 import QuizScreen from "./QuizScreen";
 import LabelScreen from "./LabelScreen";
-import ResultScreen from "./result/page";
+import ResultScreen from "./ResultScreen";
 
 export default function ToothGame() {
   const [screen, setScreen] = useState<Screen>("home");

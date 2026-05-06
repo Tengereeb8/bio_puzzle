@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { Lock, CheckCircle, Star, Trophy, Sparkles, Flame } from "lucide-react";
+import { Lock, CheckCircle, Sparkles, Flame } from "lucide-react";
 import ToothSVG, { BodyPartIcon } from "./ToothSVG";
 
 interface Chapter {
@@ -25,11 +25,14 @@ interface Chapter {
 
 export default function RoadmapScreen({
   chapters,
+  totalPoints,
   onChapterClick,
 }: {
   chapters: Chapter[];
+  totalPoints: number;
   onChapterClick: (id: string) => void;
 }) {
+  void totalPoints;
   const completedCount = chapters.filter((c) => c.isCompleted).length;
 
   return (

@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import type { Question } from "./types";
-import { useRouter } from "next/router";
 
 export default function QuizScreen({
   questions,
@@ -19,7 +18,6 @@ export default function QuizScreen({
 
   const q = questions[qIndex];
   const progress = (qIndex / questions.length) * 100;
-  const isLast = qIndex + 1 >= questions.length;
 
   function next() {
     const nextIdx = qIndex + 1;
@@ -31,7 +29,6 @@ export default function QuizScreen({
       setAnswered(false);
     }
   }
-  const router = useRouter();
 
   function pick(i: number) {
     if (answered) return;
@@ -75,7 +72,7 @@ export default function QuizScreen({
             Progress
           </span>
           <span className="text-sm text-gray-700 font-bold">
-            {qIndex + 1} of {questions.length - 1}
+            {qIndex + 1} of {questions.length}
           </span>
         </div>
         <div className="bg-yellow-100 px-3 py-1 rounded-full">

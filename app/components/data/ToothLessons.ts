@@ -1,4 +1,4 @@
-import { Question } from "@/app/teeth-game/src/types";
+import { Question } from "../teeth-game/types";
 
 export interface LessonNode {
   questions: Question[];

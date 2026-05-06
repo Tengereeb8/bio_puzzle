@@ -6,6 +6,28 @@ import ToothDiagram from "./ToothDiagram";
 
 const NUMBERS = ["①", "②", "③", "④", "⑤"];
 
+function hashSeed(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = Math.imul(31, h) + s.charCodeAt(i);
+  }
+  return Math.abs(h) || 1;
+}
+
+function shuffleDeterministic<T>(items: T[], seed: number): T[] {
+  const arr = [...items];
+  let state = seed;
+  const rnd = () => {
+    state = (Math.imul(state, 1103515245) + 12345) & 0x7fffffff;
+    return state / 0x7fffffff;
+  };
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 function zoneClass(dz: DropZone) {
   const base = "border-2 rounded-xl px-3 py-3 min-h-[48px] flex items-center justify-between text-sm transition-all active:scale-95 ";
   if (dz.state === "correct") return base + "border-green-400 bg-green-50 text-green-800";
@@ -21,7 +43,14 @@ export default function LabelScreen({
   parts: LabelPart[];
   onComplete: (correct: number, total: number) => void;
 }) {
-  const shuffled = useMemo(() => [...parts].sort(() => Math.random() - 0.5), [parts]);
+  const shuffled = useMemo(
+    () =>
+      shuffleDeterministic(
+        parts,
+        hashSeed(parts.map((p) => `${p.id}:${p.name}`).join("\0")),
+      ),
+    [parts],
+  );
   const [selected, setSelected] = useState<string | null>(null);
   const [zones, setZones] = useState<DropZone[]>(parts.map(() => ({ placed: null, state: "empty" as const })));
   const [checked, setChecked] = useState(false);

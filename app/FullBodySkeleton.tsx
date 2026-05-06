@@ -20,7 +20,8 @@ import {
   useSensor,
   useSensors,
   closestCenter,
-  MeasuringStrategy,
+  type DragEndEvent,
+  type DragStartEvent,
   type UniqueIdentifier,
 } from "@dnd-kit/core";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
@@ -50,6 +51,8 @@ interface FullBodySkeletonGameProps {
   onComplete: (completionTime: number) => void;
   onBack: () => void;
 }
+
+type DraggableOrganProps = { organ: Organ; isPlaced: boolean };
 
 function DraggableOrgan({ organ, isPlaced }: DraggableOrganProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -199,6 +202,83 @@ const organs: Organ[] = [
   },
 ];
 
+function OrganDropZone({
+  organ,
+  activeId,
+  placedOrgans,
+  setSelectedInfo,
+}: {
+  organ: Organ;
+  activeId: UniqueIdentifier | null;
+  placedOrgans: Map<string, { x: number; y: number }>;
+  setSelectedInfo: (organ: Organ) => void;
+}) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: organ.id,
+  });
+  const isPlaced = placedOrgans.has(organ.id);
+  const info = organInfo[organ.type];
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`absolute flex items-center justify-center transition-all rounded-2xl ${
+        isPlaced
+          ? "bg-linear-to-br from-green-100/95 to-emerald-50/95 border-green-500 shadow-2xl"
+          : isOver && activeId === organ.id
+            ? "bg-linear-to-br from-yellow-100/80 to-amber-100/80 border-yellow-400 animate-pulse"
+            : "bg-linear-to-br from-indigo-50/80 to-purple-50/80 border-indigo-400"
+      } border-4 border-dashed backdrop-blur-sm`}
+      style={{
+        left: `${organ.targetX}%`,
+        top: `${organ.targetY}%`,
+        width: `${organ.targetWidth}px`,
+        height: `${organ.targetHeight}px`,
+        transform: "translate(-50%, -50%)",
+        boxShadow: isPlaced
+          ? "0 20px 50px rgba(34, 197, 94, 0.3)"
+          : "0 8px 30px rgba(99, 102, 241, 0.2)",
+      }}
+      onClick={() => !isPlaced && setSelectedInfo(organ)}
+    >
+      {isPlaced ? (
+        <div className="filter drop-shadow-2xl relative">
+          <OrganSVG
+            type={organ.type}
+            size={organ.targetWidth * 0.68}
+            isPlaced={true}
+          />
+          <div className="absolute -top-2 -right-2">
+            <div className="relative">
+              <CheckCircle2
+                size={32}
+                fill="#22c55e"
+                color="white"
+              />
+              <div className="absolute inset-0 bg-green-400 rounded-full" />
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="text-center p-2 relative">
+          <div className="absolute inset-0 bg-linear-to-br from-indigo-200/40 to-purple-200/40 rounded-xl" />
+          <p
+            className="text-xs font-bold text-indigo-800 relative z-10"
+            style={{
+              fontFamily: "Noto Sans Mongolian, Nunito",
+            }}
+          >
+            {info.nameMn}
+          </p>
+          <p className="text-[10px] text-indigo-600 mt-0.5 relative z-10">
+            {info.name}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function FullBodySkeletonGame({
   onComplete,
   onBack,
@@ -277,18 +357,11 @@ export default function FullBodySkeletonGame({
     return distance < threshold;
   };
 
-  const handleDragStart = (event: { active: { id: UniqueIdentifier } }) => {
+  const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id);
   };
 
-  const handleDragEnd = (event: {
-    active: {
-      rect: any;
-      id: UniqueIdentifier;
-    };
-    over: { id: UniqueIdentifier } | null;
-    delta: { x: number; y: number };
-  }) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over, delta } = event;
     const organId = active.id.toString();
     const organ = organs.find((o) => o.id === organId);
@@ -303,6 +376,7 @@ export default function FullBodySkeletonGame({
 
     // Recalculate drop position based on initial position of draggable and delta
     const initialRect = active.rect.current.translated;
+    if (!initialRect) return;
     const dropX = initialRect.left + delta.x + initialRect.width / 2; // Center of the dropped organ
     const dropY = initialRect.top + delta.y + initialRect.height / 2;
 
@@ -372,10 +446,6 @@ export default function FullBodySkeletonGame({
   const completedCount = placedOrgans.size;
   const totalCount = organs.length;
   const progress = (completedCount / totalCount) * 100;
-
-  const activeOrgan = activeId
-    ? organs.find((organ) => organ.id === activeId)
-    : null;
 
   return (
     <DndContext
@@ -492,7 +562,6 @@ export default function FullBodySkeletonGame({
                       key={organ.id}
                       organ={organ}
                       isPlaced={placedOrgans.has(organ.id)}
-                      activeId={activeId}
                     />
                   ))}
                 </div>
@@ -1125,73 +1194,15 @@ export default function FullBodySkeletonGame({
                   </svg>
 
                   {/* Drop Zones */}
-                  {organs.map((organ) => {
-                    const { setNodeRef, isOver } = useDroppable({
-                      id: organ.id,
-                    });
-                    const isPlaced = placedOrgans.has(organ.id);
-                    const info = organInfo[organ.type];
-
-                    return (
-                      <div
-                        key={`zone-${organ.id}`}
-                        ref={setNodeRef}
-                        className={`absolute flex items-center justify-center transition-all rounded-2xl ${
-                          isPlaced
-                            ? "bg-linear-to-br from-green-100/95 to-emerald-50/95 border-green-500 shadow-2xl"
-                            : isOver && activeId === organ.id
-                              ? "bg-linear-to-br from-yellow-100/80 to-amber-100/80 border-yellow-400 animate-pulse"
-                              : "bg-linear-to-br from-indigo-50/80 to-purple-50/80 border-indigo-400"
-                        } border-4 border-dashed backdrop-blur-sm`}
-                        style={{
-                          left: `${organ.targetX}%`,
-                          top: `${organ.targetY}%`,
-                          width: `${organ.targetWidth}px`,
-                          height: `${organ.targetHeight}px`,
-                          transform: "translate(-50%, -50%)",
-                          boxShadow: isPlaced
-                            ? "0 20px 50px rgba(34, 197, 94, 0.3)"
-                            : "0 8px 30px rgba(99, 102, 241, 0.2)",
-                        }}
-                        onClick={() => !isPlaced && setSelectedInfo(organ)}
-                      >
-                        {isPlaced ? (
-                          <div className="filter drop-shadow-2xl relative">
-                            <OrganSVG
-                              type={organ.type}
-                              size={organ.targetWidth * 0.68}
-                              isPlaced={true}
-                            />
-                            <div className="absolute -top-2 -right-2">
-                              <div className="relative">
-                                <CheckCircle2
-                                  size={32}
-                                  fill="#22c55e"
-                                  color="white"
-                                />
-                                <div className="absolute inset-0 bg-green-400 rounded-full" />
-                              </div>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="text-center p-2 relative">
-                            <div className="absolute inset-0 bg-linear-to-br from-indigo-200/40 to-purple-200/40 rounded-xl" />
-                            <p
-                              className="text-xs font-bold text-indigo-800 relative z-10"
-                              style={{
-                                fontFamily: "Noto Sans Mongolian, Nunito",
-                              }}
-                            >
-                              {info.nameMn}
-                            </p>
-                            <p className="text-[10px] text-indigo-600 mt-0.5 relative z-10">
-                              {info.name}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                  {organs.map((organ) => (
+                    <OrganDropZone
+                      key={`zone-${organ.id}`}
+                      organ={organ}
+                      activeId={activeId}
+                      placedOrgans={placedOrgans}
+                      setSelectedInfo={setSelectedInfo}
+                    />
+                  ))}
                 </div>
 
                 {/* Celebration Overlay */}

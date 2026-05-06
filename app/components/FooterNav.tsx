@@ -2,27 +2,38 @@
 
 import { motion, AnimatePresence } from "motion/react";
 import { Map, Gamepad2, Menu } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 
 type TabId = "roadmap" | "game" | "more";
 
-interface FooterNavProps {
-  activeTab: TabId;
-  onTabChange: (tab: TabId) => void;
-}
-
 const TABS = [
-  { id: "roadmap" as const, label: "Roadmap", icon: Map },
-  { id: "game" as const, label: "Game", icon: Gamepad2 },
-  { id: "more" as const, label: "More", icon: Menu },
+  { id: "roadmap" as const, label: "Roadmap", icon: Map, href: "/" },
+  { id: "game" as const, label: "Game", icon: Gamepad2, href: "/game" },
+  { id: "more" as const, label: "More", icon: Menu, href: "/more" },
 ] as const;
 
-export default function FooterNav({ activeTab, onTabChange }: FooterNavProps) {
+function activeTabFromPath(pathname: string): TabId {
+  if (pathname === "/game" || pathname.startsWith("/game/")) return "game";
+  if (pathname === "/more" || pathname.startsWith("/more/")) return "more";
+  return "roadmap";
+}
+
+export default function FooterNav() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const activeTab = activeTabFromPath(pathname ?? "/");
+
+  function go(tab: TabId) {
+    const item = TABS.find((t) => t.id === tab);
+    if (item) router.push(item.href);
+  }
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
       <div className="h-px bg-linear-to-r from-transparent via-gray-200 to-transparent" />
 
       <div
-        className="flex items-stretch justify-between px-4 bg-white/90 backdrop-blur-xl"
+        className="flex items-stretch justify-between px-4 bg-white/90 backdrop-blur-xl max-w-lg mx-auto"
         style={{
           height: "72px",
           paddingBottom: "env(safe-area-inset-bottom, 0px)",
@@ -33,10 +44,13 @@ export default function FooterNav({ activeTab, onTabChange }: FooterNavProps) {
           return (
             <motion.button
               key={id}
-              onClick={() => onTabChange(id)}
+              type="button"
+              onClick={() => go(id)}
               className="relative flex flex-col items-center justify-center gap-1 flex-1 outline-none"
               whileTap={{ scale: 0.9 }}
               transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              aria-current={isActive ? "page" : undefined}
+              aria-label={label}
             >
               <AnimatePresence>
                 {isActive && (

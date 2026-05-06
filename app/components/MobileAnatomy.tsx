@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Image from "next/image";
 import {
   DndContext,
   useDraggable,
@@ -12,7 +13,6 @@ import {
   DragOverlay,
   DragStartEvent,
 } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
 
 // --- Draggable Organ Piece (The Source) ---
 function Draggable({
@@ -138,10 +138,13 @@ const MobileAnatomyGame = () => {
 
         {/* Skeleton Area */}
         <div className="relative flex-1 w-full max-w-md bg-white overflow-hidden">
-          <img
+          <Image
             src="https://images.imagerenderer.com/images/artworkimages/mediumlarge/2/1-childs-skeleton-growth-plates-monica-schroeder.jpg"
             alt="Skeleton"
-            className="absolute inset-0 w-full h-full object-contain object-top mt-4 pointer-events-none"
+            fill
+            className="object-contain object-top mt-4 pointer-events-none"
+            sizes="(max-width: 448px) 100vw, 448px"
+            priority
           />
 
           {items.map((item) => (
