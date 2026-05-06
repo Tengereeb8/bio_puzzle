@@ -25,9 +25,11 @@ interface Chapter {
 
 export default function RoadmapScreen({
   chapters,
+  totalPoints,
   onChapterClick,
 }: {
   chapters: Chapter[];
+  totalPoints: number;
   onChapterClick: (id: string) => void;
 }) {
   const completedCount = chapters.filter((c) => c.isCompleted).length;
@@ -55,7 +57,7 @@ export default function RoadmapScreen({
                 <Trophy className="text-yellow-300" size={24} />
                 <div>
                   <p className="text-xs opacity-80">Нийт оноо</p>
-                  <p className="font-bold text-lg">850</p>
+                  <p className="font-bold text-lg">{totalPoints}</p>
                 </div>
               </div>
             </motion.div>
