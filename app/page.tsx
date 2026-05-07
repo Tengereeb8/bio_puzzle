@@ -17,15 +17,7 @@ function HomeRoadmap() {
       chapters={chapters}
       totalPoints={userPoints}
       onChapterClick={(id) => router.push(`/chapter/${encodeURIComponent(id)}`)}
-    />
-    // <FullBodySkeletonGame
-    //   onComplete={function (completionTime: number): void {
-    //     throw new Error("Function not implemented.");
-    //   }}
-    //   onBack={function (): void {
-    //     throw new Error("Function not implemented.");
-    //   }}
-    // />
+    ></RoadmapScreen>
   );
 }
 

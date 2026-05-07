@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  turbopack: {},
   images: {
     remotePatterns: [
       {
@@ -9,6 +10,22 @@ const nextConfig: NextConfig = {
         pathname: "/images/**",
       },
     ],
+  },
+  webpack(config, options) {
+    const fileLoaderRule = config.module.rules.find((rule) => {
+      return typeof rule.test?.test === 'function' && rule.test.test('.svg');
+    });
+
+    if (fileLoaderRule) {
+      fileLoaderRule.exclude = /\.svg$/;
+    }
+
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ['@svgr/webpack'],
+    });
+
+    return config;
   },
 };
 
