@@ -1,16 +1,23 @@
 "use client";
 
+import type { ComponentProps } from "react";
 import LessonRoadmapScreen from "@/app/components/LessonRoadmapScreen";
-import { chapters } from "@/app/components/data/appData";
-import { teethLessons } from "@/app/components/data/ToothLessons";
+import { useCurriculum } from "@/app/components/context/CurriculumContext";
 import { useRouter } from "next/navigation";
+
+type ChapterIconType = ComponentProps<
+  typeof LessonRoadmapScreen
+>["chapterIconType"];
 
 export default function ChapterView({ chapterId }: { chapterId: string }) {
   const router = useRouter();
+  const { chapters, lessonsByChapter } = useCurriculum();
   const chapter = chapters.find((c) => c.id === chapterId);
   if (!chapter) return null;
 
-  const roadmapLessons = teethLessons.map((l) => ({
+  const chapterLessons = lessonsByChapter[chapterId] ?? [];
+
+  const roadmapLessons = chapterLessons.map((l) => ({
     id: l.id,
     type: l.type,
     title: l.title,
@@ -26,7 +33,7 @@ export default function ChapterView({ chapterId }: { chapterId: string }) {
       chapterTitle={chapter.title}
       chapterTitleMn={chapter.titleMn}
       chapterColor={chapter.color}
-      chapterIconType={chapter.iconType}
+      chapterIconType={chapter.iconType as ChapterIconType}
       lessons={roadmapLessons}
       onLessonClick={(lessonId) =>
         router.push(

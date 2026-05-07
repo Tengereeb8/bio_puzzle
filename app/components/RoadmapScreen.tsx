@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import type { ComponentProps } from "react";
 import { Lock, CheckCircle, Sparkles, Flame } from "lucide-react";
 import ToothSVG, { BodyPartIcon } from "./ToothSVG";
 
@@ -6,15 +7,7 @@ interface Chapter {
   id: string;
   title: string;
   titleMn: string;
-  iconType:
-    | "molar"
-    | "heart"
-    | "brain"
-    | "lungs"
-    | "stomach"
-    | "muscles"
-    | "bones"
-    | "blood";
+  iconType: string;
   color: string;
   isUnlocked: boolean;
   isCompleted: boolean;
@@ -153,7 +146,14 @@ export default function RoadmapScreen({
                         {chapter.iconType === "molar" ? (
                           <ToothSVG type="molar" size={64} color="white" />
                         ) : (
-                          <BodyPartIcon type={chapter.iconType} size={64} />
+                          <BodyPartIcon
+                            type={
+                              chapter.iconType as ComponentProps<
+                                typeof BodyPartIcon
+                              >["type"]
+                            }
+                            size={64}
+                          />
                         )}
                       </div>
 

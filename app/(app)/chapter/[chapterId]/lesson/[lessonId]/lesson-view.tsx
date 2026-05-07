@@ -1,7 +1,7 @@
 "use client";
 
 import QuizScreen from "@/app/components/teeth-game/QuizScreen";
-import { teethLessons } from "@/app/components/data/ToothLessons";
+import { useCurriculum } from "@/app/components/context/CurriculumContext";
 import { useProgress } from "@/app/components/context/ProgressContext";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -15,11 +15,13 @@ export default function LessonView({
 }) {
   const router = useRouter();
   const { addPoints } = useProgress();
+  const { lessonsByChapter } = useCurriculum();
+  const chapterLessons = lessonsByChapter[chapterId] ?? [];
 
-  const lesson = teethLessons.find((l) => l.id === lessonId);
+  const lesson = chapterLessons.find((l) => l.id === lessonId);
   if (!lesson) return null;
 
-  const allQuestions = teethLessons.map((l) => ({
+  const allQuestions = chapterLessons.map((l) => ({
     visual: "🦷" as const,
     text: l.question,
     options: l.options,
