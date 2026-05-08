@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import BackendUserStatus from "@/app/components/BackendUserStatus";
-import { Button } from "@/components/ui/button";
+
 import { useAuthContext } from "@/lib/auth-context";
+import { Button } from "../ui/button";
 
 export default function DashboardLayout({
   children,
