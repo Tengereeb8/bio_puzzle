@@ -27,6 +27,7 @@ import {
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 
 import OrganSVG, { organInfo } from "./OrganSVG";
+import SkeletonIcon from "./assets/icons/skeleton.svg"; // New import for skeleton icon
 
 interface Organ {
   id: string;
@@ -55,16 +56,18 @@ interface FullBodySkeletonGameProps {
 type DraggableOrganProps = { organ: Organ; isPlaced: boolean };
 
 function DraggableOrgan({ organ, isPlaced }: DraggableOrganProps) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: organ.id,
-    data: {
-      organType: organ.type,
-    },
-  });
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: organ.id,
+      data: {
+        organType: organ.type,
+      },
+    });
 
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        opacity: isDragging ? 0.5 : 1,
       }
     : undefined;
 
@@ -78,7 +81,7 @@ function DraggableOrgan({ organ, isPlaced }: DraggableOrganProps) {
       style={style}
       {...listeners}
       {...attributes}
-      className="cursor-grab relative"
+      className="cursor-grab relative active:cursor-grabbing"
     >
       <div className="bg-white rounded-2xl p-3 shadow-2xl border-4 border-indigo-400 relative overflow-hidden">
         {/* Animated gradient background */}
@@ -90,7 +93,6 @@ function DraggableOrgan({ organ, isPlaced }: DraggableOrganProps) {
           style={{ transform: "translateX(-100%) rotate(45deg)" }}
         />
 
-        {/* Organ SVG */}
         <div className="relative z-10 flex justify-center mb-2">
           <OrganSVG type={organ.type} size={90} />
         </div>
@@ -180,9 +182,9 @@ const organs: Organ[] = [
     id: "intestines",
     type: "intestines",
     targetX: 50,
-    targetY: 52,
-    targetWidth: 125,
-    targetHeight: 135,
+    targetY: 55,
+    targetWidth: 110,
+    targetHeight: 120,
   },
   {
     id: "kidneys",
@@ -228,7 +230,7 @@ function OrganDropZone({
           : isOver && activeId === organ.id
             ? "bg-linear-to-br from-yellow-100/80 to-amber-100/80 border-yellow-400 animate-pulse"
             : "bg-linear-to-br from-indigo-50/80 to-purple-50/80 border-indigo-400"
-      } border-4 border-dashed backdrop-blur-sm`}
+      } border-4 border-dashed backdrop-blur-sm cursor-pointer`}
       style={{
         left: `${organ.targetX}%`,
         top: `${organ.targetY}%`,
@@ -250,11 +252,7 @@ function OrganDropZone({
           />
           <div className="absolute -top-2 -right-2">
             <div className="relative">
-              <CheckCircle2
-                size={32}
-                fill="#22c55e"
-                color="white"
-              />
+              <CheckCircle2 size={32} fill="#22c55e" color="white" />
               <div className="absolute inset-0 bg-green-400 rounded-full" />
             </div>
           </div>
@@ -302,7 +300,11 @@ export default function FullBodySkeletonGame({
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
     useSensor(KeyboardSensor),
   );
 
@@ -344,15 +346,13 @@ export default function FullBodySkeletonGame({
     const organ = organs.find((o) => o.id === organId);
     if (!organ) return false;
 
-    // dnd-kit gives coordinates relative to the viewport.
-    // We need to convert organ target percentages to absolute pixel values within the canvas.
     const targetAbsX = rect.left + (organ.targetX / 100) * rect.width;
     const targetAbsY = rect.top + (organ.targetY / 100) * rect.height;
 
     const distance = Math.sqrt(
       Math.pow(dropX - targetAbsX, 2) + Math.pow(dropY - targetAbsY, 2),
     );
-    const threshold = Math.max(organ.targetWidth, organ.targetHeight) * 0.65; // Adjust threshold as needed
+    const threshold = Math.max(organ.targetWidth, organ.targetHeight) * 0.65;
 
     return distance < threshold;
   };
@@ -362,22 +362,22 @@ export default function FullBodySkeletonGame({
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over, delta } = event;
+    const { active, over } = event;
     const organId = active.id.toString();
     const organ = organs.find((o) => o.id === organId);
     const info = organ ? organInfo[organ.type] : null;
 
-    setActiveId(null); // Reset active draggable
+    setActiveId(null);
 
     console.log("Drag Ended:");
     console.log("Active ID:", active.id);
     console.log("Over:", over);
-    console.log("Delta:", delta);
+    console.log("Delta:", event.delta);
 
-    // Recalculate drop position based on initial position of draggable and delta
     const initialRect = active.rect.current.translated;
     if (!initialRect) return;
-    const dropX = initialRect.left + delta.x + initialRect.width / 2; // Center of the dropped organ
+    const delta = event.delta ?? { x: 0, y: 0 };
+    const dropX = initialRect.left + delta.x + initialRect.width / 2;
     const dropY = initialRect.top + delta.y + initialRect.height / 2;
 
     console.log("Calculated DropX:", dropX, "DropY:", dropY);
@@ -385,7 +385,6 @@ export default function FullBodySkeletonGame({
     const isCorrect = checkPlacement(organId, dropX, dropY);
     console.log("Is Correct Placement:", isCorrect);
 
-    // Temporarily simplify condition for debugging
     if (over && organ && info) {
       if (isCorrect) {
         setPlacedOrgans(
@@ -400,7 +399,7 @@ export default function FullBodySkeletonGame({
 
         setTimeout(() => setShowFeedback(null), 1800);
 
-        if (placedOrgans.size + 1 === organs.length) {
+        if (placedOrgans.size === organs.length) {
           setIsRunning(false);
           setShowCelebration(true);
           playAudio("Баяр хүргэе! Та бүх эрхтнүүдийг зөв байрлууллаа!");
@@ -410,7 +409,6 @@ export default function FullBodySkeletonGame({
           }, 3500);
         }
       } else {
-        // Dropped on a target, but incorrect organ or position
         setIncorrectAttempts(incorrectAttempts + 1);
         setShowFeedback({
           correct: false,
@@ -421,7 +419,6 @@ export default function FullBodySkeletonGame({
         setTimeout(() => setShowFeedback(null), 1200);
       }
     } else if (info) {
-      // Dropped outside any valid target or wrong target
       setIncorrectAttempts(incorrectAttempts + 1);
       setShowFeedback({
         correct: false,
@@ -453,7 +450,6 @@ export default function FullBodySkeletonGame({
       collisionDetection={closestCenter}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      // modifiers={[restrictToWindowEdges]} // Use if drag should be restricted to window boundaries
     >
       <div className="min-h-screen pb-24 bg-linear-to-br from-indigo-50 via-purple-50 to-pink-50 overflow-hidden">
         {/* Header */}
@@ -485,7 +481,6 @@ export default function FullBodySkeletonGame({
                 <div className="flex items-center gap-3 bg-linear-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-2xl shadow-lg">
                   <Clock size={24} />
                   <div>
-                    <p className="text-xs opacity-90">Цаг</p>
                     <p className="text-2xl font-bold font-mono">
                       {formatTime(elapsedTime)}
                     </p>
@@ -504,9 +499,10 @@ export default function FullBodySkeletonGame({
                 </button>
                 <button
                   onClick={handleReset}
-                  className="p-3 bg-linear-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 rounded-xl shadow-lg transition-all"
+                  className="p-3 bg-linear-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 rounded-xl shadow-lg transition-all flex items-center gap-2"
                 >
                   <RotateCcw size={22} color="white" />
+                  <span className="text-white">Restart</span>
                 </button>
               </div>
             </div>
@@ -556,13 +552,14 @@ export default function FullBodySkeletonGame({
                   </h3>
                 </div>
 
-                <div className="space-y-3 max-h-150 overflow-y-auto">
+                <div className="space-y-3 max-h-150 overflow-y-auto pr-2">
                   {organs.map((organ) => (
-                    <DraggableOrgan
-                      key={organ.id}
-                      organ={organ}
-                      isPlaced={placedOrgans.has(organ.id)}
-                    />
+                    <div key={organ.id} data-draggable-id={organ.id}>
+                      <DraggableOrgan
+                        organ={organ}
+                        isPlaced={placedOrgans.has(organ.id)}
+                      />
+                    </div>
                   ))}
                 </div>
               </div>
@@ -611,666 +608,26 @@ export default function FullBodySkeletonGame({
                   </div>
                 </div>
 
-                {/* Detailed Skeleton Background */}
+                {/* Detailed Skeleton SVG Background */}
                 <div className="absolute inset-0 p-8">
-                  <svg
-                    viewBox="0 0 300 450"
+                  <img
+                    src={SkeletonIcon.src || SkeletonIcon}
                     className="w-full h-full opacity-20"
-                  >
-                    {/* Skull - detailed */}
-                    <g id="skull">
-                      <ellipse
-                        cx="150"
-                        cy="32"
-                        rx="38"
-                        ry="42"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="4"
-                      />
-                      {/* Eye sockets */}
-                      <ellipse
-                        cx="138"
-                        cy="28"
-                        rx="8"
-                        ry="10"
-                        fill="#1F2937"
-                        opacity="0.3"
-                      />
-                      <ellipse
-                        cx="162"
-                        cy="28"
-                        rx="8"
-                        ry="10"
-                        fill="#1F2937"
-                        opacity="0.3"
-                      />
-                      {/* Nasal cavity */}
-                      <path
-                        d="M 145 38 L 150 45 L 155 38 Z"
-                        fill="#1F2937"
-                        opacity="0.3"
-                      />
-                      {/* Jaw */}
-                      <path
-                        d="M 118 48 Q 150 65 182 48"
-                        stroke="#1F2937"
-                        strokeWidth="4"
-                        fill="none"
-                      />
-                      <ellipse
-                        cx="150"
-                        cy="52"
-                        rx="32"
-                        ry="18"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                      />
-                      {/* Teeth indication */}
-                      <line
-                        x1="135"
-                        y1="60"
-                        x2="135"
-                        y2="65"
-                        stroke="#1F2937"
-                        strokeWidth="2"
-                      />
-                      <line
-                        x1="145"
-                        y1="60"
-                        x2="145"
-                        y2="65"
-                        stroke="#1F2937"
-                        strokeWidth="2"
-                      />
-                      <line
-                        x1="155"
-                        y1="60"
-                        x2="155"
-                        y2="65"
-                        stroke="#1F2937"
-                        strokeWidth="2"
-                      />
-                      <line
-                        x1="165"
-                        y1="60"
-                        x2="165"
-                        y2="65"
-                        stroke="#1F2937"
-                        strokeWidth="2"
-                      />
-                    </g>
+                    alt="Skeleton Background"
+                  />
+                </div>
 
-                    {/* Cervical Spine (Neck) */}
-                    <g id="cervical-spine">
-                      <rect
-                        x="147"
-                        y="70"
-                        width="6"
-                        height="8"
-                        rx="2"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="2.5"
-                      />
-                      <rect
-                        x="147"
-                        y="80"
-                        width="6"
-                        height="8"
-                        rx="2"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="2.5"
-                      />
-                    </g>
-
-                    {/* Clavicles (Collar bones) */}
-                    <g id="clavicles">
-                      <path
-                        d="M 150 90 Q 130 88 110 95"
-                        stroke="#1F2937"
-                        strokeWidth="4"
-                        fill="none"
-                        strokeLinecap="round"
-                      />
-                      <path
-                        d="M 150 90 Q 170 88 190 95"
-                        stroke="#1F2937"
-                        strokeWidth="4"
-                        fill="none"
-                        strokeLinecap="round"
-                      />
-                    </g>
-
-                    {/* Scapulae (Shoulder blades) */}
-                    <g id="scapulae">
-                      <ellipse
-                        cx="110"
-                        cy="105"
-                        rx="12"
-                        ry="18"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                        opacity="0.6"
-                      />
-                      <ellipse
-                        cx="190"
-                        cy="105"
-                        rx="12"
-                        ry="18"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                        opacity="0.6"
-                      />
-                    </g>
-
-                    {/* Sternum (Breastbone) */}
-                    <g id="sternum">
-                      <rect
-                        x="147"
-                        y="95"
-                        width="6"
-                        height="65"
-                        rx="3"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                      />
-                      <circle
-                        cx="150"
-                        cy="95"
-                        r="5"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="2"
-                      />
-                    </g>
-
-                    {/* Ribcage - detailed with multiple ribs */}
-                    <g id="ribcage">
-                      {/* Right ribs */}
-                      <path
-                        d="M 153 100 Q 185 105 195 120 Q 195 125 185 130 Q 175 133 153 135"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                        fill="none"
-                      />
-                      <path
-                        d="M 153 110 Q 190 115 200 130 Q 200 135 190 140 Q 180 143 153 145"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                        fill="none"
-                      />
-                      <path
-                        d="M 153 120 Q 195 125 205 140 Q 205 145 195 150 Q 185 153 153 155"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                        fill="none"
-                      />
-                      <path
-                        d="M 153 130 Q 192 135 200 148 Q 200 153 192 158 Q 182 160 153 160"
-                        stroke="#1F2937"
-                        strokeWidth="2.5"
-                        fill="none"
-                      />
-
-                      {/* Left ribs */}
-                      <path
-                        d="M 147 100 Q 115 105 105 120 Q 105 125 115 130 Q 125 133 147 135"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                        fill="none"
-                      />
-                      <path
-                        d="M 147 110 Q 110 115 100 130 Q 100 135 110 140 Q 120 143 147 145"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                        fill="none"
-                      />
-                      <path
-                        d="M 147 120 Q 105 125 95 140 Q 95 145 105 150 Q 115 153 147 155"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                        fill="none"
-                      />
-                      <path
-                        d="M 147 130 Q 108 135 100 148 Q 100 153 108 158 Q 118 160 147 160"
-                        stroke="#1F2937"
-                        strokeWidth="2.5"
-                        fill="none"
-                      />
-                    </g>
-
-                    {/* Thoracic Spine */}
-                    <g id="thoracic-spine">
-                      <rect
-                        x="147"
-                        y="95"
-                        width="6"
-                        height="70"
-                        rx="3"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="2"
-                      />
-                      {/* Vertebrae bumps */}
-                      <circle
-                        cx="150"
-                        cy="100"
-                        r="3"
-                        fill="#1F2937"
-                        opacity="0.3"
-                      />
-                      <circle
-                        cx="150"
-                        cy="115"
-                        r="3"
-                        fill="#1F2937"
-                        opacity="0.3"
-                      />
-                      <circle
-                        cx="150"
-                        cy="130"
-                        r="3"
-                        fill="#1F2937"
-                        opacity="0.3"
-                      />
-                      <circle
-                        cx="150"
-                        cy="145"
-                        r="3"
-                        fill="#1F2937"
-                        opacity="0.3"
-                      />
-                      <circle
-                        cx="150"
-                        cy="160"
-                        r="3"
-                        fill="#1F2937"
-                        opacity="0.3"
-                      />
-                    </g>
-
-                    {/* Lumbar Spine */}
-                    <g id="lumbar-spine">
-                      <rect
-                        x="146"
-                        y="165"
-                        width="8"
-                        height="50"
-                        rx="4"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="2.5"
-                      />
-                      <circle
-                        cx="150"
-                        cy="175"
-                        r="3"
-                        fill="#1F2937"
-                        opacity="0.3"
-                      />
-                      <circle
-                        cx="150"
-                        cy="190"
-                        r="3"
-                        fill="#1F2937"
-                        opacity="0.3"
-                      />
-                      <circle
-                        cx="150"
-                        cy="205"
-                        r="3"
-                        fill="#1F2937"
-                        opacity="0.3"
-                      />
-                    </g>
-
-                    {/* Pelvis - detailed */}
-                    <g id="pelvis">
-                      <ellipse
-                        cx="150"
-                        cy="235"
-                        rx="55"
-                        ry="30"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="4"
-                      />
-                      <path
-                        d="M 95 235 Q 95 250 110 255"
-                        stroke="#1F2937"
-                        strokeWidth="4"
-                        fill="none"
-                      />
-                      <path
-                        d="M 205 235 Q 205 250 190 255"
-                        stroke="#1F2937"
-                        strokeWidth="4"
-                        fill="none"
-                      />
-                      <circle
-                        cx="120"
-                        cy="245"
-                        r="8"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                      />
-                      <circle
-                        cx="180"
-                        cy="245"
-                        r="8"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                      />
-                      <path
-                        d="M 140 255 L 160 255"
-                        stroke="#1F2937"
-                        strokeWidth="4"
-                      />
-                    </g>
-
-                    {/* Arms - Humerus (upper arm) */}
-                    <g id="arms">
-                      <line
-                        x1="110"
-                        y1="100"
-                        x2="75"
-                        y2="175"
-                        stroke="#1F2937"
-                        strokeWidth="5"
-                        strokeLinecap="round"
-                      />
-                      <line
-                        x1="190"
-                        y1="100"
-                        x2="225"
-                        y2="175"
-                        stroke="#1F2937"
-                        strokeWidth="5"
-                        strokeLinecap="round"
-                      />
-                      <circle
-                        cx="110"
-                        cy="100"
-                        r="6"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                      />
-                      <circle
-                        cx="190"
-                        cy="100"
-                        r="6"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                      />
-
-                      {/* Elbow joints */}
-                      <circle
-                        cx="75"
-                        cy="175"
-                        r="5"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                      />
-                      <circle
-                        cx="225"
-                        cy="175"
-                        r="5"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                      />
-
-                      {/* Radius and Ulna (forearm) */}
-                      <line
-                        x1="75"
-                        y1="175"
-                        x2="55"
-                        y2="240"
-                        stroke="#1F2937"
-                        strokeWidth="4"
-                        strokeLinecap="round"
-                      />
-                      <line
-                        x1="77"
-                        y1="175"
-                        x2="60"
-                        y2="240"
-                        stroke="#1F2937"
-                        strokeWidth="3.5"
-                        strokeLinecap="round"
-                        opacity="0.6"
-                      />
-                      <line
-                        x1="225"
-                        y1="175"
-                        x2="245"
-                        y2="240"
-                        stroke="#1F2937"
-                        strokeWidth="4"
-                        strokeLinecap="round"
-                      />
-                      <line
-                        x1="223"
-                        y1="175"
-                        x2="240"
-                        y2="240"
-                        stroke="#1F2937"
-                        strokeWidth="3.5"
-                        strokeLinecap="round"
-                        opacity="0.6"
-                      />
-
-                      {/* Hands */}
-                      <ellipse
-                        cx="57"
-                        cy="250"
-                        rx="8"
-                        ry="12"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                      />
-                      <ellipse
-                        cx="243"
-                        cy="250"
-                        rx="8"
-                        ry="12"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                      />
-                    </g>
-
-                    {/* Legs - Femur (thigh bone) */}
-                    <g id="legs">
-                      <line
-                        x1="120"
-                        y1="255"
-                        x2="115"
-                        y2="330"
-                        stroke="#1F2937"
-                        strokeWidth="6"
-                        strokeLinecap="round"
-                      />
-                      <line
-                        x1="180"
-                        y1="255"
-                        x2="185"
-                        y2="330"
-                        stroke="#1F2937"
-                        strokeWidth="6"
-                        strokeLinecap="round"
-                      />
-
-                      {/* Knee joints - patella */}
-                      <circle
-                        cx="115"
-                        cy="330"
-                        r="8"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                      />
-                      <circle
-                        cx="185"
-                        cy="330"
-                        r="8"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                      />
-
-                      {/* Tibia and Fibula (shin) */}
-                      <line
-                        x1="115"
-                        y1="335"
-                        x2="110"
-                        y2="410"
-                        stroke="#1F2937"
-                        strokeWidth="5"
-                        strokeLinecap="round"
-                      />
-                      <line
-                        x1="117"
-                        y1="335"
-                        x2="115"
-                        y2="410"
-                        stroke="#1F2937"
-                        strokeWidth="4"
-                        strokeLinecap="round"
-                        opacity="0.6"
-                      />
-                      <line
-                        x1="185"
-                        y1="335"
-                        x2="190"
-                        y2="410"
-                        stroke="#1F2937"
-                        strokeWidth="5"
-                        strokeLinecap="round"
-                      />
-                      <line
-                        x1="183"
-                        y1="335"
-                        x2="185"
-                        y2="410"
-                        stroke="#1F2937"
-                        strokeWidth="4"
-                        strokeLinecap="round"
-                        opacity="0.6"
-                      />
-
-                      {/* Feet */}
-                      <ellipse
-                        cx="110"
-                        cy="425"
-                        rx="12"
-                        ry="8"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                      />
-                      <ellipse
-                        cx="190"
-                        cy="425"
-                        rx="12"
-                        ry="8"
-                        fill="none"
-                        stroke="#1F2937"
-                        strokeWidth="3"
-                      />
-                    </g>
-                  </svg>
-
-                  {/* Drop Zones */}
-                  {organs.map((organ) => (
+                {/* Drop Zones - With data attributes for easier detection */}
+                {organs.map((organ) => (
+                  <div key={`zone-${organ.id}`} data-droppable-id={organ.id}>
                     <OrganDropZone
-                      key={`zone-${organ.id}`}
                       organ={organ}
                       activeId={activeId}
                       placedOrgans={placedOrgans}
                       setSelectedInfo={setSelectedInfo}
                     />
-                  ))}
-                </div>
-
-                {/* Celebration Overlay */}
-                {showCelebration && (
-                  <div
-                    className="absolute inset-0 flex flex-col items-center justify-center z-20 backdrop-blur-md"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, rgba(99, 102, 241, 0.97), rgba(139, 92, 246, 0.97), rgba(236, 72, 153, 0.97))",
-                    }}
-                  >
-                    {/* Animated trophy */}
-                    <div className="relative mb-8">
-                      <div>
-                        <Trophy size={120} color="#fbbf24" fill="#fbbf24" />
-                      </div>
-                      {/* Glow effect */}
-                      <div className="absolute inset-0 bg-yellow-400 rounded-full blur-3xl" />
-                    </div>
-
-                    <h2
-                      className="text-6xl font-bold mb-4 text-white"
-                      style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-                    >
-                      Гайхалтай!
-                    </h2>
-
-                    <p className="text-2xl mb-8 text-white">
-                      Та бүх эрхтнийг зөв байрлууллаа!
-                    </p>
-
-                    <div className="bg-white/25 backdrop-blur-xl rounded-3xl px-14 py-8 mb-8 border-4 border-white/30 shadow-2xl">
-                      <div className="flex items-center gap-6">
-                        <div>
-                          <Clock size={56} color="white" strokeWidth={2.5} />
-                        </div>
-                        <div>
-                          <p className="text-white/90 text-base mb-2">
-                            Таны хугацаа
-                          </p>
-                          <p className="text-6xl font-bold text-white font-mono">
-                            {formatTime(elapsedTime)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-8">
-                      <div className="text-center">
-                        <p className="text-white/80 text-sm mb-1">Алдаа</p>
-                        <p className="text-3xl font-bold text-white">
-                          {incorrectAttempts}
-                        </p>
-                      </div>
-                      <div className="w-px h-12 bg-white/30" />
-                      <div className="text-center">
-                        <p className="text-white/80 text-sm mb-1">Амжилт</p>
-                        <p className="text-3xl font-bold text-white">
-                          {Math.round(
-                            (totalCount / (totalCount + incorrectAttempts)) *
-                              100,
-                          )}
-                          %
-                        </p>
-                      </div>
-                    </div>
                   </div>
-                )}
+                ))}
               </div>
             </div>
           </div>
@@ -1279,7 +636,7 @@ export default function FullBodySkeletonGame({
         {/* Floating Feedback */}
         {showFeedback && (
           <div
-            className={`fixed top-32 right-6 px-8 py-5 rounded-2xl shadow-2xl border-4 z-40 ${
+            className={`fixed top-32 right-6 px-8 py-5 rounded-2xl shadow-2xl border-4 z-40 animate-in slide-in-from-right-5 ${
               showFeedback.correct
                 ? "bg-linear-to-r from-green-400 to-emerald-500 border-green-600"
                 : "bg-linear-to-r from-orange-400 to-red-500 border-orange-600"
@@ -1302,7 +659,7 @@ export default function FullBodySkeletonGame({
             onClick={() => setSelectedInfo(null)}
           >
             <div
-              className="bg-white rounded-3xl p-8 max-w-md shadow-2xl"
+              className="bg-white rounded-3xl p-8 max-w-md shadow-2xl animate-in zoom-in-95"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-center mb-6">
@@ -1325,7 +682,7 @@ export default function FullBodySkeletonGame({
               </p>
               <button
                 onClick={() => setSelectedInfo(null)}
-                className="w-full py-3 bg-linear-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-bold"
+                className="w-full py-3 bg-linear-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-bold hover:opacity-90 transition-all"
               >
                 Ойлголоо
               </button>
@@ -1335,7 +692,7 @@ export default function FullBodySkeletonGame({
       </div>
       <DragOverlay modifiers={[restrictToWindowEdges]}>
         {activeId ? (
-          <div className="bg-white rounded-2xl p-3 shadow-2xl border-4 border-indigo-400 relative overflow-hidden opacity-80">
+          <div className="bg-white rounded-2xl p-3 shadow-2xl border-4 border-indigo-400 relative overflow-hidden opacity-90 rotate-3 scale-105">
             <div className="relative z-10 flex justify-center mb-2">
               <OrganSVG
                 type={organs.find((o) => o.id === activeId)?.type || "brain"}
