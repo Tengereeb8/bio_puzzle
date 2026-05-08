@@ -1,3 +1,4 @@
+/** Хуучин статик жагсаалт — DB `curriculum_lesson` (chapterId=heart) болон `prisma/data/heartLessons.json`. */
 import { Question } from "../teeth-game/types";
 
 export interface LessonNode {

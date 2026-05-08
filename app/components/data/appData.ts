@@ -1,3 +1,8 @@
+/**
+ * Анхны статик seed. Одоо backend (`/curriculum/bootstrap`, Prisma `AppContent`)
+ * болон seed JSON-тэй синхрон ажиллана. UI-д `useCurriculum()` ашиглана; энэ файлыг
+ * зөвхөн fallback / документлалд үлдээсэн (устгахгүй түр хавсаргасан хуучин хувилбар).
+ */
 // ─── Chapters ────────────────────────────────────────────────────────────────
 
 export const chapters = [

@@ -14,7 +14,7 @@ import ToothSVG, { BodyPartIcon } from "./ToothSVG";
 
 interface LessonNode {
   id: string;
-  type: "lesson" | "quiz" | "game" | "story" | "practice";
+  type: string;
   title: string;
   titleMn: string;
   isUnlocked: boolean;
@@ -180,7 +180,8 @@ export default function LessonRoadmapScreen({
 
           <div className="relative z-10 space-y-12">
             {lessons.map((lesson, index) => {
-              const TypeIcon = TYPE_ICONS[lesson.type];
+              const TypeIcon =
+                TYPE_ICONS[lesson.type as keyof typeof TYPE_ICONS] ?? BookOpen;
               const left = index % 2 === 0;
 
               return (

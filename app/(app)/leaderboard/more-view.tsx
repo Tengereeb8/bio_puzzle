@@ -1,21 +1,39 @@
 "use client";
 
-import {
-  BASE_LEADERBOARD,
-  BASE_USER_PROFILE,
-} from "@/app/components/data/appData";
-import { useProgress } from "@/app/components/context/ProgressContext";
 import LeaderboardScreen from "@/app/components/Leaderboard";
+import { useCurriculum } from "@/app/components/context/CurriculumContext";
+import { BASE_LEADERBOARD } from "@/app/components/data/appData";
+
+type LbEntry = {
+  rank: number;
+  name: string;
+  nameMn: string;
+  points: number;
+  isCurrentUser?: boolean;
+  [key: string]: unknown;
+};
+
+function normalizeLb(entries: unknown): LbEntry[] {
+  if (!Array.isArray(entries) || entries.length === 0) {
+    return BASE_LEADERBOARD as LbEntry[];
+  }
+  return entries as LbEntry[];
+}
 
 export default function MoreView() {
-  const { userPoints } = useProgress();
+  const { leaderboard } = useCurriculum();
+  const source = normalizeLb(leaderboard);
 
-  const leaderboardData = BASE_LEADERBOARD.map((entry: any) => ({
+  const leaderboardData = source.map((entry) => ({
     ...entry,
-
-    time: entry.time ?? (entry.isCurrentUser ? 0 : undefined),
-    date: (entry as any).date ?? new Date().toISOString(),
-    userId: (entry as any).userId ?? (entry as any).id ?? entry.name,
+    time:
+      (entry as { time?: number }).time ??
+      Math.max(30, 420 - (entry.points ?? 0) / 5),
+    date:
+      (entry as { date?: string }).date ?? new Date().toISOString(),
+    userId: entry.isCurrentUser
+      ? "current-user"
+      : `player-${entry.rank}`,
     userName: entry.name,
     userNameMn: entry.nameMn,
   }));
@@ -23,7 +41,7 @@ export default function MoreView() {
   return (
     <LeaderboardScreen
       gameTimes={leaderboardData}
-      currentUserId="some-user-id"
+      currentUserId="current-user"
     />
   );
 }
