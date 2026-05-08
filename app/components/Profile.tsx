@@ -104,7 +104,7 @@ export default function ProfileScreen({
     <div className="min-h-screen bg-[#fcf9f4] pb-24 font-sans">
       <div className="bg-[#fff4ea] border-b px-6 py-6">
         <div className="flex items-center gap-4">
-          <div className="relative flex-shrink-0">
+          <div className="relative shrink-0">
             <div className="bg-amber-400 rounded-3xl p-3 shadow-inner">
               <CharacterAvatar {...character} size={85} />
             </div>
@@ -131,14 +131,14 @@ export default function ProfileScreen({
       </div>
 
       <div className="px-6 py-4">
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           <div className="bg-white rounded-2xl p-4 text-center border border-gray-100 shadow-sm">
             <Flame size={24} color="#F97316" className="mx-auto mb-2" />
             <div className="font-black text-gray-900 text-xl">
               {userProfile.streak}
             </div>
             <div className="text-gray-500 text-[10px] font-bold uppercase">
-              Цуврал
+              Streak
             </div>
           </div>
 
@@ -158,17 +158,7 @@ export default function ProfileScreen({
               {userProfile.bestTime ? formatTime(userProfile.bestTime) : "--"}
             </div>
             <div className="text-gray-500 text-[10px] font-bold uppercase">
-              Шилдэг
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl p-4 text-center border border-gray-100 shadow-sm">
-            <Target size={24} color="#A855F7" className="mx-auto mb-2" />
-            <div className="font-black text-gray-900 text-xl">
-              {userProfile.totalGames || 0}
-            </div>
-            <div className="text-gray-500 text-[10px] font-bold uppercase">
-              Тоглоом
+              Шилдэг цаг
             </div>
           </div>
         </div>
@@ -284,7 +274,7 @@ export default function ProfileScreen({
 
               <button
                 onClick={handleSaveCharacter}
-                className="w-full py-4 bg-green-500 text-white rounded-2xl font-black shadow-[0_5px_0_0_#16a34a] hover:mt-[2px] hover:shadow-[0_3px_0_0_#16a34a] transition-all flex items-center justify-center gap-2 active:shadow-none active:mt-[5px]"
+                className="w-full py-4 bg-green-500 text-white rounded-2xl font-black shadow-[0_5px_0_0_#16a34a] hover:mt-0.5 hover:shadow-[0_3px_0_0_#16a34a] transition-all flex items-center justify-center gap-2 active:shadow-none active:mt-1.25"
               >
                 <Check size={20} strokeWidth={3} /> ХАДГАЛАХ
               </button>
