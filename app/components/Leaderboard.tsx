@@ -101,7 +101,6 @@ export default function LeaderboardScreen({
 
   return (
     <div className="min-h-screen bg-linear-to-b from-yellow-50 via-orange-50 to-red-50 pb-24 ">
-      {/* Header */}
       <div className="bg-linear-to-br from-yellow-500 via-orange-500 to-red-500 text-white px-6 pt-8 pb-20 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl" />
@@ -223,7 +222,6 @@ export default function LeaderboardScreen({
         </div>
       )}
 
-      {/* Full Leaderboard */}
       <div className="px-6">
         <div className="flex items-center gap-2 mb-4">
           <Zap size={20} color="#F59E0B" fill="#F59E0B" />
