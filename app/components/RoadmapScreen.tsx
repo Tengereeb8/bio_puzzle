@@ -39,25 +39,16 @@ export default function RoadmapScreen({
     <div className="min-h-full overflow-auto relative bg-orange-50">
       <div className="relative bg-[#fa8e1b] text-white px-6 pt-6 pb-10 rounded-b-full">
         <div className="max-w-2xl  mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-between mb-6"
-          >
+          <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-3xl mb-1 font-game-black">
                 Бие Махбодын Аялал
               </h1>
               <p className="text-purple-100 text-sm">Өөрийнхөө биеийг судал!</p>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="flex justify-center items-center-safe gap-15"
-          >
+          <div className="flex justify-center items-center-safe gap-15">
             {[
               {
                 icon: <Sparkles size={23} className="text-yellow-300" />,
@@ -76,7 +67,7 @@ export default function RoadmapScreen({
                 <p className="text-xs opacity-90">{label}</p>
               </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </div>
 
@@ -112,30 +103,16 @@ export default function RoadmapScreen({
 
           <div className="relative z-10 space-y-16 pt-8">
             {chapters.map((chapter, index) => (
-              <motion.div
-                key={chapter.id}
-                className="relative"
-                initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{
-                  delay: index * 0.15,
-                  type: "spring",
-                  stiffness: 100,
-                }}
-              >
+              <div key={chapter.id} className="relative">
                 <div
                   className={`flex items-center gap-6 ${index % 2 === 0 ? "flex-row" : "flex-row-reverse"}`}
                 >
-                  <motion.button
+                  <button
                     onClick={() =>
                       chapter.isUnlocked && onChapterClick(chapter.id)
                     }
                     disabled={!chapter.isUnlocked}
                     className="relative group"
-                    whileHover={
-                      chapter.isUnlocked ? { scale: 1.15, rotate: 5 } : {}
-                    }
-                    whileTap={chapter.isUnlocked ? { scale: 0.95 } : {}}
                   >
                     <div
                       className={`relative w-32 h-32 rounded-full flex flex-col items-center justify-center shadow-2xl border-4 ${
@@ -164,18 +141,9 @@ export default function RoadmapScreen({
                       )}
 
                       {chapter.isCompleted && (
-                        <motion.div
-                          className="absolute -top-3 -right-3 bg-green-500 rounded-full p-2 shadow-xl border-4 border-white"
-                          initial={{ scale: 0, rotate: -180 }}
-                          animate={{ scale: 1, rotate: 0 }}
-                          transition={{
-                            type: "spring",
-                            stiffness: 500,
-                            delay: 0.3,
-                          }}
-                        >
+                        <div className="absolute -top-3 -right-3 bg-green-500 rounded-full p-2 shadow-xl border-4 border-white">
                           <CheckCircle size={28} color="white" fill="#22c55e" />
-                        </motion.div>
+                        </div>
                       )}
 
                       {chapter.isUnlocked &&
@@ -187,7 +155,7 @@ export default function RoadmapScreen({
                           ></svg>
                         )}
                     </div>
-                  </motion.button>
+                  </button>
 
                   <motion.div
                     className={`flex-1 bg-white rounded-2xl p-5 shadow-xl border-2 border-gray-100 game-card ${
@@ -251,7 +219,7 @@ export default function RoadmapScreen({
                     )}
                   </motion.div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

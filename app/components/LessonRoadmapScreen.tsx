@@ -132,20 +132,6 @@ export default function LessonRoadmapScreen({
               <p className="text-sm text-gray-600">{chapterTitle}</p>
             </div>
           </div>
-
-          <div className="text-right">
-            <p className="text-xs text-gray-500">Явц</p>
-            <div className="flex items-center gap-1">
-              {[...Array(3)].map((_, i) => (
-                <Star
-                  key={i}
-                  size={16}
-                  fill={i < 2 ? "#FFB800" : "none"}
-                  color="#FFB800"
-                />
-              ))}
-            </div>
-          </div>
         </div>
       </div>
 
@@ -166,7 +152,23 @@ export default function LessonRoadmapScreen({
               </linearGradient>
             </defs>
             <motion.path
-              d="M 48 0 Q 24 40 48 80 Q 72 120 48 160 Q 24 200 48 240 Q 72 280 48 320 Q 24 360 48 400 Q 72 440 48 480 Q 24 520 48 560 Q 72 600 48 640 Q 24 680 48 720 Q 72 760 48 800 Q 24 840 48 880 Q 72 920 48 960 Q 24 1000 48 1040"
+              d="M 48 0 
+     Q 24 40 48 80 Q 72 120 48 160 
+     Q 24 200 48 240 Q 72 280 48 320 
+     Q 24 360 48 400 Q 72 440 48 480 
+     Q 24 520 48 560 Q 72 600 48 640 
+     Q 24 680 48 720 Q 72 760 48 800 
+     Q 24 840 48 880 Q 72 920 48 960 
+     Q 24 1000 48 1040 Q 72 1080 48 1120
+     Q 24 1160 48 1200 Q 72 1240 48 1280
+     Q 24 1320 48 1360 Q 72 1400 48 1440
+     Q 24 1480 48 1520 Q 72 1560 48 1600
+     Q 24 1640 48 1680 Q 72 1720 48 1760
+     Q 24 1800 48 1840 Q 72 1880 48 1920
+     Q 24 1960 48 2000 Q 72 2040 48 2080
+     Q 24 2120 48 2160 Q 72 2300 48 2240
+     Q 24 2380 48 2300 Q 72 2460 48 2360
+     Q 24 2520 48 2420 Q 72 2600 48 2500"
               stroke="url(#lessonPath)"
               strokeWidth="12"
               fill="none"
@@ -291,19 +293,8 @@ export default function LessonRoadmapScreen({
                       <p className="text-xs text-gray-500 mb-2">
                         {lesson.title}
                       </p>
-
                       {lesson.isUnlocked ? (
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1">
-                            {[...Array(lesson.maxStars)].map((_, i) => (
-                              <Star
-                                key={i}
-                                size={14}
-                                fill={i < lesson.stars ? "#FFB800" : "none"}
-                                color={i < lesson.stars ? "#FFB800" : "#D1D5DB"}
-                              />
-                            ))}
-                          </div>
                           <span
                             className="text-xs font-semibold"
                             style={{

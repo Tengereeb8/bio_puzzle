@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import type { Question } from "./types";
+import { Heart } from "lucide-react";
 
 export default function QuizScreen({
   questions,
@@ -76,7 +77,10 @@ export default function QuizScreen({
           </span>
         </div>
         <div className="bg-yellow-100 px-3 py-1 rounded-full">
-          <span className="text-sm font-black text-yellow-600">⭐ {score}</span>
+          <span className="text-base font-black text-yellow-600 flex gap-1">
+            <Heart className="size-5" />
+            {score}
+          </span>
         </div>
       </div>
 
