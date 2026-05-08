@@ -35,7 +35,7 @@ function Draggable({
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      className={`flex-shrink-0 bg-white border-2 border-blue-200 rounded-2xl shadow-sm flex flex-col items-center justify-center w-20 h-20 touch-none ${
+      className={`shrink-0 bg-white border-2 border-blue-200 rounded-2xl shadow-sm flex flex-col items-center justify-center w-20 h-20 touch-none ${
         isDragging || isPlaced ? "opacity-20" : "opacity-100"
       }`}
     >

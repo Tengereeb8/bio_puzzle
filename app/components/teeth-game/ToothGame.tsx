@@ -17,6 +17,8 @@ export default function ToothGame() {
   );
   const [labelKey, setLabelKey] = useState(0);
 
+  const back = useCallback(() => setScreen("home"), []);
+
   const start = useCallback(
     () => setScreen(mode === "quiz" ? "quiz" : "label"),
     [mode],
@@ -47,7 +49,7 @@ export default function ToothGame() {
         />
       )}
       {screen === "quiz" && (
-        <QuizScreen questions={questions} onComplete={quizDone} />
+        <QuizScreen questions={questions} onComplete={quizDone} onBack={back} />
       )}
       {screen === "label" && (
         <LabelScreen key={labelKey} parts={labelParts} onComplete={labelDone} />

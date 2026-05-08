@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button } from "@/app/ui/button";
-import { Input } from "@/app/ui/input";
 import { useAuthContext } from "@/lib/auth-context";
 import { API_URL } from "@/lib/api-url";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     setPending(true);
@@ -81,7 +81,9 @@ export default function RegisterPage() {
           <div className="space-y-1.5">
             <label htmlFor="reg-password" className="text-sm font-medium">
               Нууц үг{" "}
-              <span className="text-muted-foreground font-normal">(хамгийн багадаа 8 тэмдэгт)</span>
+              <span className="text-muted-foreground font-normal">
+                (хамгийн багадаа 8 тэмдэгт)
+              </span>
             </label>
             <Input
               id="reg-password"
@@ -108,7 +110,10 @@ export default function RegisterPage() {
 
         <p className="text-center text-sm text-muted-foreground mt-5">
           Аль хэдийн бүртгэлтэй?{" "}
-          <Link href="/login" className="text-primary font-medium underline underline-offset-2">
+          <Link
+            href="/login"
+            className="text-primary font-medium underline underline-offset-2"
+          >
             Нэвтрэх
           </Link>
         </p>

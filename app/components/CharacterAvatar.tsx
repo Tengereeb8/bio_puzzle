@@ -71,7 +71,7 @@ export default function CharacterAvatar({
 
       {/* Дагалдах хэрэгслүүд */}
       {accessory === "headphones" && (
-        <g stroke="#333" strokeWidth="4" fill="none">
+        <g stroke="#333" strokeWidth="5" fill="none">
           <path d="M 28 40 Q 28 15 50 15 Q 72 15 72 40" />
           <rect
             x="22"
@@ -95,28 +95,42 @@ export default function CharacterAvatar({
       )}
       {accessory === "scarf" && (
         <path
-          d="M 35 62 Q 50 70 65 62 L 68 75 Q 50 82 32 75 Z"
+          d="M 35 59 Q 54 67 67 59 L 68 72 Q 54 82 32 72 Z"
           fill="#E53E3E"
         />
       )}
       {accessory === "glasses" && (
         <g stroke="#2D3748" strokeWidth="2" fill="none">
-          <circle cx="42" cy="38" r="7" />
-          <circle cx="58" cy="38" r="7" />
-          <line x1="49" y1="38" x2="51" y2="38" />
+          <circle cx="42" cy="38" r="8.5" />
+          <circle cx="58" cy="38" r="8.5" />
+          <line x1="29" y1="38" x2="35" y2="34" />
+          <line x1="71" y1="38" x2="65" y2="34" />
         </g>
       )}
       {accessory === "hat" && (
-        <g transform="translate(0, -5)">
+        <g transform="translate(0, 4)">
           <path d="M 25 25 L 75 25 L 70 12 L 30 12 Z" fill="#2D3748" />
           <rect x="20" y="22" width="60" height="4" rx="1" fill="#1A202C" />
         </g>
       )}
       {accessory === "bow" && (
-        <g transform="translate(70, 25)" fill="#F687B3">
-          <circle r="4" />
-          <path d="M -7 -4 L -2 0 L -7 4 Z" />
-          <path d="M 7 -4 L 2 0 L 7 4 Z" />
+        <g transform="translate(65, 26) rotate(32) scale(0.8)" fill="#F687B3">
+          <path d="M -2 -1 C -10 -8, -18 -5, -18 4 C -18 10, -10 7, -2 1" />
+          <path d="M 2 -1 C 10 -8, 18 -5, 18 4 C 18 10, 10 7, 2 1" />
+
+          <path d="M -3 3 L -8 12 L -2 10 Z" opacity="0.7" />
+          <path d="M 3 3 L 8 12 L 2 10 Z" opacity="0.7" />
+
+          <rect
+            x="-3"
+            y="-3"
+            width="6"
+            height="6"
+            rx="3"
+            fill="#F687B3"
+            stroke="#FFF"
+            strokeWidth="0.5"
+          />
         </g>
       )}
     </motion.svg>

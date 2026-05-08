@@ -68,6 +68,7 @@ export default function LessonView({
         key={lesson.id}
         questions={allQuestions}
         onComplete={handleQuizComplete}
+        onBack={() => router.push(backHref)}
       />
     </div>
   );

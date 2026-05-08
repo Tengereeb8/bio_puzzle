@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button } from "@/app/ui/button";
-import { Input } from "@/app/ui/input";
 import { useAuthContext } from "@/lib/auth-context";
 import { API_URL } from "@/lib/api-url";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     setPending(true);
@@ -28,7 +28,14 @@ export default function LoginPage() {
       });
       const data = (await res.json()) as {
         token?: string;
-        user?: { id: string; email: string; username: string; streak: number; age: number | null; createdAt: string };
+        user?: {
+          id: string;
+          email: string;
+          username: string;
+          streak: number;
+          age: number | null;
+          createdAt: string;
+        };
         error?: string;
       };
 
@@ -100,7 +107,10 @@ export default function LoginPage() {
 
         <p className="text-center text-sm text-muted-foreground mt-5">
           Бүртгэл байхгүй юу?{" "}
-          <Link href="/register" className="text-primary font-medium underline underline-offset-2">
+          <Link
+            href="/register"
+            className="text-primary font-medium underline underline-offset-2"
+          >
             Бүртгүүлэх
           </Link>
         </p>

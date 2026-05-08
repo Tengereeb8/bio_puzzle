@@ -29,7 +29,7 @@ export default function RoadmapScreen({
   const completedCount = chapters.filter((c) => c.isCompleted).length;
 
   return (
-    <div className="min-h-full overflow-auto relative bg-orange-50">
+    <div className="min-h-full relative bg-orange-50">
       <div className="relative bg-[#fa8e1b] text-white px-6 pt-6 pb-10 rounded-b-full">
         <div className="max-w-2xl  mx-auto">
           <div className="flex items-center justify-between mb-6">
@@ -94,7 +94,7 @@ export default function RoadmapScreen({
             />
           </svg>
 
-          <div className="relative z-10 space-y-16 pt-8">
+          <div className="relative z-10 space-y-16 pt-12 px-33">
             {chapters.map((chapter, index) => (
               <div key={chapter.id} className="relative">
                 <div
@@ -151,73 +151,11 @@ export default function RoadmapScreen({
                         chapter.progress > 0 && (
                           <svg
                             className="absolute inset-0 w-full h-full -rotate-90"
-                            style={{ overflow: "visible" }}
+                            // style={{ overflow: "visible" }}
                           ></svg>
                         )}
                     </div>
                   </button>
-
-                  <motion.div
-                    className={`flex-1 bg-white rounded-2xl p-5 shadow-xl border-2 border-gray-100 game-card ${
-                      !chapter.isUnlocked && "opacity-60"
-                    } ${index % 2 === 0 ? "text-left" : "text-right"}`}
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div className={index % 2 === 0 ? "" : "order-2"}>
-                        <h3
-                          className={`text-xl mb-1 font-game-bold ${chapter.isUnlocked ? "text-gray-800" : "text-gray-400"}`}
-                        >
-                          {chapter.titleMn}
-                        </h3>
-                        <p className="text-sm text-gray-500">{chapter.title}</p>
-                      </div>
-
-                      {chapter.isUnlocked && (
-                        <div
-                          className={`px-3 py-1 rounded-full text-xs font-bold ${index % 2 === 0 ? "" : "order-1"}`}
-                          style={{
-                            backgroundColor: `${chapter.color}20`,
-                            color: chapter.color,
-                          }}
-                        >
-                          {chapter.completedLessons}/{chapter.totalLessons}
-                        </div>
-                      )}
-                    </div>
-
-                    {chapter.isUnlocked && (
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                            <motion.div
-                              className="h-full rounded-full"
-                              style={{ backgroundColor: chapter.color }}
-                              initial={{ width: 0 }}
-                              animate={{ width: `${chapter.progress}%` }}
-                              transition={{ duration: 1.2, ease: "easeOut" }}
-                            />
-                          </div>
-                          <span className="text-xs font-bold text-gray-600">
-                            {chapter.progress}%
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-500">
-                          {chapter.isCompleted
-                            ? "✓ Дууслаа!"
-                            : chapter.completedLessons > 0
-                              ? "Үргэлжлүүлэх..."
-                              : "Эхлүүлэх"}
-                        </p>
-                      </div>
-                    )}
-
-                    {!chapter.isUnlocked && (
-                      <p className="text-xs text-gray-400 flex items-center gap-1">
-                        <Lock size={12} />
-                        Өмнөх бүлгийг дуусгана уу
-                      </p>
-                    )}
-                  </motion.div>
                 </div>
               </div>
             ))}

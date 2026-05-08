@@ -172,7 +172,7 @@ export default function ProfileScreen({
             exit={{ opacity: 0, y: -20 }}
             className="px-6 mb-6"
           >
-            <div className="bg-white rounded-3xl p-6 shadow-2xl border-2 border-green-100">
+            <div className="bg-white rounded-3xl p-6 shadow-2xl border-2 border-orange-100">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="font-black text-gray-900 uppercase italic text-lg tracking-tight">
                   Дүр засах студи
@@ -185,7 +185,6 @@ export default function ProfileScreen({
                 </button>
               </div>
 
-              {/* Skeleton Style */}
               <div className="mb-5">
                 <p className="text-[11px] font-black text-gray-400 mb-3 uppercase tracking-widest">
                   Гавлын хэлбэр
@@ -195,7 +194,7 @@ export default function ProfileScreen({
                     onClick={() =>
                       setCharacter({ ...character, gender: "boy" })
                     }
-                    className={`flex-1 py-3 rounded-2xl text-xs font-black transition-all border-b-4 ${character.gender === "boy" ? "border-green-600 bg-green-500 text-white" : "border-gray-200 bg-gray-50 text-gray-400"}`}
+                    className={`flex-1 py-3 rounded-2xl text-xs font-black transition-all border-b-4 ${character.gender === "boy" ? "border-orange-600 bg-orange-400 text-white" : "border-gray-200 bg-gray-50 text-gray-400"}`}
                   >
                     ГАВАЛ А
                   </button>
@@ -203,7 +202,7 @@ export default function ProfileScreen({
                     onClick={() =>
                       setCharacter({ ...character, gender: "girl" })
                     }
-                    className={`flex-1 py-3 rounded-2xl text-xs font-black transition-all border-b-4 ${character.gender === "girl" ? "border-green-600 bg-green-500 text-white" : "border-gray-200 bg-gray-50 text-gray-400"}`}
+                    className={`flex-1 py-3 rounded-2xl text-xs font-black transition-all border-b-4 ${character.gender === "girl" ? "border-orange-600 bg-orange-400 text-white" : "border-gray-200 bg-gray-50 text-gray-400"}`}
                   >
                     ГАВАЛ Б
                   </button>
@@ -220,7 +219,7 @@ export default function ProfileScreen({
                     onClick={() =>
                       setCharacter({ ...character, shirtType: "classic" })
                     }
-                    className={`flex-1 py-3 rounded-2xl text-xs font-black border-b-4 ${character.shirtType === "classic" ? "border-green-600 bg-green-500 text-white" : "border-gray-200 bg-gray-50 text-gray-400"}`}
+                    className={`flex-1 py-3 rounded-2xl text-xs font-black border-b-4 ${character.shirtType === "classic" ? "border-amber-600 bg-amber-500 text-white" : "border-gray-200 bg-gray-50 text-gray-400"}`}
                   >
                     ЭНГИЙН
                   </button>
@@ -228,7 +227,7 @@ export default function ProfileScreen({
                     onClick={() =>
                       setCharacter({ ...character, shirtType: "hoodie" })
                     }
-                    className={`flex-1 py-3 rounded-2xl text-xs font-black border-b-4 ${character.shirtType === "hoodie" ? "border-green-600 bg-green-500 text-white" : "border-gray-200 bg-gray-50 text-gray-400"}`}
+                    className={`flex-1 py-3 rounded-2xl text-xs font-black border-b-4 ${character.shirtType === "hoodie" ? "border-orange-600 bg-orange-400 text-white" : "border-gray-200 bg-gray-50 text-gray-400"}`}
                   >
                     ӨРГӨН
                   </button>
@@ -264,7 +263,7 @@ export default function ProfileScreen({
                       onClick={() =>
                         setCharacter({ ...character, accessory: acc })
                       }
-                      className={`py-3 rounded-xl text-xs font-bold transition-all ${character.accessory === acc ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}
+                      className={`py-3 rounded-xl text-xs font-bold transition-all ${character.accessory === acc ? "bg-yellow-800 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}
                     >
                       {accessoryNames[acc]}
                     </button>
@@ -274,7 +273,7 @@ export default function ProfileScreen({
 
               <button
                 onClick={handleSaveCharacter}
-                className="w-full py-4 bg-green-500 text-white rounded-2xl font-black shadow-[0_5px_0_0_#16a34a] hover:mt-0.5 hover:shadow-[0_3px_0_0_#16a34a] transition-all flex items-center justify-center gap-2 active:shadow-none active:mt-1.25"
+                className="w-full py-4 bg-orange-500 border-orange-600 text-white rounded-2xl font-black shadow-[0_5px_0_0_#ea580c] hover:mt-0.5 hover:shadow-[0_3px_0_0_#ea580c] transition-all flex items-center justify-center gap-2 active:shadow-none active:mt-1.25"
               >
                 <Check size={20} strokeWidth={3} /> ХАДГАЛАХ
               </button>
@@ -341,7 +340,7 @@ export default function ProfileScreen({
                         width: `${badge.progress && badge.maxProgress ? (badge.progress / badge.maxProgress) * 100 : 0}%`,
                       }}
                       transition={{ duration: 1, ease: "easeOut" }}
-                      className="h-full bg-green-500 rounded-full"
+                      className="h-full bg-orange-500 rounded-full"
                     />
                   </div>
                 </div>
