@@ -6,6 +6,16 @@ import { useProgress } from "@/app/components/context/ProgressContext";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+const CHAPTER_VISUAL: Record<string, string> = {
+  teeth: "🦷",
+  bones: "🦴",
+  heart: "❤️",
+  muscles: "💪",
+  digestion: "🍽️",
+  brain: "🧠",
+  blood: "🩸",
+};
+
 export default function LessonView({
   chapterId,
   lessonId,
@@ -21,8 +31,10 @@ export default function LessonView({
   const lesson = chapterLessons.find((l) => l.id === lessonId);
   if (!lesson) return null;
 
+  const visual = CHAPTER_VISUAL[chapterId] ?? "🧬";
+
   const allQuestions = chapterLessons.map((l) => ({
-    visual: "🦷" as const,
+    visual,
     text: l.question,
     options: l.options,
     answer: l.correctAnswer,

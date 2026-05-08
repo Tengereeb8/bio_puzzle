@@ -36,9 +36,9 @@ export type CurriculumLesson = {
 export type CurriculumBootstrap = {
   chapters: CurriculumChapter[];
   lessonsByChapter: Record<string, CurriculumLesson[]>;
-  userProfile: Record<string, unknown>;
-  leaderboard: Record<string, unknown>[];
-  teethGameParts: Record<string, unknown>[];
+  userProfile: Record<string, unknown> | null;
+  leaderboard: unknown;
+  teethGameParts: unknown;
 };
 
 /** Next.js сервер компонент, metadata зэргээс дуудах. */
