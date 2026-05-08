@@ -127,57 +127,6 @@ export default function LeaderboardScreen({
         </motion.div>
       </div>
 
-      {/* User Stats Card */}
-      {currentUser && (
-        <div className="px-6 -mt-12 mb-6 relative z-20">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-3xl p-5 shadow-2xl border-2 border-green-200"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-linear-to-br from-green-50 to-green-100 rounded-2xl p-2 border-2 border-green-300 flex items-center justify-center overflow-hidden">
-                {currentUser.character ? (
-                  <CharacterAvatar {...currentUser.character} size={48} />
-                ) : (
-                  <div className="w-full h-full bg-green-200 rounded-xl" />
-                )}
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-gray-700 font-bold text-[16px]">
-                    Таны байрлал
-                  </span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-1.5">
-                    <Trophy size={20} color="#22C55E" />
-                    <span className="text-green-600 font-bold text-[28px]">
-                      #{currentUser.rank}
-                    </span>
-                  </div>
-                  <div className="w-px h-10 bg-gray-200" />
-                  <div className="flex items-center gap-1.5">
-                    <Clock size={20} color="#3B82F6" />
-                    <span className="text-blue-600 font-bold font-mono text-[28px]">
-                      {formatTime(currentUser.time)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="text-right bg-linear-to-br from-purple-50 to-purple-100 rounded-xl px-4 py-3 border-2 border-purple-200">
-                <div className="text-purple-600 text-xs mb-1 font-bold">
-                  Тоглогчид
-                </div>
-                <div className="text-purple-900 font-bold text-3xl">
-                  {totalPlayers}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      )}
-
       {/* Top 3 Podium */}
       {leaderboardData.length >= 3 && (
         <div className="px-6 mb-6 mt-10">
