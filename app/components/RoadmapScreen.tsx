@@ -31,8 +31,8 @@ export default function RoadmapScreen({
 
   return (
     <div className="min-h-full relative bg-orange-50">
-      <div className="relative bg-[#fa8e1b] text-white px-6 pt-6 pb-10 rounded-b-full">
-        <div className="max-w-2xl  mx-auto">
+      <div className="relative bg-[#fa8e1b] text-white px-6 pt-6 rounded-b-full">
+        <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-3xl mb-1 font-game-black">
