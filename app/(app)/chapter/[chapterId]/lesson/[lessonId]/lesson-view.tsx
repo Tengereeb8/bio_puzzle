@@ -3,6 +3,9 @@
 import QuizScreen from "@/app/components/teeth-game/QuizScreen";
 import { useCurriculum } from "@/app/components/context/CurriculumContext";
 import { useProgress } from "@/app/components/context/ProgressContext";
+import { useAuthContext } from "@/lib/auth-context";
+import { postChapterQuiz } from "@/lib/progress-api";
+import { requestCurriculumReload } from "@/lib/curriculum-reload";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -24,7 +27,8 @@ export default function LessonView({
   lessonId: string;
 }) {
   const router = useRouter();
-  const { addPoints } = useProgress();
+  const { setUserPoints } = useProgress();
+  const { token, refreshUser } = useAuthContext();
   const { lessonsByChapter } = useCurriculum();
   const chapterLessons = lessonsByChapter[chapterId] ?? [];
 
@@ -41,8 +45,20 @@ export default function LessonView({
     fact: l.explanation,
   }));
 
-  function handleQuizComplete(score: number) {
-    addPoints(score * 10);
+  async function handleQuizComplete(score: number) {
+    const totalCount = allQuestions.length;
+    if (token) {
+      const data = await postChapterQuiz(token, {
+        chapterId,
+        correctCount: score,
+        totalCount,
+      });
+      if (data?.user?.totalPoints != null) {
+        setUserPoints(data.user.totalPoints);
+      }
+      await refreshUser();
+      requestCurriculumReload();
+    }
     router.push(`/chapter/${encodeURIComponent(chapterId)}`);
   }
 

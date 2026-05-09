@@ -1,4 +1,4 @@
-import { Award, Flame, Edit3, Clock, Target, Check, X } from "lucide-react";
+import { Award, Flame, Edit3, Clock, Check, X } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import CharacterAvatar from "./CharacterAvatar";
@@ -46,14 +46,15 @@ export default function ProfileScreen({
   const [showCustomization, setShowCustomization] = useState(false);
 
   const [character, setCharacter] = useState<CharacterCustomization>(
-    userProfile.character || {
-      gender: "boy",
-      skinTone: "#FFFFFF",
-      hairColor: "#58CC02",
-      shirtColor: "#4A90E2",
-      shirtType: "classic",
-      accessory: "none",
-    },
+    () =>
+      userProfile.character ?? {
+        gender: "boy",
+        skinTone: "#FFFFFF",
+        hairColor: "#58CC02",
+        shirtColor: "#4A90E2",
+        shirtType: "classic",
+        accessory: "none",
+      },
   );
 
   const shirtColors = [

@@ -24,7 +24,7 @@ export default function ChapterView({ chapterId }: { chapterId: string }) {
     titleMn: l.titleMn,
     isUnlocked: l.isUnlocked,
     isCompleted: l.isCompleted,
-    stars: 0,
+    stars: l.stars ?? 0,
     maxStars: 3,
   }));
 

@@ -1,5 +1,5 @@
 /**
- * Curriculum өгөгдлийг зөвхөн backend API-аас авна (`API_URL` / NEXT_PUBLIC_API_URL).
+ * Curriculum өгөгдлийг backend API-аас авна (`API_URL` / NEXT_PUBLIC_API_URL).
  */
 
 import { API_URL } from "./api-url";
@@ -25,6 +25,7 @@ export type CurriculumLesson = {
   titleMn: string;
   isUnlocked: boolean;
   isCompleted: boolean;
+  stars: number;
   question: string;
   options: string[];
   correctAnswer: number;
@@ -36,12 +37,10 @@ export type CurriculumLesson = {
 export type CurriculumBootstrap = {
   chapters: CurriculumChapter[];
   lessonsByChapter: Record<string, CurriculumLesson[]>;
-  userProfile: Record<string, unknown> | null;
-  leaderboard: unknown;
   teethGameParts: unknown;
 };
 
-/** Next.js сервер компонент, metadata зэргээс дуудах. */
+/** Next.js сервер компонент, metadata зэргээс дуудах (JWT байхгүй — ерөнхий агуулга). */
 export async function fetchCurriculumBootstrap(): Promise<CurriculumBootstrap> {
   const res = await fetch(`${API_URL}/curriculum/bootstrap`, {
     next: { revalidate: 60 },

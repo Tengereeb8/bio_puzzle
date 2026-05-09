@@ -7,8 +7,20 @@ import HomeScreen from "./HomeScreen";
 import QuizScreen from "./QuizScreen";
 import LabelScreen from "./LabelScreen";
 import ResultScreen from "./ResultScreen";
+import { postMiniGame } from "@/lib/progress-api";
+import { requestCurriculumReload } from "@/lib/curriculum-reload";
 
-export default function ToothGame() {
+type ToothGameProps = {
+  getAuthToken?: () => string | null;
+  onMiniGameSynced?: (
+    payload: { user?: { totalPoints: number } } | null,
+  ) => void | Promise<void>;
+};
+
+export default function ToothGame({
+  getAuthToken,
+  onMiniGameSynced,
+}: ToothGameProps) {
   const [screen, setScreen] = useState<Screen>("home");
   const [mode, setMode] = useState<GameMode>("quiz");
   const [result, setResult] = useState({ score: 0, total: 0 });
@@ -24,15 +36,41 @@ export default function ToothGame() {
     [mode],
   );
 
-  const quizDone = useCallback((score: number) => {
-    setResult({ score, total: questions.length });
-    setScreen("result");
-  }, []);
+  const quizDone = useCallback(
+    async (score: number) => {
+      const tok = getAuthToken?.() ?? null;
+      if (tok) {
+        const json = await postMiniGame(tok, {
+          gameKey: "tooth-quiz",
+          correctCount: score,
+          totalCount: questions.length,
+        });
+        await onMiniGameSynced?.(json);
+        requestCurriculumReload();
+      }
+      setResult({ score, total: questions.length });
+      setScreen("result");
+    },
+    [getAuthToken, onMiniGameSynced],
+  );
 
-  const labelDone = useCallback((correct: number, total: number) => {
-    setResult({ score: correct, total });
-    setScreen("result");
-  }, []);
+  const labelDone = useCallback(
+    async (correct: number, total: number) => {
+      const tok = getAuthToken?.() ?? null;
+      if (tok) {
+        const json = await postMiniGame(tok, {
+          gameKey: "tooth-label",
+          correctCount: correct,
+          totalCount: total,
+        });
+        await onMiniGameSynced?.(json);
+        requestCurriculumReload();
+      }
+      setResult({ score: correct, total });
+      setScreen("result");
+    },
+    [getAuthToken, onMiniGameSynced],
+  );
 
   const replay = useCallback(() => {
     setLabelKey((k) => k + 1);

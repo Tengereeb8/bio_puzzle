@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import type { ComponentProps } from "react";
-import { Lock, CheckCircle, Sparkles, Flame } from "lucide-react";
+import { Lock, CheckCircle, Sparkles, Flame, Zap } from "lucide-react";
 import ToothSVG, { BodyPartIcon } from "./ToothSVG";
 
 interface Chapter {
@@ -19,13 +19,14 @@ interface Chapter {
 export default function RoadmapScreen({
   chapters,
   totalPoints,
+  streakDays,
   onChapterClick,
 }: {
   chapters: Chapter[];
   totalPoints: number;
+  streakDays: number;
   onChapterClick: (id: string) => void;
 }) {
-  void totalPoints;
   const completedCount = chapters.filter((c) => c.isCompleted).length;
 
   return (
@@ -41,20 +42,25 @@ export default function RoadmapScreen({
             </div>
           </div>
 
-          <div className="flex justify-center items-center-safe gap-15">
+          <div className="flex flex-wrap justify-center items-center-safe gap-10 sm:gap-15">
             {[
               {
                 icon: <Sparkles size={23} className="text-yellow-300" />,
                 value: completedCount,
-                label: "Дууссан",
+                label: "Бүлэг дууссан",
               },
               {
-                icon: <Flame className="text-base"></Flame>,
-                value: 7,
-                label: "Өдөр",
+                icon: <Zap size={23} className="text-yellow-200" />,
+                value: totalPoints,
+                label: "Нийт оноо",
+              },
+              {
+                icon: <Flame className="text-base text-orange-200" />,
+                value: streakDays,
+                label: "Дараалал",
               },
             ].map(({ icon, value, label }) => (
-              <div key={label} className=" rounded-xl p-3 text-center">
+              <div key={label} className="rounded-xl p-3 text-center min-w-[100px]">
                 <div className="flex justify-center mb-1">{icon}</div>
                 <p className="text-2xl font-bold">{value}</p>
                 <p className="text-xs opacity-90">{label}</p>

@@ -1,47 +1,94 @@
 "use client";
 
-import LeaderboardScreen from "@/app/components/Leaderboard";
-import { useCurriculum } from "@/app/components/context/CurriculumContext";
-import { BASE_LEADERBOARD } from "@/app/components/data/appData";
+import { useEffect, useState } from "react";
+import LeaderboardScreen, {
+  type LeaderboardRow,
+  type CharacterCustomization,
+} from "@/app/components/Leaderboard";
+import { useAuthContext } from "@/lib/auth-context";
+import { fetchGlobalLeaderboard } from "@/lib/progress-api";
 
-type LbEntry = {
-  rank: number;
-  name: string;
-  nameMn: string;
-  points: number;
-  isCurrentUser?: boolean;
-  [key: string]: unknown;
+type GlobalLbResponse = {
+  entries: Array<{
+    rank: number;
+    userId: string;
+    name: string;
+    nameMn: string;
+    points: number;
+    level: number;
+    streak: number;
+    isCurrentUser: boolean;
+    bestSkeletonSeconds?: number | null;
+    date?: string;
+    character?: unknown;
+  }>;
+  totalUsers: number;
 };
 
-function normalizeLb(entries: unknown): LbEntry[] {
-  if (!Array.isArray(entries) || entries.length === 0) {
-    return BASE_LEADERBOARD as LbEntry[];
-  }
-  return entries as LbEntry[];
-}
-
 export default function MoreView() {
-  const { leaderboard } = useCurriculum();
-  const source = normalizeLb(leaderboard);
+  const { token, user, isHydrated } = useAuthContext();
+  const [rows, setRows] = useState<LeaderboardRow[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const leaderboardData = source.map((entry) => ({
-    ...entry,
-    time:
-      (entry as { time?: number }).time ??
-      Math.max(30, 420 - (entry.points ?? 0) / 5),
-    date:
-      (entry as { date?: string }).date ?? new Date().toISOString(),
-    userId: entry.isCurrentUser
-      ? "current-user"
-      : `player-${entry.rank}`,
-    userName: entry.name,
-    userNameMn: entry.nameMn,
-  }));
+  useEffect(() => {
+    if (!isHydrated) return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const json = (await fetchGlobalLeaderboard(token)) as GlobalLbResponse;
+        if (cancelled) return;
+        const mapped: LeaderboardRow[] = (json.entries ?? []).map((e) => ({
+          userId: e.userId,
+          userName: e.name,
+          userNameMn: e.nameMn,
+          points: e.points,
+          bestSkeletonSeconds:
+            e.bestSkeletonSeconds !== undefined && e.bestSkeletonSeconds !== null
+              ? e.bestSkeletonSeconds
+              : null,
+          date: e.date ?? new Date().toISOString(),
+          character:
+            e.character && typeof e.character === "object"
+              ? (e.character as CharacterCustomization)
+              : undefined,
+        }));
+        setRows(mapped);
+        setError(null);
+      } catch (e) {
+        if (!cancelled) {
+          setRows(null);
+          setError(e instanceof Error ? e.message : String(e));
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isHydrated, token]);
+
+  if (!isHydrated || rows === null) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center text-sm text-gray-500 px-4">
+        Жагсаалтыг ачаалж байна…
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mx-auto max-w-lg px-4 py-10 text-center text-sm text-red-700">
+        <p className="font-semibold mb-2">Жагсаалт ачаалагдаагүй байна</p>
+        <p>{error}</p>
+      </div>
+    );
+  }
+
+  const currentUserId = user?.id ?? "";
 
   return (
     <LeaderboardScreen
-      gameTimes={leaderboardData}
-      currentUserId="current-user"
+      gameTimes={rows}
+      currentUserId={currentUserId || "anonymous"}
     />
   );
 }

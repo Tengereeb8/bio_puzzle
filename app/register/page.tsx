@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuthContext } from "@/lib/auth-context";
 import { API_URL } from "@/lib/api-url";
+import { parseAuthResponse } from "@/lib/parse-auth-response";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
@@ -26,7 +27,12 @@ export default function RegisterPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim(), password }),
       });
-      const data = (await res.json()) as {
+      const parsed = await parseAuthResponse(res);
+      if (!parsed.ok) {
+        setError(parsed.displayError);
+        return;
+      }
+      const data = parsed.json as {
         token?: string;
         user?: {
           id: string;
@@ -40,7 +46,11 @@ export default function RegisterPage() {
       };
 
       if (!res.ok || !data.token || !data.user) {
-        setError(data.error ?? `Алдаа (${res.status})`);
+        setError(
+          typeof data.error === "string"
+            ? data.error
+            : `Алдаа (${res.status})`,
+        );
         return;
       }
 

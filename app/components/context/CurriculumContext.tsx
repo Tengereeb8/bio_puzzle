@@ -9,20 +9,36 @@ import {
 } from "react";
 import type { CurriculumBootstrap } from "@/lib/curriculumApi";
 import { API_URL } from "@/lib/api-url";
+import { useAuthContext } from "@/lib/auth-context";
+import { CURRICULUM_RELOAD_EVENT } from "@/lib/curriculum-reload";
 
 const CurriculumContext = createContext<CurriculumBootstrap | null>(null);
 
 export function CurriculumProvider({ children }: { children: ReactNode }) {
+  const { token, isHydrated } = useAuthContext();
   const [data, setData] = useState<CurriculumBootstrap | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [reloadTick, setReloadTick] = useState(0);
 
   useEffect(() => {
+    const bump = () => setReloadTick((n) => n + 1);
+    window.addEventListener(CURRICULUM_RELOAD_EVENT, bump);
+    return () => window.removeEventListener(CURRICULUM_RELOAD_EVENT, bump);
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) return;
+
     let cancelled = false;
 
     async function load() {
       try {
+        const headers: HeadersInit = { Accept: "application/json" };
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+        }
         const res = await fetch(`${API_URL}/curriculum/bootstrap`, {
-          headers: { Accept: "application/json" },
+          headers,
         });
         if (!res.ok) {
           throw new Error(`API ${res.status}: curriculum/bootstrap`);
@@ -44,7 +60,15 @@ export function CurriculumProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [token, isHydrated, reloadTick]);
+
+  if (!isHydrated) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center text-sm text-gray-500">
+        Бэлдэж байна…
+      </div>
+    );
+  }
 
   if (error) {
     return (
