@@ -13,6 +13,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const { login } = useAuthContext();
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -25,7 +26,11 @@ export default function RegisterPage() {
       const res = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), password }),
+        body: JSON.stringify({
+          email: email.trim(),
+          username: username.trim(),
+          password,
+        }),
       });
       const parsed = await parseAuthResponse(res);
       if (!parsed.ok) {
@@ -69,10 +74,27 @@ export default function RegisterPage() {
       <div className="w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-sm">
         <h1 className="text-xl font-semibold mb-1">Бүртгүүлэх</h1>
         <p className="text-sm text-muted-foreground mb-6">
-          И-мэйл + нууц үг хадгалагдана (доод тал хамгаалалт bcrypt).
+          Хэрэглэгчийн нэр, и-мэйл, нууц үг хадгалагдана (нууц үг нь bcrypt).
         </p>
 
         <form onSubmit={onSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+            <label htmlFor="reg-username" className="text-sm font-medium">
+              Хэрэглэгчийн нэр
+            </label>
+            <Input
+              id="reg-username"
+              type="text"
+              autoComplete="username"
+              required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="h-10"
+              placeholder="bio_student"
+              minLength={2}
+              maxLength={48}
+            />
+          </div>
           <div className="space-y-1.5">
             <label htmlFor="reg-email" className="text-sm font-medium">
               И-мэйл

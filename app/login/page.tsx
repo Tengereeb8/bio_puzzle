@@ -69,7 +69,8 @@ export default function LoginPage() {
       <div className="w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-sm">
         <h1 className="text-xl font-semibold mb-1">Нэвтрэх</h1>
         <p className="text-sm text-muted-foreground mb-6">
-          И-мэйл, нууц үгээ оруулна уу.
+          И-мэйл, нууц үгээр нэвтэрнэ. Таны хэрэглэгчийн нэр нэвтрэсний дараа
+          дүрс ба профайлд харагдана.
         </p>
 
         <form onSubmit={onSubmit} className="space-y-4">
