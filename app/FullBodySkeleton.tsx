@@ -451,11 +451,11 @@ export default function FullBodySkeletonGame({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="min-h-screen pb-24 bg-linear-to-br from-indigo-50 via-purple-50 to-pink-50 overflow-hidden">
+      <div className="flex flex-col min-h-screen bg-linear-to-br from-indigo-50 via-purple-50 to-pink-50">
         {/* Header */}
         <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b-2 border-gray-200 shadow-xl">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+            <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <button
                   onClick={onBack}
@@ -478,10 +478,10 @@ export default function FullBodySkeletonGame({
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-3 bg-linear-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-2xl shadow-lg">
+                <div className="flex items-center gap-3 bg-linear-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-2xl shadow-lg">
                   <Clock size={24} />
                   <div>
-                    <p className="text-2xl font-bold font-mono">
+                    <p className="text-xl font-bold font-mono">
                       {formatTime(elapsedTime)}
                     </p>
                   </div>
@@ -493,16 +493,16 @@ export default function FullBodySkeletonGame({
                       "Эрхтнүүдийг зөв байрлалд чирж байрлуулна уу. Та хурдан дуусгахыг оролдоорой!",
                     )
                   }
-                  className="p-3 bg-linear-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 rounded-xl shadow-lg transition-all"
+                  className="p-2 bg-linear-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 rounded-xl shadow-lg transition-all"
                 >
-                  <Volume2 size={22} color="white" />
+                  <Volume2 size={20} color="white" />
                 </button>
                 <button
                   onClick={handleReset}
-                  className="p-3 bg-linear-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 rounded-xl shadow-lg transition-all flex items-center gap-2"
+                  className="p-2 bg-linear-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 rounded-xl shadow-lg transition-all flex items-center gap-2"
                 >
-                  <RotateCcw size={22} color="white" />
-                  <span className="text-white">Restart</span>
+                  <RotateCcw size={20} color="white" />
+                  <span className="text-white hidden sm:inline">Restart</span>
                 </button>
               </div>
             </div>
@@ -520,7 +520,7 @@ export default function FullBodySkeletonGame({
                   Алдаа: {incorrectAttempts}
                 </span>
               </div>
-              <div className="h-4 bg-gray-200 rounded-full overflow-hidden shadow-inner">
+              <div className="h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner">
                 <div
                   className="h-full rounded-full shadow-lg"
                   style={{
@@ -535,14 +535,14 @@ export default function FullBodySkeletonGame({
         </div>
 
         {/* Game Area */}
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grow max-w-7xl mx-auto px-4 sm:px-6 py-4 overflow-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
             {/* Organs Panel */}
-            <div className="lg:col-span-1">
-              <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-2xl sticky top-32 border-2 border-indigo-200">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-                    <Award size={24} color="white" />
+            <div className="lg:col-span-1 flex flex-col">
+              <div className="bg-white/95 backdrop-blur-md rounded-3xl p-4 shadow-2xl sticky top-4 lg:top-32 border-2 border-indigo-200 grow">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
+                    <Award size={20} color="white" />
                   </div>
                   <h3
                     className="font-bold text-lg"
@@ -552,7 +552,7 @@ export default function FullBodySkeletonGame({
                   </h3>
                 </div>
 
-                <div className="space-y-3 max-h-150 overflow-y-auto pr-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-3 max-h-[calc(100vh-200px)] lg:max-h-150 overflow-y-auto pr-2">
                   {organs.map((organ) => (
                     <div key={organ.id} data-draggable-id={organ.id}>
                       <DraggableOrgan
@@ -566,40 +566,39 @@ export default function FullBodySkeletonGame({
             </div>
 
             {/* Skeleton Canvas */}
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-3 flex justify-center items-center h-full">
               <div
                 ref={canvasRef}
-                className="relative rounded-3xl shadow-2xl overflow-hidden border-4 border-indigo-300"
+                className="relative rounded-3xl shadow-2xl overflow-hidden border-4 border-indigo-300 w-full max-w-112.5"
                 style={{
-                  aspectRatio: "2/3",
-                  minHeight: "800px",
+                  aspectRatio: "2 / 3",
                   background:
                     "linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 50%, #f0f9ff 100%)",
                 }}
               >
                 {/* Anatomical Region Labels */}
-                <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-none z-10">
-                  <div className="bg-white/80 backdrop-blur-sm rounded-xl px-3 py-2 shadow-md border border-indigo-200">
+                <div className="absolute top-2 left-2 right-2 flex justify-between items-start pointer-events-none z-10 text-xs sm:text-sm">
+                  <div className="bg-white/80 backdrop-blur-sm rounded-xl px-2 py-1 shadow-md border border-indigo-200">
                     <p
-                      className="text-xs font-bold text-indigo-700"
+                      className="font-bold text-indigo-700"
                       style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
                     >
                       Толгой
                     </p>
                     <p className="text-[10px] text-indigo-600">Head</p>
                   </div>
-                  <div className="bg-white/80 backdrop-blur-sm rounded-xl px-3 py-2 shadow-md border border-red-200">
+                  <div className="bg-white/80 backdrop-blur-sm rounded-xl px-2 py-1 shadow-md border border-red-200">
                     <p
-                      className="text-xs font-bold text-red-700"
+                      className="font-bold text-red-700"
                       style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
                     >
                       Цээж
                     </p>
                     <p className="text-[10px] text-red-600">Chest</p>
                   </div>
-                  <div className="bg-white/80 backdrop-blur-sm rounded-xl px-3 py-2 shadow-md border border-orange-200">
+                  <div className="bg-white/80 backdrop-blur-sm rounded-xl px-2 py-1 shadow-md border border-orange-200">
                     <p
-                      className="text-xs font-bold text-orange-700"
+                      className="font-bold text-orange-700"
                       style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
                     >
                       Хэвлий
@@ -609,7 +608,7 @@ export default function FullBodySkeletonGame({
                 </div>
 
                 {/* Detailed Skeleton SVG Background */}
-                <div className="absolute inset-0 p-8">
+                <div className="absolute inset-0 p-4 sm:p-8">
                   <img
                     src={SkeletonIcon.src || SkeletonIcon}
                     className="w-full h-full opacity-20"
@@ -636,14 +635,14 @@ export default function FullBodySkeletonGame({
         {/* Floating Feedback */}
         {showFeedback && (
           <div
-            className={`fixed top-32 right-6 px-8 py-5 rounded-2xl shadow-2xl border-4 z-40 animate-in slide-in-from-right-5 ${
+            className={`fixed top-24 sm:top-32 right-4 sm:right-6 px-6 py-4 rounded-2xl shadow-2xl border-4 z-40 animate-in slide-in-from-right-5 ${
               showFeedback.correct
                 ? "bg-linear-to-r from-green-400 to-emerald-500 border-green-600"
                 : "bg-linear-to-r from-orange-400 to-red-500 border-orange-600"
-            } text-white max-w-sm`}
+            } text-white max-w-xs sm:max-w-sm`}
           >
             <p
-              className="font-bold text-xl mb-1"
+              className="font-bold text-lg sm:text-xl mb-1"
               style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
             >
               {showFeedback.textMn}
@@ -655,18 +654,18 @@ export default function FullBodySkeletonGame({
         {/* Info Modal */}
         {selectedInfo && (
           <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-6"
             onClick={() => setSelectedInfo(null)}
           >
             <div
-              className="bg-white rounded-3xl p-8 max-w-md shadow-2xl animate-in zoom-in-95"
+              className="bg-white rounded-3xl p-6 sm:p-8 max-w-md shadow-2xl animate-in zoom-in-95"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex justify-center mb-6">
-                <OrganSVG type={selectedInfo.type} size={140} />
+              <div className="flex justify-center mb-4 sm:mb-6">
+                <OrganSVG type={selectedInfo.type} size={120} />
               </div>
               <h3
-                className="text-2xl font-bold mb-3 text-center"
+                className="text-xl sm:text-2xl font-bold mb-3 text-center"
                 style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
               >
                 {organInfo[selectedInfo.type].nameMn}
@@ -675,7 +674,7 @@ export default function FullBodySkeletonGame({
                 {organInfo[selectedInfo.type].name}
               </p>
               <p
-                className="text-gray-700 leading-relaxed mb-4 text-center"
+                className="text-gray-700 leading-relaxed mb-4 text-center text-sm sm:text-base"
                 style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
               >
                 {organInfo[selectedInfo.type].descriptionMn}

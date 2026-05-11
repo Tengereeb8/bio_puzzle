@@ -1,3 +1,7 @@
+"use client";
+
+import Image from "next/image";
+
 interface OrganSVGProps {
   type:
     | "brain"
@@ -14,61 +18,58 @@ interface OrganSVGProps {
   isPlaced?: boolean;
 }
 
-// Import SVG components (assuming Next.js handles SVG imports like this)
-import BrainIcon from "./assets/icons/brain.svg";
-import HeartIcon from "./assets/icons/heart.svg";
-import LungsIcon from "./assets/icons/lungs.svg";
-import LiverIcon from "./assets/icons/liver.svg";
-import StomachIcon from "./assets/icons/stomach.svg";
-import IntestinesIcon from "./assets/icons/intestines.svg";
-import KidneysIcon from "./assets/icons/kidneys.svg";
-import BladderIcon from "./assets/icons/bladder.svg";
-import PancreasIcon from "./assets/icons/pancreas.svg";
-import SpleenIcon from "./assets/icons/spleen.svg";
+// Import SVG components as static assets
+import brainIcon from "./assets/icons/brain.svg";
+import heartIcon from "./assets/icons/heart.svg";
+import lungsIcon from "./assets/icons/lungs.svg";
+import liverIcon from "./assets/icons/liver.svg";
+import stomachIcon from "./assets/icons/stomach.svg";
+import intestinesIcon from "./assets/icons/intestines.svg";
+import kidneysIcon from "./assets/icons/kidneys.svg";
+import bladderIcon from "./assets/icons/bladder.svg";
+import pancreasIcon from "./assets/icons/pancreas.svg";
+import spleenIcon from "./assets/icons/spleen.svg";
 
 export default function OrganSVG({
   type,
   size = 120,
   isPlaced = false,
 }: OrganSVGProps) {
-  const IconComponent = {
-    brain: BrainIcon,
-    heart: HeartIcon,
-    lungs: LungsIcon,
-    liver: LiverIcon,
-    stomach: StomachIcon,
-    intestines: IntestinesIcon,
-    kidneys: KidneysIcon,
-    bladder: BladderIcon,
-    pancreas: PancreasIcon,
-    spleen: SpleenIcon,
-  }[type];
+  const IconMap = {
+    brain: brainIcon,
+    heart: heartIcon,
+    lungs: lungsIcon,
+    liver: liverIcon,
+    stomach: stomachIcon,
+    intestines: intestinesIcon,
+    kidneys: kidneysIcon,
+    bladder: bladderIcon,
+    pancreas: pancreasIcon,
+    spleen: spleenIcon,
+  };
 
-  if (!IconComponent) {
-    return null; // Or a placeholder
+  const iconSrc = IconMap[type];
+
+  if (!iconSrc) {
+    return null;
   }
 
   return (
-    <div
+    <Image
+      src={iconSrc}
+      alt={`${type} organ icon`}
+      width={size}
+      height={size}
       style={{
-        width: size,
-        height: size,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
         filter: isPlaced ? "drop-shadow(0 2px 3px rgba(0,0,0,0.3))" : "none",
       }}
-    >
-      <img
-        src={IconComponent.src || IconComponent}
-        style={{ width: "100%", height: "100%" }}
-        alt="organ icon"
-      />
-    </div>
+    />
   );
 }
 
 export const organInfo = {
+  // ... your existing organInfo object
+
   brain: {
     name: "Brain",
     nameMn: "Тархи",

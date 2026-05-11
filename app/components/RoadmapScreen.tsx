@@ -30,8 +30,13 @@ export default function RoadmapScreen({
   const completedCount = chapters.filter((c) => c.isCompleted).length;
 
   return (
+<<<<<<< HEAD
     <div className=" min-h-full relative bg-orange-50">
       <div className="relative bg-[#fa8e1b] text-white px-10 pt-6 rounded-b-full pb-15">
+=======
+    <div className="min-h-full w-full relative bg-orange-50">
+      <div className="relative bg-[#fa8e1b] text-white px-6 pt-6 rounded-b-full">
+>>>>>>> 2ab6bc3 (test of design)
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-5">
             <div>
@@ -60,7 +65,14 @@ export default function RoadmapScreen({
                 label: "Дараалал",
               },
             ].map(({ icon, value, label }) => (
+<<<<<<< HEAD
               <div key={label} className="rounded-xl p-3 text-center min-w-10">
+=======
+              <div
+                key={label}
+                className="rounded-xl p-3 text-center min-w-[100px]"
+              >
+>>>>>>> 2ab6bc3 (test of design)
                 <div className="flex justify-center mb-1">{icon}</div>
                 <p className="text-2xl font-bold">{value}</p>
                 <p className="text-xs opacity-90">{label}</p>
