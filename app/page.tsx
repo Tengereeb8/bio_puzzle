@@ -18,9 +18,7 @@ function HomeRoadmap() {
       chapters={chapters}
       totalPoints={userPoints}
       streakDays={user?.streak ?? 0}
-      onChapterClick={(id) =>
-        router.push(`/chapter/${encodeURIComponent(id)}`)
-      }
+      onChapterClick={(id) => router.push(`/chapter/${encodeURIComponent(id)}`)}
     />
   );
 }

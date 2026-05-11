@@ -102,7 +102,7 @@ export default function ProfileScreen({
   };
 
   return (
-    <div className="min-h-screen bg-[#fcf9f4] pb-24 font-sans">
+    <div className="font-game-black min-h-screen bg-[#fcf9f4] pb-24 font-sans">
       <div className="bg-[#fff4ea] border-b px-6 py-6">
         <div className="flex items-center gap-4">
           <div className="relative shrink-0">

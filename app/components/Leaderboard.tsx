@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Trophy, Medal, Clock, Crown, Zap } from "lucide-react";
+import { Trophy, Medal, Clock, Crown, Zap, User } from "lucide-react";
 import CharacterAvatar from "./CharacterAvatar";
 
 export interface CharacterCustomization {
@@ -89,10 +89,7 @@ export default function LeaderboardScreen({
       </div>
       <div className="flex items-center justify-center gap-1 text-xs text-gray-500">
         <Clock size={12} className="shrink-0" />
-        <span>
-          Яс:{" "}
-          {skeletonSec != null ? formatTime(skeletonSec) : "—"}
-        </span>
+        <span>Яс: {skeletonSec != null ? formatTime(skeletonSec) : "—"}</span>
       </div>
     </div>
   );
@@ -126,7 +123,7 @@ export default function LeaderboardScreen({
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-yellow-50 via-orange-50 to-red-50 pb-24 ">
+    <div className="font-game-black min-h-screen bg-linear-to-b from-yellow-50 via-orange-50 to-red-50 pb-24 ">
       <div className="bg-linear-to-br from-yellow-500 via-orange-500 to-red-500 text-white px-6 pt-8 pb-20 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl" />
@@ -154,10 +151,10 @@ export default function LeaderboardScreen({
 
       {leaderboardData.length >= 3 && (
         <div className="px-6 mb-6 mt-10">
-          <div className="bg-white rounded-3xl pt-10 px-6 pb-6 shadow-2xl border-2 border-yellow-200">
+          <div className="bg-amber-50 rounded-3xl pt-10 px-6 pb-6 shadow-2xl border-2 border-yellow-200">
             <div className="flex items-end justify-center gap-3">
               <div className="flex-1 flex flex-col items-center">
-                <div className="w-20 h-20 bg-white rounded-2xl p-2 shadow-lg mb-3 border-4 border-gray-300 overflow-hidden">
+                <div className="flex w-20 h-20 bg-amber-400 rounded-2xl p-2 shadow-lg mb-3 border-4 border-yellow-400 overflow-hidden">
                   {leaderboardData[1].character ? (
                     <CharacterAvatar
                       {...leaderboardData[1].character}
@@ -170,7 +167,7 @@ export default function LeaderboardScreen({
                 <div className="w-10 h-10 bg-linear-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center shadow-md mb-2 -mt-5 border-4 border-white">
                   <span className="font-bold text-white text-lg">2</span>
                 </div>
-                <div className="text-center mb-3 min-h-[72px] flex flex-col justify-center">
+                <div className="text-center mb-3 min-h-18 flex flex-col justify-center">
                   <div className="font-bold text-gray-900 text-sm">
                     {leaderboardData[1].userNameMn}
                   </div>
@@ -183,7 +180,7 @@ export default function LeaderboardScreen({
               </div>
 
               <div className="flex-1 flex flex-col items-center -mt-6">
-                <div className="w-24 h-24 bg-white rounded-2xl p-2 shadow-2xl mb-3 border-4 border-yellow-400 overflow-hidden">
+                <div className="flex w-24 h-24 bg-amber-400 rounded-2xl p-2 shadow-2xl mb-3 border-4 border-yellow-400 overflow-hidden">
                   {leaderboardData[0].character ? (
                     <CharacterAvatar
                       {...leaderboardData[0].character}
@@ -196,7 +193,7 @@ export default function LeaderboardScreen({
                 <div className="w-12 h-12 bg-linear-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow-xl mb-2 -mt-6 border-4 border-white">
                   <Crown size={24} color="white" />
                 </div>
-                <div className="text-center mb-3 min-h-[80px] flex flex-col justify-center">
+                <div className="text-center mb-3 min-h-20 flex flex-col justify-center">
                   <div className="font-bold text-gray-900 text-base">
                     {leaderboardData[0].userNameMn}
                   </div>
@@ -210,20 +207,20 @@ export default function LeaderboardScreen({
               </div>
 
               <div className="flex-1 flex flex-col items-center">
-                <div className="w-20 h-20 bg-white rounded-2xl p-2 shadow-lg mb-3 border-4 border-orange-300 overflow-hidden">
+                <div className="flex w-20 h-20 bg-amber-400 rounded-2xl p-2 shadow-lg mb-3 border-4 border-yellow-400 overflow-hidden">
                   {leaderboardData[2].character ? (
                     <CharacterAvatar
                       {...leaderboardData[2].character}
                       size={64}
                     />
                   ) : (
-                    <div className="w-full h-full bg-orange-200 rounded-xl" />
+                    <div className="w-full h-full bg-orange-200 rounded-xl justify-center" />
                   )}
                 </div>
                 <div className="w-10 h-10 bg-linear-to-br from-orange-400 to-orange-500 rounded-full flex items-center justify-center shadow-md mb-2 -mt-5 border-4 border-white">
                   <span className="font-bold text-white text-lg">3</span>
                 </div>
-                <div className="text-center mb-3 min-h-[72px] flex flex-col justify-center">
+                <div className="text-center mb-3 min-h-18 flex flex-col justify-center">
                   <div className="font-bold text-gray-900 text-sm">
                     {leaderboardData[2].userNameMn}
                   </div>
@@ -248,26 +245,28 @@ export default function LeaderboardScreen({
           {leaderboardData.map((player) => (
             <div
               key={player.userId}
-              className={`rounded-2xl p-4 shadow-lg ${player.isCurrentUser ? "bg-linear-to-r from-green-100 to-emerald-50 border-4 border-green-500" : "bg-white border-2 border-gray-100"}`}
+              className={`rounded-2xl p-4 shadow-lg ${player.isCurrentUser ? "bg-linear-to-r from-amber-200 to-amber-100 border-4 border-amber-500" : "bg-white border-2 border-gray-100"}`}
             >
               <div className="flex items-center gap-4">
                 <div className="shrink-0">{getRankBadge(player.rank)}</div>
-                <div className="w-12 h-12 bg-gray-100 rounded-xl p-1.5 overflow-hidden">
+                <div className="flex w-12 h-12 bg-amber-300 rounded-xl p-1.5 overflow-hidden justify-center items-center">
                   {player.character ? (
                     <CharacterAvatar {...player.character} size={40} />
                   ) : (
-                    <div className="w-full h-full bg-gray-300 rounded-lg" />
+                    <div className=" flex justify-center  items-center w-10 bg-amber-300 rounded-lg ">
+                      <User className="text-amber-800" />
+                    </div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span
-                      className={`font-bold ${player.isCurrentUser ? "text-green-700" : "text-gray-900"} text-[16px]`}
+                      className={`font-bold ${player.isCurrentUser ? "text-amber-700" : "text-gray-900"} text-[16px]`}
                     >
                       {player.userNameMn}
                     </span>
                     {player.isCurrentUser && (
-                      <span className="bg-green-500 text-white px-2 py-0.5 rounded-full text-xs font-bold">
+                      <span className="bg-amber-500 text-white px-2 py-0.5 rounded-full text-xs font-bold">
                         Та
                       </span>
                     )}

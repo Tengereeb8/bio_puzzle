@@ -1,7 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Mongolian&family=Nunito:wght@400;700;900&display=swap");
 @import "tailwindcss";
 @import "shadcn/tailwind.css";
-
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

@@ -30,10 +30,10 @@ export default function RoadmapScreen({
   const completedCount = chapters.filter((c) => c.isCompleted).length;
 
   return (
-    <div className="min-h-full relative bg-orange-50">
-      <div className="relative bg-[#fa8e1b] text-white px-6 pt-6 rounded-b-full">
+    <div className=" min-h-full relative bg-orange-50">
+      <div className="relative bg-[#fa8e1b] text-white px-10 pt-6 rounded-b-full pb-15">
         <div className="max-w-2xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-5">
             <div>
               <h1 className="text-3xl mb-1 font-game-black">
                 Бие Махбодын Аялал
@@ -55,12 +55,12 @@ export default function RoadmapScreen({
                 label: "Нийт оноо",
               },
               {
-                icon: <Flame className="text-base text-orange-200" />,
+                icon: <Flame className="text-base text-yellow-200" />,
                 value: streakDays,
                 label: "Дараалал",
               },
             ].map(({ icon, value, label }) => (
-              <div key={label} className="rounded-xl p-3 text-center min-w-[100px]">
+              <div key={label} className="rounded-xl p-3 text-center min-w-10">
                 <div className="flex justify-center mb-1">{icon}</div>
                 <p className="text-2xl font-bold">{value}</p>
                 <p className="text-xs opacity-90">{label}</p>
@@ -127,7 +127,7 @@ export default function RoadmapScreen({
                     >
                       <div className="mb-1">
                         {chapter.iconType === "molar" ? (
-                          <ToothSVG type="molar" size={64} color="white" />
+                          <img src="tooth.svg" className="size-12"></img>
                         ) : (
                           <BodyPartIcon
                             type={
@@ -155,10 +155,7 @@ export default function RoadmapScreen({
                       {chapter.isUnlocked &&
                         !chapter.isCompleted &&
                         chapter.progress > 0 && (
-                          <svg
-                            className="absolute inset-0 w-full h-full -rotate-90"
-                            // style={{ overflow: "visible" }}
-                          ></svg>
+                          <svg className="absolute inset-0 w-full h-full -rotate-90"></svg>
                         )}
                     </div>
                   </button>

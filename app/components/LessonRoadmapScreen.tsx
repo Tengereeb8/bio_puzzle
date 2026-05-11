@@ -9,6 +9,7 @@ import {
   BookOpen,
   Gamepad2,
   Zap,
+  Smile,
 } from "lucide-react";
 import ToothSVG, { BodyPartIcon } from "./ToothSVG";
 
@@ -84,7 +85,7 @@ export default function LessonRoadmapScreen({
   const allDone = lessons.every((l) => l.isCompleted);
 
   return (
-    <div className="min-h-screen relative bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="font-game-black min-h-screen relative bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="fixed inset-0  pointer-events-none">
         {PARTICLES.map((p, i) => (
           <motion.div
@@ -112,7 +113,7 @@ export default function LessonRoadmapScreen({
       </div>
 
       <div
-        className="sticky top-0 z-20 backdrop-blur-xl bg-white/80 border-b-2 border-gray-200 px-6 py-4"
+        className=" font-game-black sticky top-0 z-20 backdrop-blur-xl bg-white/80 border-b-2 border-gray-200 px-6 py-4"
         style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.05)" }}
       >
         <div className="max-w-2xl mx-auto flex items-center gap-4">
@@ -131,7 +132,7 @@ export default function LessonRoadmapScreen({
               style={{ backgroundColor: chapterColor }}
             >
               {chapterIconType === "molar" ? (
-                <ToothSVG type="molar" size={40} color="white" />
+                <img src="/tooth.svg" className="size-7"></img>
               ) : (
                 <BodyPartIcon type={chapterIconType} size={40} />
               )}
@@ -144,7 +145,7 @@ export default function LessonRoadmapScreen({
         </div>
       </div>
 
-      <div className="relative px-6 pt-14">
+      <div className="relative px-6 pt-14 pb-20">
         <div className="max-w-xl mx-auto relative">
           <svg
             className="absolute left-1/2 top-0 w-24 -ml-12 pointer-events-none"
@@ -210,17 +211,13 @@ export default function LessonRoadmapScreen({
                       style={{
                         backgroundColor: lesson.isUnlocked
                           ? lesson.isCompleted
-                            ? "#22c55e"
+                            ? "#ffab2b"
                             : chapterColor
-                          : "#E5E7EB",
+                          : "#ffab2b",
                       }}
                     >
                       <div className="mb-1">
-                        <ToothSVG
-                          type={toothType(lesson.id)}
-                          size={45}
-                          color="white"
-                        />
+                        <img src="/tooth.svg" className="size-8 " />
                       </div>
 
                       {!lesson.isUnlocked && (
@@ -233,8 +230,8 @@ export default function LessonRoadmapScreen({
                         <div className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-lg">
                           <CheckCircle2
                             size={20}
-                            color="#22c55e"
-                            fill="#22c55e"
+                            color="#fa7b14"
+                            fill="#fa7b14"
                           />
                         </div>
                       )}
@@ -276,7 +273,7 @@ export default function LessonRoadmapScreen({
                             className="text-xs font-semibold"
                             style={{
                               color: lesson.isCompleted
-                                ? "#16a34a"
+                                ? "#f57e1d"
                                 : chapterColor,
                             }}
                           >
@@ -301,26 +298,17 @@ export default function LessonRoadmapScreen({
           </div>
 
           {allDone && (
-            <motion.div
-              className="mt-12 bg-linear-to-r from-yellow-400 to-orange-400 rounded-3xl p-8 text-center text-white shadow-2xl"
-              initial={{ scale: 0, rotate: -10 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: "spring", stiffness: 200, delay: 0.5 }}
-            >
-              <motion.div
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 2 }}
-                className="text-6xl mb-4"
-              >
-                🏆
-              </motion.div>
+            <div className="mt-12 bg-linear-to-r from-yellow-400 to-orange-400 rounded-3xl p-8 text-center text-white shadow-2xl">
+              <div className="flex justify-center mb-4">
+                <Trophy className="size-10 " />
+              </div>
               <h2 className="text-2xl font-black mb-2 font-game">
                 Баяр хүргэе!
               </h2>
               <p className="text-white/90 font-game">
                 Та {chapterTitleMn} бүлгийг дууслаа!
               </p>
-            </motion.div>
+            </div>
           )}
         </div>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import type { Question } from "./types";
+import type { Question } from "./teeth-game/types";
 import { Heart } from "lucide-react";
 
 export default function QuizScreen({
@@ -76,15 +76,15 @@ export default function QuizScreen({
   }
 
   return (
-    <div className="max-w-md mx-auto">
+    <div className="font-game-black max-w-md mx-auto ">
       {/* Header */}
       <div className="flex justify-between items-end mb-3 px-1">
         <div className="flex flex-col">
           <span className="text-[10px] uppercase tracking-widest text-gray-400 font-black">
-            Progress
+            явц
           </span>
           <span className="text-sm text-gray-700 font-bold">
-            {qIndex + 1} of {questions.length}
+            {qIndex + 1} / {questions.length}
           </span>
         </div>
 
@@ -113,7 +113,6 @@ export default function QuizScreen({
 
       {/* Question card */}
       <div className="relative bg-white border-2 border-gray-100 rounded-[2rem] p-6 mb-6 shadow-xl shadow-blue-900/5 overflow-hidden">
-        <div className="absolute -top-6 -right-6 w-24 h-24 bg-blue-50 rounded-full opacity-50" />
         <div className="text-center text-6xl mb-4 drop-shadow-sm">
           {q.visual}
         </div>

@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import type { GameMode, Screen } from "./types";
 import { questions, labelParts, funFacts } from "./gameData";
 import HomeScreen from "./HomeScreen";
-import QuizScreen from "./QuizScreen";
+import QuizScreen from "../QuizScreen";
 import LabelScreen from "./LabelScreen";
 import ResultScreen from "./ResultScreen";
 import { postMiniGame } from "@/lib/progress-api";
