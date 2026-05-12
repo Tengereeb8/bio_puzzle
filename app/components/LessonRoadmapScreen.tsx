@@ -9,12 +9,13 @@ import {
   BookOpen,
   Gamepad2,
   Zap,
+  Smile,
 } from "lucide-react";
 import ToothSVG, { BodyPartIcon } from "./ToothSVG";
 
 interface LessonNode {
   id: string;
-  type: "lesson" | "quiz" | "game" | "story" | "practice";
+  type: string;
   title: string;
   titleMn: string;
   isUnlocked: boolean;
@@ -38,7 +39,16 @@ function toothType(id: string): "incisor" | "canine" | "premolar" | "molar" {
   return "molar";
 }
 
-// Fixed positions so server and client render the same thing
+function buildPath(count: number): string {
+  const points = ["M 48 0"];
+  for (let i = 0; i < count; i++) {
+    const y1 = i * 120 + 40;
+    const y2 = i * 120 + 80;
+    const side = i % 2 === 0 ? 24 : 72;
+    points.push(`Q ${side} ${y1} 48 ${y2}`);
+  }
+  return points.join(" ");
+}
 const PARTICLES = Array.from({ length: 20 }, (_, i) => ({
   left: ((i * 37 + 13) % 100).toFixed(1),
   top: ((i * 53 + 7) % 100).toFixed(1),
@@ -75,8 +85,8 @@ export default function LessonRoadmapScreen({
   const allDone = lessons.every((l) => l.isCompleted);
 
   return (
-    <div className="min-h-screen  pb-24 overflow-auto relative bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+    <div className="font-game-black min-h-screen relative bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <div className="fixed inset-0  pointer-events-none">
         {PARTICLES.map((p, i) => (
           <motion.div
             key={i}
@@ -103,7 +113,7 @@ export default function LessonRoadmapScreen({
       </div>
 
       <div
-        className="sticky top-0 z-20 backdrop-blur-xl bg-white/80 border-b-2 border-gray-200 px-6 py-4"
+        className=" font-game-black sticky top-0 z-20 backdrop-blur-xl bg-white/80 border-b-2 border-gray-200 px-6 py-4"
         style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.05)" }}
       >
         <div className="max-w-2xl mx-auto flex items-center gap-4">
@@ -122,7 +132,7 @@ export default function LessonRoadmapScreen({
               style={{ backgroundColor: chapterColor }}
             >
               {chapterIconType === "molar" ? (
-                <ToothSVG type="molar" size={40} color="white" />
+                <img src="/tooth.svg" className="size-7"></img>
               ) : (
                 <BodyPartIcon type={chapterIconType} size={40} />
               )}
@@ -132,28 +142,14 @@ export default function LessonRoadmapScreen({
               <p className="text-sm text-gray-600">{chapterTitle}</p>
             </div>
           </div>
-
-          <div className="text-right">
-            <p className="text-xs text-gray-500">Явц</p>
-            <div className="flex items-center gap-1">
-              {[...Array(3)].map((_, i) => (
-                <Star
-                  key={i}
-                  size={16}
-                  fill={i < 2 ? "#FFB800" : "none"}
-                  color="#FFB800"
-                />
-              ))}
-            </div>
-          </div>
         </div>
       </div>
 
-      <div className="relative px-6 pt-4">
+      <div className="relative px-6 pt-14 pb-20">
         <div className="max-w-xl mx-auto relative">
           <svg
             className="absolute left-1/2 top-0 w-24 -ml-12 pointer-events-none"
-            style={{ height: `${lessons.length * 120}px` }}
+            style={{ height: `${(lessons.length + 5) * 120}px` }}
           >
             <defs>
               <linearGradient id="lessonPath" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -166,7 +162,7 @@ export default function LessonRoadmapScreen({
               </linearGradient>
             </defs>
             <motion.path
-              d="M 48 0 Q 24 40 48 80 Q 72 120 48 160 Q 24 200 48 240 Q 72 280 48 320 Q 24 360 48 400 Q 72 440 48 480 Q 24 520 48 560 Q 72 600 48 640 Q 24 680 48 720 Q 72 760 48 800 Q 24 840 48 880 Q 72 920 48 960 Q 24 1000 48 1040"
+              d={buildPath(lessons.length + 6)}
               stroke="url(#lessonPath)"
               strokeWidth="12"
               fill="none"
@@ -178,7 +174,8 @@ export default function LessonRoadmapScreen({
 
           <div className="relative z-10 space-y-12">
             {lessons.map((lesson, index) => {
-              const TypeIcon = TYPE_ICONS[lesson.type];
+              const TypeIcon =
+                TYPE_ICONS[lesson.type as keyof typeof TYPE_ICONS] ?? BookOpen;
               const left = index % 2 === 0;
 
               return (
@@ -203,14 +200,9 @@ export default function LessonRoadmapScreen({
                     whileTap={lesson.isUnlocked ? { scale: 0.95 } : {}}
                   >
                     {lesson.isUnlocked && !lesson.isCompleted && (
-                      <motion.div
+                      <div
                         className="absolute inset-0 rounded-full blur-xl"
                         style={{ backgroundColor: chapterColor, opacity: 0.4 }}
-                        animate={{
-                          scale: [1, 1.3, 1],
-                          opacity: [0.3, 0.6, 0.3],
-                        }}
-                        transition={{ duration: 2, repeat: Infinity }}
                       />
                     )}
 
@@ -219,17 +211,13 @@ export default function LessonRoadmapScreen({
                       style={{
                         backgroundColor: lesson.isUnlocked
                           ? lesson.isCompleted
-                            ? "#22c55e"
+                            ? "#ffab2b"
                             : chapterColor
-                          : "#E5E7EB",
+                          : "#ffab2b",
                       }}
                     >
                       <div className="mb-1">
-                        <ToothSVG
-                          type={toothType(lesson.id)}
-                          size={45}
-                          color="white"
-                        />
+                        <img src="/tooth.svg" className="size-8 " />
                       </div>
 
                       {!lesson.isUnlocked && (
@@ -239,32 +227,23 @@ export default function LessonRoadmapScreen({
                       )}
 
                       {lesson.isCompleted && (
-                        <motion.div
-                          className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-lg"
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ type: "spring", stiffness: 400 }}
-                        >
+                        <div className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-lg">
                           <CheckCircle2
                             size={20}
-                            color="#22c55e"
-                            fill="#22c55e"
+                            color="#fa7b14"
+                            fill="#fa7b14"
                           />
-                        </motion.div>
+                        </div>
                       )}
 
                       {lesson.isUnlocked && !lesson.isCompleted && (
-                        <motion.div
-                          className="absolute -bottom-1 bg-white rounded-full px-2 py-0.5 shadow-md"
-                          animate={{ y: [0, -4, 0] }}
-                          transition={{ duration: 1.5, repeat: Infinity }}
-                        >
+                        <div className="absolute -bottom-1 bg-white rounded-full px-2 py-0.5 shadow-md">
                           <Play
                             size={12}
                             color={chapterColor}
                             fill={chapterColor}
                           />
-                        </motion.div>
+                        </div>
                       )}
                     </div>
 
@@ -276,10 +255,7 @@ export default function LessonRoadmapScreen({
                     </div>
                   </motion.button>
 
-                  <motion.div
-                    className={`flex-1 max-w-xs ${left ? "ml-6" : "mr-6"}`}
-                    whileHover={lesson.isUnlocked ? { x: left ? 4 : -4 } : {}}
-                  >
+                  <div className={`flex-1 max-w-xs ${left ? "ml-6" : "mr-6"}`}>
                     <div
                       className={`bg-white rounded-2xl p-4 shadow-lg border-2 ${lesson.isUnlocked ? "border-gray-100" : "border-gray-200 opacity-60"}`}
                     >
@@ -291,24 +267,13 @@ export default function LessonRoadmapScreen({
                       <p className="text-xs text-gray-500 mb-2">
                         {lesson.title}
                       </p>
-
                       {lesson.isUnlocked ? (
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1">
-                            {[...Array(lesson.maxStars)].map((_, i) => (
-                              <Star
-                                key={i}
-                                size={14}
-                                fill={i < lesson.stars ? "#FFB800" : "none"}
-                                color={i < lesson.stars ? "#FFB800" : "#D1D5DB"}
-                              />
-                            ))}
-                          </div>
                           <span
                             className="text-xs font-semibold"
                             style={{
                               color: lesson.isCompleted
-                                ? "#16a34a"
+                                ? "#f57e1d"
                                 : chapterColor,
                             }}
                           >
@@ -326,33 +291,24 @@ export default function LessonRoadmapScreen({
                         </div>
                       )}
                     </div>
-                  </motion.div>
+                  </div>
                 </motion.div>
               );
             })}
           </div>
 
           {allDone && (
-            <motion.div
-              className="mt-12 bg-linear-to-r from-yellow-400 to-orange-400 rounded-3xl p-8 text-center text-white shadow-2xl"
-              initial={{ scale: 0, rotate: -10 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: "spring", stiffness: 200, delay: 0.5 }}
-            >
-              <motion.div
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 2 }}
-                className="text-6xl mb-4"
-              >
-                🏆
-              </motion.div>
+            <div className="mt-12 bg-linear-to-r from-yellow-400 to-orange-400 rounded-3xl p-8 text-center text-white shadow-2xl">
+              <div className="flex justify-center mb-4">
+                <Trophy className="size-10 " />
+              </div>
               <h2 className="text-2xl font-black mb-2 font-game">
                 Баяр хүргэе!
               </h2>
               <p className="text-white/90 font-game">
                 Та {chapterTitleMn} бүлгийг дууслаа!
               </p>
-            </motion.div>
+            </div>
           )}
         </div>
       </div>

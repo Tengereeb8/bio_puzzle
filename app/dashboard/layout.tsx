@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import BackendUserStatus from "@/app/components/BackendUserStatus";
-import { Button } from "@/components/ui/button";
+
 import { useAuthContext } from "@/lib/auth-context";
+import { Button } from "../ui/button";
 
 export default function DashboardLayout({
   children,
@@ -13,7 +14,7 @@ export default function DashboardLayout({
   const { isSignedIn, isHydrated, logout, user } = useAuthContext();
 
   return (
-    <div className="flex flex-col w-full min-h-[100dvh]">
+    <div className="flex flex-col w-full min-h-dvh">
       <header className="w-full flex items-center justify-between gap-3 px-4 py-2 border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-50">
         <BackendUserStatus />
         <nav className="flex items-center shrink-0 gap-2">
@@ -34,10 +35,15 @@ export default function DashboardLayout({
             </>
           ) : (
             <div className="flex items-center gap-2 text-sm">
-              <span className="hidden sm:inline max-w-[140px] truncate text-muted-foreground">
+              <span className="hidden sm:inline max-w-35 truncate text-muted-foreground">
                 {user?.email}
               </span>
-              <Button variant="outline" size="sm" className="h-9" onClick={logout}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9"
+                onClick={logout}
+              >
                 Гарах
               </Button>
             </div>

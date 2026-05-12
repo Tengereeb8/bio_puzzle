@@ -107,6 +107,8 @@ type AuthContextValue = {
   isSignedIn: boolean;
   login: (token: string, user: User) => void;
   logout: () => void;
+  /** Серверээс сүүлийн users/me татаж localStorage болон UI шинэчилнэ */
+  refreshUser: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -160,6 +162,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     clearAuth();
   }, [clearAuth]);
 
+  const refreshUser = useCallback(async () => {
+    if (typeof window === "undefined") return;
+    const { token: tok } = readAuthFromStorage();
+    if (!tok) return;
+    try {
+      const r = await fetch(`${API_URL}/users/me`, {
+        headers: { Authorization: `Bearer ${tok}` },
+      });
+      if (!r.ok) return;
+      const u = (await r.json()) as User;
+      localStorage.setItem(USER_KEY, JSON.stringify(u));
+      emitAuthChange();
+    } catch {
+      /* үл тоомсорлох */
+    }
+  }, []);
+
   const value = useMemo(
     (): AuthContextValue => ({
       token,
@@ -168,8 +187,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isSignedIn: Boolean(token && user),
       login,
       logout,
+      refreshUser,
     }),
-    [token, user, isHydrated, login, logout],
+    [token, user, isHydrated, login, logout, refreshUser],
   );
 
   return (

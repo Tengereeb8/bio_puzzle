@@ -8,15 +8,20 @@ import { useProgress } from "@/app/components/context/ProgressContext";
 type TabId = "roadmap" | "game" | "leaderboard" | "profile";
 
 const TABS = [
-  { id: "roadmap" as const, label: "Roadmap", icon: Map, href: "/" },
-  { id: "game" as const, label: "Game", icon: Gamepad2, href: "/game" },
+  { id: "roadmap" as const, label: "Хичээл", icon: Map, href: "/" },
+  { id: "game" as const, label: "Тоглоом", icon: Gamepad2, href: "/game" },
   {
     id: "leaderboard" as const,
-    label: "Leaderboard",
+    label: "Тэргүүлэгчдийн самбар",
     icon: Trophy,
     href: "/leaderboard",
   },
-  { id: "profile" as const, label: "Profile", icon: User, href: "/profile" },
+  {
+    id: "profile" as const,
+    label: "Хувийн мэдээлэл",
+    icon: User,
+    href: "/profile",
+  },
 ] as const;
 
 function activeTabFromPath(pathname: string): TabId {
@@ -41,7 +46,7 @@ export default function FooterNav() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
       <div
-        className="flex items-stretch justify-between px-4 bg-white/90 backdrop-blur-xl max-w-lg mx-auto"
+        className="flex items-stretch justify-between px-4 bg-white/90 backdrop-blur-xl max-w-full"
         style={{
           height: "72px",
           paddingBottom: "env(safe-area-inset-bottom, 0px)",

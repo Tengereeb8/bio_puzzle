@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useAuthContext } from "@/lib/auth-context";
 import { API_URL } from "@/lib/api-url";
+import { parseAuthResponse } from "@/lib/parse-auth-response";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     setPending(true);
@@ -26,14 +27,30 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim(), password }),
       });
-      const data = (await res.json()) as {
+      const parsed = await parseAuthResponse(res);
+      if (!parsed.ok) {
+        setError(parsed.displayError);
+        return;
+      }
+      const data = parsed.json as {
         token?: string;
-        user?: { id: string; email: string; username: string; streak: number; age: number | null; createdAt: string };
+        user?: {
+          id: string;
+          email: string;
+          username: string;
+          streak: number;
+          age: number | null;
+          createdAt: string;
+        };
         error?: string;
       };
 
       if (!res.ok || !data.token || !data.user) {
-        setError(data.error ?? `Алдаа (${res.status})`);
+        setError(
+          typeof data.error === "string"
+            ? data.error
+            : `Алдаа (${res.status})`,
+        );
         return;
       }
 
@@ -52,7 +69,8 @@ export default function LoginPage() {
       <div className="w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-sm">
         <h1 className="text-xl font-semibold mb-1">Нэвтрэх</h1>
         <p className="text-sm text-muted-foreground mb-6">
-          И-мэйл, нууц үгээ оруулна уу.
+          И-мэйл, нууц үгээр нэвтэрнэ. Таны хэрэглэгчийн нэр нэвтрэсний дараа
+          дүрс ба профайлд харагдана.
         </p>
 
         <form onSubmit={onSubmit} className="space-y-4">
@@ -100,7 +118,10 @@ export default function LoginPage() {
 
         <p className="text-center text-sm text-muted-foreground mt-5">
           Бүртгэл байхгүй юу?{" "}
-          <Link href="/register" className="text-primary font-medium underline underline-offset-2">
+          <Link
+            href="/register"
+            className="text-primary font-medium underline underline-offset-2"
+          >
             Бүртгүүлэх
           </Link>
         </p>

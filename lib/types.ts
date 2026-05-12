@@ -2,9 +2,13 @@ export interface User {
   id: string;
   username: string;
   email: string;
+  displayNameMn?: string | null;
   streak?: number;
   age?: number | null;
   createdAt: string;
+  totalPoints?: number;
+  level?: number;
+  gamesPlayed?: number;
 }
 
 export interface Level {
