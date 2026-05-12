@@ -4,15 +4,15 @@ import Image from "next/image";
 
 // Map types to asset paths. Ensure these SVG files exist!
 const iconPaths = {
-  brain: require("./assets/brain.svg"),
-  heart: require("./assets/heart.svg"),
-  lungs: require("./assets/lungs.svg"),
-  liver: require("./assets/liver.svg"),
-  stomach: require("./assets/stomach.svg"),
-  intestines: require("./assets/intestines.svg"),
-  kidneys: require("./assets/kidneys.svg"),
-  bladder: require("./assets/bladder.svg"),
-  pancreas: require("./assets/pancreas.svg"),
+  brain: require("./assets/brain.jpeg"),
+  heart: require("./assets/heart.jpeg"),
+  lungs: require("./assets/lung.png"),
+  liver: require("./assets/liver.png"),
+  stomach: require("./assets/stomach.png"),
+  intestines: require("./assets/intestines.png"),
+  kidneys: require("./assets/kidney.png"),
+  bladder: require("./assets/bladder.png"),
+  pancreas: require("./assets/pancreas.png"),
 };
 
 export type OrganType = keyof typeof iconPaths;
@@ -87,13 +87,13 @@ export const organInfo: Record<
     descriptionMn: "Цуснаас хог хаягдлыг шүүдэг",
   },
   bladder: {
-    nameMn: "Давсаг",
-    nameEn: "Bladder",
-    descriptionMn: "Шээс хадгалдаг",
+    nameMn: "",
+    nameEn: "",
+    descriptionMn: "",
   },
   pancreas: {
-    nameMn: "Нойр булчирхай",
-    nameEn: "Pancreas",
-    descriptionMn: "Инсулин ба боловсруулах ферментүүд үйлдвэрлэдэг",
+    nameMn: "",
+    nameEn: "",
+    descriptionMn: "",
   },
 };

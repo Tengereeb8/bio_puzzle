@@ -120,34 +120,10 @@ interface Props {
 }
 
 // -- SVG Skeleton Background Component --
+import Image from "next/image";
+
 const SkeletonSVG = () => (
-  <svg
-    viewBox="0 0 100 150"
-    className="absolute inset-0 w-full h-full opacity-20 pointer-events-none"
-    fill="none"
-    stroke="#4338ca"
-    strokeWidth="1"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <ellipse cx="50" cy="10" rx="8" ry="10" strokeWidth="1.5" />
-
-    <path d="M50 20 L50 80 M50 25 L49 25 M50 30 L51 30 M50 35 L49 35 M50 40 L51 40 M50 45 L49 45 M50 50 L51 50 M50 55 L49 55 M50 60 L51 60 M50 65 L49 65 M50 70 L51 70 M50 75 L49 75 M50 80 L51 80" />
-
-    <path d="M50 22 C 30 25, 30 45, 50 48 M50 22 C 70 25, 70 45, 50 48" />
-    <path d="M50 28 L 35 30 M50 28 L 65 30 M50 34 L 33 36 M50 34 L 67 36 M50 40 L 33 42 M50 40 L 67 42" />
-
-    <path
-      d="M50 78 C 35 75, 35 90, 50 92 M50 78 C 65 75, 65 90, 50 92"
-      strokeWidth="1.5"
-    />
-
-    <path d="M38 22 L15 50 L10 70" />
-    <path d="M62 22 L85 50 L90 70" />
-
-    <path d="M42 85 L40 120 L45 145" />
-    <path d="M58 85 L60 120 L55 145" />
-  </svg>
+  <img src="/skeleton.png" alt="Skeleton" className="w-full h-full" />
 );
 
 // -- UI Component: Draggable Organ Card (Bottom Carousel) --
@@ -173,10 +149,10 @@ const DraggableOrganCard: FC<{ organ: Organ }> = ({ organ }) => {
       style={style}
       {...listeners}
       {...attributes}
-      className={`flex-shrink-0 cursor-grab active:cursor-grabbing touch-none select-none transition-opacity ${isDragging ? "opacity-50" : ""}`}
+      className={`shrink-0 cursor-grab active:cursor-grabbing touch-none select-none transition-opacity ${isDragging ? "opacity-50" : ""}`}
     >
       <div className="bg-white rounded-2xl p-3 shadow-lg border-2 border-indigo-100 flex flex-col items-center gap-1.5 w-28 h-36">
-        <div className="flex-grow flex items-center justify-center">
+        <div className="grow flex items-center justify-center">
           <OrganSVG
             type={organ.type}
             size={56}
@@ -443,10 +419,10 @@ export default function FullBodySkeletonGame({ onComplete, onBack }: Props) {
           />
         </div>
 
-        <main className="flex-grow flex items-center justify-center p-4 relative overflow-hidden bg-gray-100">
+        <main className="grow flex items-center justify-center p-4 relative overflow-hidden bg-gray-100">
           <div
             ref={canvasRef}
-            className="relative bg-white rounded-3xl shadow-2xl border-4 border-indigo-200 overflow-hidden w-full max-w-[450px]"
+            className="relative bg-white rounded-3xl shadow-2xl border-4 border-indigo-200 overflow-hidden w-full max-w-112.5"
             style={{ aspectRatio: "2 / 3" }}
           >
             <SkeletonSVG />
