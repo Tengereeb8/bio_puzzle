@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import type { Question } from "./teeth-game/types";
-import { Heart } from "lucide-react";
+import { Heart, X } from "lucide-react";
 
 export default function QuizScreen({
   questions,
@@ -19,12 +19,14 @@ export default function QuizScreen({
   const [answered, setAnswered] = useState(false);
   const [hearts, setHearts] = useState(3);
   const [gameOver, setGameOver] = useState(false);
+  const [feedbackVisible, setFeedbackVisible] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(false);
   const scoreRef = useRef(0);
 
   const q = questions[qIndex];
   const progress = (qIndex / questions.length) * 100;
 
-  function next() {
+  function handleNext() {
     const nextIdx = qIndex + 1;
     if (nextIdx >= questions.length) {
       onComplete(scoreRef.current);
@@ -32,7 +34,20 @@ export default function QuizScreen({
       setQIndex(nextIdx);
       setSelected(null);
       setAnswered(false);
+      setFeedbackVisible(false);
+      setIsCorrect(false);
     }
+  }
+
+  function handleAgain() {
+    setSelected(null);
+    setAnswered(false);
+    setFeedbackVisible(false);
+    setIsCorrect(false);
+  }
+
+  function closeFeedback() {
+    setFeedbackVisible(false);
   }
 
   function pick(i: number) {
@@ -40,21 +55,18 @@ export default function QuizScreen({
 
     setSelected(i);
     setAnswered(true);
+    setFeedbackVisible(true);
 
     if (i === q.answer) {
       scoreRef.current += 1;
       setScore(scoreRef.current);
-      setTimeout(() => next(), 1500);
+      setIsCorrect(true);
     } else {
+      setIsCorrect(false);
       const nextHearts = hearts - 1;
       setHearts(nextHearts);
       if (nextHearts <= 0) {
         setGameOver(true);
-      } else {
-        setTimeout(() => {
-          setSelected(null);
-          setAnswered(false);
-        }, 1500);
       }
     }
   }
@@ -76,8 +88,7 @@ export default function QuizScreen({
   }
 
   return (
-    <div className="font-game-black max-w-md mx-auto ">
-      {/* Header */}
+    <div className="font-game-black max-w-md mx-auto">
       <div className="flex justify-between items-end mb-3 px-1">
         <div className="flex flex-col">
           <span className="text-[10px] uppercase tracking-widest text-gray-400 font-black">
@@ -88,7 +99,6 @@ export default function QuizScreen({
           </span>
         </div>
 
-        {/* Hearts */}
         <div className="flex gap-1">
           {Array.from({ length: 3 }).map((_, i) => (
             <Heart
@@ -103,7 +113,6 @@ export default function QuizScreen({
         </div>
       </div>
 
-      {/* Progress bar */}
       <div className="bg-gray-100 rounded-full h-3 mb-8 p-1 shadow-inner">
         <div
           className="bg-linear-to-r from-blue-400 to-blue-600 h-full rounded-full transition-all duration-700 ease-out"
@@ -111,7 +120,6 @@ export default function QuizScreen({
         />
       </div>
 
-      {/* Question card */}
       <div className="relative bg-white border-2 border-gray-100 rounded-[2rem] p-6 mb-6 shadow-xl shadow-blue-900/5 overflow-hidden">
         <div className="text-center text-6xl mb-4 drop-shadow-sm">
           {q.visual}
@@ -121,7 +129,6 @@ export default function QuizScreen({
         </h2>
       </div>
 
-      {/* Options */}
       <div className="flex flex-col gap-4 mb-8">
         {q.options.map((opt, i) => (
           <button
@@ -150,21 +157,35 @@ export default function QuizScreen({
         ))}
       </div>
 
-      {/* Feedback banner */}
       <div
-        className={`transition-all duration-500 transform ${answered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+        className={`transition-all duration-500 transform ${
+          feedbackVisible
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-4 pointer-events-none"
+        }`}
       >
         <div
           className={`rounded-3xl p-5 border-b-4 ${
-            selected === q.answer
+            isCorrect
               ? "bg-green-100 border-green-200 text-green-800"
               : "bg-red-100 border-red-200 text-red-800"
           }`}
         >
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center justify-between mb-1">
             <span className="text-lg font-black">
-              {selected === q.answer ? "Awesome!" : "Not quite!"}
+              {isCorrect ? "Сайн байна!" : "Буруу байна. Ахин оролдоорой!"}
             </span>
+            <button
+              onClick={closeFeedback}
+              className={`rounded-full p-1 transition-colors ${
+                isCorrect
+                  ? "hover:bg-green-200 text-green-700"
+                  : "hover:bg-red-200 text-red-700"
+              }`}
+              aria-label="Close feedback"
+            >
+              <X size={16} strokeWidth={2.5} />
+            </button>
           </div>
           <p className="text-sm font-medium leading-snug opacity-90">
             {q.fact}
@@ -172,14 +193,37 @@ export default function QuizScreen({
         </div>
       </div>
 
-      {/* Game over modal */}
+      <div
+        className={`transition-all duration-500 transform mt-4 ${
+          answered
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-4 pointer-events-none"
+        }`}
+      >
+        {isCorrect ? (
+          <button
+            onClick={handleNext}
+            className="w-full bg-green-500 hover:bg-green-600 active:scale-95 text-white rounded-2xl py-3 font-black text-sm transition-all shadow-md shadow-green-200"
+          >
+            Дараагийнх →
+          </button>
+        ) : (
+          <button
+            onClick={handleAgain}
+            className="w-full bg-red-500 hover:bg-red-600 active:scale-95 text-white rounded-2xl py-3 font-black text-sm transition-all shadow-md shadow-red-200"
+          >
+            ↺ Ахиад оролдох
+          </button>
+        )}
+      </div>
+
       {gameOver && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-8 text-center max-w-xs mx-4 shadow-2xl">
             <div className="text-5xl mb-4">💔</div>
             <h2 className="text-xl font-black mb-2">Оролдлого дууслаа!</h2>
             <p className="text-gray-500 text-sm mb-6">
-              Зүрхний цохилт дуусав. Дахин сурч, хичээлдээ буцаарай.
+              Зүрхний цохилт дууслаа. Дахин давтаарай.
             </p>
             <button
               onClick={onBack}

@@ -279,10 +279,10 @@ export default function LeaderboardScreen({
                   <div className="flex items-center gap-2 justify-end mb-1">
                     <Zap
                       size={18}
-                      color={player.isCurrentUser ? "#58CC02" : "#F59E0B"}
+                      color={player.isCurrentUser ? "#F59E0B" : "#F59E0B"}
                     />
                     <span
-                      className={`font-bold tabular-nums ${player.isCurrentUser ? "text-green-600" : "text-gray-900"} text-[18px]`}
+                      className={`font-bold tabular-nums ${player.isCurrentUser ? "text-amber-600" : "text-gray-900"} text-[18px]`}
                     >
                       {player.points.toLocaleString("mn-MN")}
                     </span>

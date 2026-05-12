@@ -30,14 +30,12 @@ export default function RoadmapScreen({
   const completedCount = chapters.filter((c) => c.isCompleted).length;
 
   return (
-    <div className="min-h-screen relative bg-orange-50">
+    <div className="min-h-screen relative bg-orange-50 ">
       <div className="relative bg-[#fa8e1b] text-white px-10 pt-6 rounded-b-full pb-15">
         <div className="max-w-2xl mx-auto">
-          <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl mb-1 font-game-black">
-                Бие Махбодын Аялал
-              </h1>
+              <h1 className="text-3xl font-game-black">Бие Махбодын Аялал</h1>
               <p className="text-purple-100 text-sm">Өөрийнхөө биеийг судал!</p>
             </div>
           </div>
@@ -70,8 +68,8 @@ export default function RoadmapScreen({
         </div>
       </div>
 
-      <div className="relative bg-orange-50 px-4 sm:px-6 lg:px-8">
-        <div className="relative mx-auto w-full">
+      <div className="relative  ">
+        <div className="relative mx-auto w-full ">
           <svg
             className="absolute left-1/2 top-0 bottom-0 w-32 -ml-16 pointer-events-none"
             style={{ height: `${chapters.length * 204}px` }}
@@ -100,9 +98,9 @@ export default function RoadmapScreen({
             />
           </svg>
 
-          <div className="relative z-10 space-y-16 pt-12 px-4 sm:px-6 lg:px-8">
+          <div className="min-w-screen relative z-10 space-y-16 pt-20 px-10 md:px-40 lg:px-65 xl:px-100 2xl:px-120">
             {chapters.map((chapter, index) => (
-              <div key={chapter.id} className="relative">
+              <div key={chapter.id} className="relative 2xl:mx-20">
                 <div
                   className={`flex items-center gap-6 ${index % 2 === 0 ? "flex-row" : "flex-row-reverse"}`}
                 >
