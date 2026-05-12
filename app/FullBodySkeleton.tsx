@@ -1,13 +1,13 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+
+import { useState, useRef, useEffect, useMemo, FC } from "react";
 import {
   ArrowLeft,
   Clock,
-  Trophy,
   RotateCcw,
-  Volume2,
   CheckCircle2,
   Award,
+  BookOpenText,
 } from "lucide-react";
 
 import {
@@ -15,63 +15,155 @@ import {
   useDraggable,
   useDroppable,
   DragOverlay,
-  KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
   closestCenter,
   type DragEndEvent,
   type DragStartEvent,
-  type UniqueIdentifier,
 } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 
-import OrganSVG, { organInfo } from "./OrganSVG";
-import SkeletonIcon from "./assets/icons/skeleton.svg"; // New import for skeleton icon
+import OrganSVG, { OrganType, organInfo } from "./OrganSVG";
+
+// -- Data Definition --
 
 interface Organ {
   id: string;
-  type:
-    | "brain"
-    | "heart"
-    | "lungs"
-    | "liver"
-    | "stomach"
-    | "intestines"
-    | "kidneys"
-    | "bladder"
-    | "pancreas"
-    | "spleen";
-  targetX: number;
-  targetY: number;
-  targetWidth: number;
+  type: OrganType;
+  // Position targets as percentage of the background
+  targetX: number; // Center X
+  targetY: number; // Center Y
+  targetWidth: number; // Used for the drop zone size
   targetHeight: number;
 }
 
-interface FullBodySkeletonGameProps {
+const ORGANS_DATA: Organ[] = [
+  {
+    id: "o-brain",
+    type: "brain",
+    targetX: 50,
+    targetY: 7,
+    targetWidth: 20,
+    targetHeight: 12,
+  },
+  {
+    id: "o-heart",
+    type: "heart",
+    targetX: 47,
+    targetY: 26,
+    targetWidth: 16,
+    targetHeight: 14,
+  },
+  {
+    id: "o-lungs",
+    type: "lungs",
+    targetX: 50,
+    targetY: 24,
+    targetWidth: 30,
+    targetHeight: 18,
+  },
+  {
+    id: "o-liver",
+    type: "liver",
+    targetX: 58,
+    targetY: 36,
+    targetWidth: 25,
+    targetHeight: 14,
+  },
+  {
+    id: "o-stomach",
+    type: "stomach",
+    targetX: 42,
+    targetY: 37,
+    targetWidth: 18,
+    targetHeight: 16,
+  },
+  {
+    id: "o-pancreas",
+    type: "pancreas",
+    targetX: 50,
+    targetY: 41,
+    targetWidth: 20,
+    targetHeight: 6,
+  },
+  {
+    id: "o-intestines",
+    type: "intestines",
+    targetX: 50,
+    targetY: 55,
+    targetWidth: 22,
+    targetHeight: 22,
+  },
+  {
+    id: "o-kidneys",
+    type: "kidneys",
+    targetX: 50,
+    targetY: 46,
+    targetWidth: 28,
+    targetHeight: 14,
+  },
+  {
+    id: "o-bladder",
+    type: "bladder",
+    targetX: 50,
+    targetY: 66,
+    targetWidth: 14,
+    targetHeight: 12,
+  },
+];
+
+interface Props {
   onComplete: (completionTime: number) => void;
   onBack: () => void;
 }
 
-type DraggableOrganProps = { organ: Organ; isPlaced: boolean };
+// -- SVG Skeleton Background Component --
+const SkeletonSVG = () => (
+  <svg
+    viewBox="0 0 100 150"
+    className="absolute inset-0 w-full h-full opacity-20 pointer-events-none"
+    fill="none"
+    stroke="#4338ca"
+    strokeWidth="1"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <ellipse cx="50" cy="10" rx="8" ry="10" strokeWidth="1.5" />
 
-function DraggableOrgan({ organ, isPlaced }: DraggableOrganProps) {
+    <path d="M50 20 L50 80 M50 25 L49 25 M50 30 L51 30 M50 35 L49 35 M50 40 L51 40 M50 45 L49 45 M50 50 L51 50 M50 55 L49 55 M50 60 L51 60 M50 65 L49 65 M50 70 L51 70 M50 75 L49 75 M50 80 L51 80" />
+
+    <path d="M50 22 C 30 25, 30 45, 50 48 M50 22 C 70 25, 70 45, 50 48" />
+    <path d="M50 28 L 35 30 M50 28 L 65 30 M50 34 L 33 36 M50 34 L 67 36 M50 40 L 33 42 M50 40 L 67 42" />
+
+    <path
+      d="M50 78 C 35 75, 35 90, 50 92 M50 78 C 65 75, 65 90, 50 92"
+      strokeWidth="1.5"
+    />
+
+    <path d="M38 22 L15 50 L10 70" />
+    <path d="M62 22 L85 50 L90 70" />
+
+    <path d="M42 85 L40 120 L45 145" />
+    <path d="M58 85 L60 120 L55 145" />
+  </svg>
+);
+
+// -- UI Component: Draggable Organ Card (Bottom Carousel) --
+const DraggableOrganCard: FC<{ organ: Organ }> = ({ organ }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: organ.id,
-      data: {
-        organType: organ.type,
-      },
+      data: { organType: organ.type },
     });
 
   const style = transform
     ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-        opacity: isDragging ? 0.5 : 1,
+        transform: CSS.Translate.toString(transform),
+        opacity: isDragging ? 0.3 : 1,
       }
     : undefined;
-
-  if (isPlaced) return null;
 
   const info = organInfo[organ.type];
 
@@ -81,223 +173,119 @@ function DraggableOrgan({ organ, isPlaced }: DraggableOrganProps) {
       style={style}
       {...listeners}
       {...attributes}
-      className="cursor-grab relative active:cursor-grabbing"
+      className={`flex-shrink-0 cursor-grab active:cursor-grabbing touch-none select-none transition-opacity ${isDragging ? "opacity-50" : ""}`}
     >
-      <div className="bg-white rounded-2xl p-3 shadow-2xl border-4 border-indigo-400 relative overflow-hidden">
-        {/* Animated gradient background */}
-        <div className="absolute inset-0 bg-linear-to-br from-indigo-100 via-purple-100 to-pink-100" />
-
-        {/* Shine effect */}
-        <div
-          className="absolute inset-0 bg-linear-to-br from-white/60 via-transparent to-transparent"
-          style={{ transform: "translateX(-100%) rotate(45deg)" }}
-        />
-
-        <div className="relative z-10 flex justify-center mb-2">
-          <OrganSVG type={organ.type} size={90} />
+      <div className="bg-white rounded-2xl p-3 shadow-lg border-2 border-indigo-100 flex flex-col items-center gap-1.5 w-28 h-36">
+        <div className="flex-grow flex items-center justify-center">
+          <OrganSVG
+            type={organ.type}
+            size={56}
+            className={isDragging ? "scale-125" : ""}
+            isPlaced={false}
+          />
         </div>
-
-        <p
-          className="text-center font-bold text-sm relative z-10"
-          style={{
-            fontFamily: "Noto Sans Mongolian, Nunito",
-            color: "#1F2937",
-          }}
-        >
-          {info.nameMn}
-        </p>
-        <p className="text-center text-xs text-gray-600 relative z-10">
-          {info.name}
-        </p>
-
-        {/* Drag indicator dots */}
-        <div className="absolute top-2 right-2 flex gap-0.5 z-10">
-          <div className="w-1 h-1 rounded-full bg-indigo-400" />
-          <div className="w-1 h-1 rounded-full bg-indigo-400" />
-          <div className="w-1 h-1 rounded-full bg-indigo-400" />
+        <div className="text-center">
+          <p
+            className="font-bold text-sm text-gray-900"
+            style={{ fontFamily: "Noto Sans Mongolian, sans-serif" }}
+          >
+            {info.nameMn}
+          </p>
+          <p className="text-[10px] text-gray-500 uppercase tracking-wider font-medium">
+            {info.nameEn}
+          </p>
         </div>
       </div>
     </div>
   );
-}
+};
 
-const organs: Organ[] = [
-  {
-    id: "brain",
-    type: "brain",
-    targetX: 50,
-    targetY: 7,
-    targetWidth: 130,
-    targetHeight: 95,
-  },
-  {
-    id: "heart",
-    type: "heart",
-    targetX: 48,
-    targetY: 26,
-    targetWidth: 95,
-    targetHeight: 105,
-  },
-  {
-    id: "lungs",
-    type: "lungs",
-    targetX: 50,
-    targetY: 24,
-    targetWidth: 175,
-    targetHeight: 115,
-  },
-  {
-    id: "liver",
-    type: "liver",
-    targetX: 56,
-    targetY: 36,
-    targetWidth: 145,
-    targetHeight: 88,
-  },
-  {
-    id: "stomach",
-    type: "stomach",
-    targetX: 44,
-    targetY: 36,
-    targetWidth: 88,
-    targetHeight: 98,
-  },
-  {
-    id: "pancreas",
-    type: "pancreas",
-    targetX: 50,
-    targetY: 40,
-    targetWidth: 115,
-    targetHeight: 48,
-  },
-  {
-    id: "spleen",
-    type: "spleen",
-    targetX: 37,
-    targetY: 38,
-    targetWidth: 68,
-    targetHeight: 88,
-  },
-  {
-    id: "intestines",
-    type: "intestines",
-    targetX: 50,
-    targetY: 55,
-    targetWidth: 110,
-    targetHeight: 120,
-  },
-  {
-    id: "kidneys",
-    type: "kidneys",
-    targetX: 50,
-    targetY: 46,
-    targetWidth: 135,
-    targetHeight: 88,
-  },
-  {
-    id: "bladder",
-    type: "bladder",
-    targetX: 50,
-    targetY: 64,
-    targetWidth: 78,
-    targetHeight: 78,
-  },
-];
-
-function OrganDropZone({
-  organ,
-  activeId,
-  placedOrgans,
-  setSelectedInfo,
-}: {
+// -- UI Component: Drop Zone (On Skeleton) --
+const OrganDropZone: FC<{
   organ: Organ;
-  activeId: UniqueIdentifier | null;
-  placedOrgans: Map<string, { x: number; y: number }>;
-  setSelectedInfo: (organ: Organ) => void;
-}) {
+  activeOrganType: OrganType | null;
+  isPlaced: boolean;
+  onShowInfo: () => void;
+}> = ({ organ, activeOrganType, isPlaced, onShowInfo }) => {
   const { setNodeRef, isOver } = useDroppable({
-    id: organ.id,
+    id: `zone-${organ.id}`,
+    data: { accepts: organ.id },
   });
-  const isPlaced = placedOrgans.has(organ.id);
+
   const info = organInfo[organ.type];
+  const isCorrectActive = activeOrganType === organ.type;
+
+  const stateClasses = useMemo(() => {
+    if (isPlaced) {
+      return "bg-green-100/90 border-green-500 shadow-xl";
+    }
+    if (isOver) {
+      return isCorrectActive
+        ? "bg-emerald-100/90 border-emerald-500 animate-pulse"
+        : "bg-red-100/90 border-red-500";
+    }
+    if (isCorrectActive) {
+      return "bg-indigo-100/80 border-indigo-500 border-2";
+    }
+    return "bg-white/70 border-gray-300";
+  }, [isPlaced, isOver, isCorrectActive]);
 
   return (
     <div
       ref={setNodeRef}
-      className={`absolute flex items-center justify-center transition-all rounded-2xl ${
-        isPlaced
-          ? "bg-linear-to-br from-green-100/95 to-emerald-50/95 border-green-500 shadow-2xl"
-          : isOver && activeId === organ.id
-            ? "bg-linear-to-br from-yellow-100/80 to-amber-100/80 border-yellow-400 animate-pulse"
-            : "bg-linear-to-br from-indigo-50/80 to-purple-50/80 border-indigo-400"
-      } border-4 border-dashed backdrop-blur-sm cursor-pointer`}
+      className={`absolute flex items-center justify-center transition-all rounded-xl border-2 border-dashed backdrop-blur-sm ${stateClasses}`}
       style={{
         left: `${organ.targetX}%`,
         top: `${organ.targetY}%`,
-        width: `${organ.targetWidth}px`,
-        height: `${organ.targetHeight}px`,
+        width: `${organ.targetWidth}%`,
+        height: `${organ.targetHeight}%`,
         transform: "translate(-50%, -50%)",
-        boxShadow: isPlaced
-          ? "0 20px 50px rgba(34, 197, 94, 0.3)"
-          : "0 8px 30px rgba(99, 102, 241, 0.2)",
+        pointerEvents: isPlaced ? "auto" : "none",
       }}
-      onClick={() => !isPlaced && setSelectedInfo(organ)}
     >
       {isPlaced ? (
-        <div className="filter drop-shadow-2xl relative">
-          <OrganSVG
-            type={organ.type}
-            size={organ.targetWidth * 0.68}
-            isPlaced={true}
-          />
-          <div className="absolute -top-2 -right-2">
-            <div className="relative">
-              <CheckCircle2 size={32} fill="#22c55e" color="white" />
-              <div className="absolute inset-0 bg-green-400 rounded-full" />
-            </div>
+        <div className="relative flex items-center justify-center w-full h-full p-1 group">
+          <OrganSVG type={organ.type} size={48} isPlaced={true} />
+          <div className="absolute -top-2 -right-2 bg-green-500 rounded-full p-0.5 shadow-lg">
+            <CheckCircle2 size={20} className="text-white" />
           </div>
+
+          <button
+            onClick={onShowInfo}
+            className="absolute inset-0 bg-white/70 opacity-0 group-active:opacity-100 flex items-center justify-center rounded-xl transition-opacity"
+          >
+            <BookOpenText className="text-indigo-700" size={24} />
+          </button>
         </div>
       ) : (
-        <div className="text-center p-2 relative">
-          <div className="absolute inset-0 bg-linear-to-br from-indigo-200/40 to-purple-200/40 rounded-xl" />
-          <p
-            className="text-xs font-bold text-indigo-800 relative z-10"
-            style={{
-              fontFamily: "Noto Sans Mongolian, Nunito",
-            }}
-          >
-            {info.nameMn}
-          </p>
-          <p className="text-[10px] text-indigo-600 mt-0.5 relative z-10">
-            {info.name}
-          </p>
+        <div
+          className={`transition-opacity ${isCorrectActive ? "opacity-100" : "opacity-20"}`}
+        >
+          <OrganSVG
+            type={organ.type}
+            size={32}
+            isPlaced={false}
+            className="opacity-40 saturate-0"
+          />
         </div>
       )}
     </div>
   );
-}
+};
 
-export default function FullBodySkeletonGame({
-  onComplete,
-  onBack,
-}: FullBodySkeletonGameProps) {
-  const [placedOrgans, setPlacedOrgans] = useState<
-    Map<string, { x: number; y: number }>
-  >(new Map());
+// -- Main Game Component --
+export default function FullBodySkeletonGame({ onComplete, onBack }: Props) {
+  const [placedOrgans, setPlacedOrgans] = useState<Set<string>>(new Set());
   const [incorrectAttempts, setIncorrectAttempts] = useState(0);
-  const [showCelebration, setShowCelebration] = useState(false);
-  const [showFeedback, setShowFeedback] = useState<{
-    correct: boolean;
-    text: string;
-    textMn: string;
-  } | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isRunning, setIsRunning] = useState(true);
-  const [selectedInfo, setSelectedInfo] = useState<Organ | null>(null);
-  const canvasRef = useRef<HTMLDivElement>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [activeOrgan, setActiveOrgan] = useState<Organ | null>(null);
+  const [selectedInfoType, setSelectedInfoType] = useState<OrganType | null>(
+    null,
+  );
 
-  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -305,22 +293,87 @@ export default function FullBodySkeletonGame({
         distance: 8,
       },
     }),
-    useSensor(KeyboardSensor),
   );
 
   useEffect(() => {
     if (isRunning) {
-      timerRef.current = setInterval(() => {
-        setElapsedTime((prev) => prev + 1);
-      }, 1000);
-    } else if (timerRef.current) {
-      clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => setElapsedTime((p) => p + 1), 1000);
+    } else {
+      if (timerRef.current) clearInterval(timerRef.current);
     }
-
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [isRunning]);
+
+  useEffect(() => {
+    if (placedOrgans.size === ORGANS_DATA.length && isRunning) {
+      setIsRunning(false);
+      setTimeout(() => onComplete(elapsedTime), 1500);
+    }
+  }, [placedOrgans, isRunning, onComplete, elapsedTime]);
+
+  const validatePlacement = (
+    organId: string,
+    clientX: number,
+    clientY: number,
+  ): boolean => {
+    if (!canvasRef.current) return false;
+
+    const canvasRect = canvasRef.current.getBoundingClientRect();
+    const organData = ORGANS_DATA.find((o) => o.id === organId);
+    if (!organData) return false;
+
+    const targetPixelX =
+      canvasRect.left + (organData.targetX / 100) * canvasRect.width;
+    const targetPixelY =
+      canvasRect.top + (organData.targetY / 100) * canvasRect.height;
+
+    const distX = clientX - targetPixelX;
+    const distY = clientY - targetPixelY;
+    const distance = Math.sqrt(distX * distX + distY * distY);
+
+    const thresholdPixelX = (organData.targetWidth / 100) * canvasRect.width;
+    const thresholdPixelY = (organData.targetHeight / 100) * canvasRect.height;
+    const threshold = Math.max(thresholdPixelX, thresholdPixelY) * 0.7;
+
+    return distance < threshold;
+  };
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const organ = ORGANS_DATA.find((o) => o.id === event.active.id);
+    if (organ) setActiveOrgan(organ);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active } = event;
+    const organId = active.id.toString();
+
+    const activator = event.activatorEvent as PointerEvent;
+    if (!activator) return;
+
+    const isCorrect = validatePlacement(
+      organId,
+      activator.clientX,
+      activator.clientY,
+    );
+
+    if (isCorrect) {
+      setPlacedOrgans((prev) => new Set(prev).add(organId));
+    } else {
+      setIncorrectAttempts((p) => p + 1);
+    }
+
+    setActiveOrgan(null);
+  };
+
+  const handleReset = () => {
+    setPlacedOrgans(new Set());
+    setIncorrectAttempts(0);
+    setElapsedTime(0);
+    setIsRunning(true);
+    setSelectedInfoType(null);
+  };
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
@@ -328,121 +381,14 @@ export default function FullBodySkeletonGame({
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const playAudio = (text: string) => {
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.8;
-      utterance.pitch = 1.0;
-      utterance.lang = "mn-MN";
-      window.speechSynthesis.speak(utterance);
-    }
-  };
-
-  const checkPlacement = (organId: string, dropX: number, dropY: number) => {
-    if (!canvasRef.current) return false;
-
-    const rect = canvasRef.current.getBoundingClientRect();
-    const organ = organs.find((o) => o.id === organId);
-    if (!organ) return false;
-
-    const targetAbsX = rect.left + (organ.targetX / 100) * rect.width;
-    const targetAbsY = rect.top + (organ.targetY / 100) * rect.height;
-
-    const distance = Math.sqrt(
-      Math.pow(dropX - targetAbsX, 2) + Math.pow(dropY - targetAbsY, 2),
-    );
-    const threshold = Math.max(organ.targetWidth, organ.targetHeight) * 0.65;
-
-    return distance < threshold;
-  };
-
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id);
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    const organId = active.id.toString();
-    const organ = organs.find((o) => o.id === organId);
-    const info = organ ? organInfo[organ.type] : null;
-
-    setActiveId(null);
-
-    console.log("Drag Ended:");
-    console.log("Active ID:", active.id);
-    console.log("Over:", over);
-    console.log("Delta:", event.delta);
-
-    const initialRect = active.rect.current.translated;
-    if (!initialRect) return;
-    const delta = event.delta ?? { x: 0, y: 0 };
-    const dropX = initialRect.left + delta.x + initialRect.width / 2;
-    const dropY = initialRect.top + delta.y + initialRect.height / 2;
-
-    console.log("Calculated DropX:", dropX, "DropY:", dropY);
-
-    const isCorrect = checkPlacement(organId, dropX, dropY);
-    console.log("Is Correct Placement:", isCorrect);
-
-    if (over && organ && info) {
-      if (isCorrect) {
-        setPlacedOrgans(
-          new Map(placedOrgans.set(organId, { x: dropX, y: dropY })),
-        );
-        setShowFeedback({
-          correct: true,
-          text: `Perfect! ${info.name} is in the right place!`,
-          textMn: `Гоё! ${info.nameMn} зөв байрлалд!`,
-        });
-        playAudio(`Маш сайн! ${info.nameMn} зөв байрласан байна!`);
-
-        setTimeout(() => setShowFeedback(null), 1800);
-
-        if (placedOrgans.size === organs.length) {
-          setIsRunning(false);
-          setShowCelebration(true);
-          playAudio("Баяр хүргэе! Та бүх эрхтнүүдийг зөв байрлууллаа!");
-
-          setTimeout(() => {
-            onComplete(elapsedTime);
-          }, 3500);
-        }
-      } else {
-        setIncorrectAttempts(incorrectAttempts + 1);
-        setShowFeedback({
-          correct: false,
-          text: "That's not the right spot!",
-          textMn: "Энэ буруу байрлал байна!",
-        });
-        playAudio("Буруу байна. Дахин оролдоорой!");
-        setTimeout(() => setShowFeedback(null), 1200);
-      }
-    } else if (info) {
-      setIncorrectAttempts(incorrectAttempts + 1);
-      setShowFeedback({
-        correct: false,
-        text: "Try a different spot!",
-        textMn: "Өөр газар оролдоорой!",
-      });
-      playAudio("Буруу байна. Дахин оролдоорой!");
-      setTimeout(() => setShowFeedback(null), 1200);
-    }
-  };
-
-  const handleReset = () => {
-    setPlacedOrgans(new Map());
-    setIncorrectAttempts(0);
-    setShowCelebration(false);
-    setShowFeedback(null);
-    setElapsedTime(0);
-    setIsRunning(true);
-    setSelectedInfo(null);
-  };
+  const availableOrgans = useMemo(
+    () => ORGANS_DATA.filter((o) => !placedOrgans.has(o.id)),
+    [placedOrgans],
+  );
 
   const completedCount = placedOrgans.size;
-  const totalCount = organs.length;
-  const progress = (completedCount / totalCount) * 100;
+  const totalCount = ORGANS_DATA.length;
+  const progressPercent = (completedCount / totalCount) * 100;
 
   return (
     <DndContext
@@ -451,276 +397,152 @@ export default function FullBodySkeletonGame({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex flex-col min-h-screen bg-linear-to-br from-indigo-50 via-purple-50 to-pink-50">
-        {/* Header */}
-        <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b-2 border-gray-200 shadow-xl">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={onBack}
-                  className="p-3 hover:bg-gray-100 rounded-xl transition-colors"
-                >
-                  <ArrowLeft size={24} color="#1F2937" strokeWidth={2.5} />
-                </button>
-
-                <div>
-                  <h2
-                    className="font-bold text-xl"
-                    style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-                  >
-                    Биеийн бүтэц тоглоом
-                  </h2>
-                  <p className="text-sm text-gray-600">
-                    Full Body Anatomy Challenge
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-3 bg-linear-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-2xl shadow-lg">
-                  <Clock size={24} />
-                  <div>
-                    <p className="text-xl font-bold font-mono">
-                      {formatTime(elapsedTime)}
-                    </p>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() =>
-                    playAudio(
-                      "Эрхтнүүдийг зөв байрлалд чирж байрлуулна уу. Та хурдан дуусгахыг оролдоорой!",
-                    )
-                  }
-                  className="p-2 bg-linear-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 rounded-xl shadow-lg transition-all"
-                >
-                  <Volume2 size={20} color="white" />
-                </button>
-                <button
-                  onClick={handleReset}
-                  className="p-2 bg-linear-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 rounded-xl shadow-lg transition-all flex items-center gap-2"
-                >
-                  <RotateCcw size={20} color="white" />
-                  <span className="text-white hidden sm:inline">Restart</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="mt-4">
-              <div className="flex items-center justify-between mb-2">
-                <span
-                  className="font-bold text-gray-800"
-                  style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-                >
-                  Явц: {completedCount}/{totalCount} эрхтэн
-                </span>
-                <span className="text-sm text-gray-600">
-                  Алдаа: {incorrectAttempts}
-                </span>
-              </div>
-              <div className="h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner">
-                <div
-                  className="h-full rounded-full shadow-lg"
-                  style={{
-                    background:
-                      "linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899)",
-                    width: `${progress}%`,
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Game Area */}
-        <div className="grow max-w-7xl mx-auto px-4 sm:px-6 py-4 overflow-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
-            {/* Organs Panel */}
-            <div className="lg:col-span-1 flex flex-col">
-              <div className="bg-white/95 backdrop-blur-md rounded-3xl p-4 shadow-2xl sticky top-4 lg:top-32 border-2 border-indigo-200 grow">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-                    <Award size={20} color="white" />
-                  </div>
-                  <h3
-                    className="font-bold text-lg"
-                    style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-                  >
-                    Эрхтнүүд
-                  </h3>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-3 max-h-[calc(100vh-200px)] lg:max-h-150 overflow-y-auto pr-2">
-                  {organs.map((organ) => (
-                    <div key={organ.id} data-draggable-id={organ.id}>
-                      <DraggableOrgan
-                        organ={organ}
-                        isPlaced={placedOrgans.has(organ.id)}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Skeleton Canvas */}
-            <div className="lg:col-span-3 flex justify-center items-center h-full">
-              <div
-                ref={canvasRef}
-                className="relative rounded-3xl shadow-2xl overflow-hidden border-4 border-indigo-300 w-full max-w-112.5"
-                style={{
-                  aspectRatio: "2 / 3",
-                  background:
-                    "linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 50%, #f0f9ff 100%)",
-                }}
-              >
-                {/* Anatomical Region Labels */}
-                <div className="absolute top-2 left-2 right-2 flex justify-between items-start pointer-events-none z-10 text-xs sm:text-sm">
-                  <div className="bg-white/80 backdrop-blur-sm rounded-xl px-2 py-1 shadow-md border border-indigo-200">
-                    <p
-                      className="font-bold text-indigo-700"
-                      style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-                    >
-                      Толгой
-                    </p>
-                    <p className="text-[10px] text-indigo-600">Head</p>
-                  </div>
-                  <div className="bg-white/80 backdrop-blur-sm rounded-xl px-2 py-1 shadow-md border border-red-200">
-                    <p
-                      className="font-bold text-red-700"
-                      style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-                    >
-                      Цээж
-                    </p>
-                    <p className="text-[10px] text-red-600">Chest</p>
-                  </div>
-                  <div className="bg-white/80 backdrop-blur-sm rounded-xl px-2 py-1 shadow-md border border-orange-200">
-                    <p
-                      className="font-bold text-orange-700"
-                      style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
-                    >
-                      Хэвлий
-                    </p>
-                    <p className="text-[10px] text-orange-600">Abdomen</p>
-                  </div>
-                </div>
-
-                {/* Detailed Skeleton SVG Background */}
-                <div className="absolute inset-0 p-4 sm:p-8">
-                  <img
-                    src={SkeletonIcon.src || SkeletonIcon}
-                    className="w-full h-full opacity-20"
-                    alt="Skeleton Background"
-                  />
-                </div>
-
-                {/* Drop Zones - With data attributes for easier detection */}
-                {organs.map((organ) => (
-                  <div key={`zone-${organ.id}`} data-droppable-id={organ.id}>
-                    <OrganDropZone
-                      organ={organ}
-                      activeId={activeId}
-                      placedOrgans={placedOrgans}
-                      setSelectedInfo={setSelectedInfo}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Floating Feedback */}
-        {showFeedback && (
-          <div
-            className={`fixed top-24 sm:top-32 right-4 sm:right-6 px-6 py-4 rounded-2xl shadow-2xl border-4 z-40 animate-in slide-in-from-right-5 ${
-              showFeedback.correct
-                ? "bg-linear-to-r from-green-400 to-emerald-500 border-green-600"
-                : "bg-linear-to-r from-orange-400 to-red-500 border-orange-600"
-            } text-white max-w-xs sm:max-w-sm`}
-          >
-            <p
-              className="font-bold text-lg sm:text-xl mb-1"
-              style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
+      <div className="flex flex-col h-screen bg-gray-50 text-gray-900 overflow-hidden">
+        <header className="sticky top-0 z-30 bg-white border-b border-gray-100 shadow-sm px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onBack}
+              className="p-2 -ml-2 rounded-lg hover:bg-gray-100"
             >
-              {showFeedback.textMn}
-            </p>
-            <p className="text-sm opacity-90">{showFeedback.text}</p>
+              <ArrowLeft size={22} className="text-gray-600" />
+            </button>
+            <h1
+              className="font-extrabold text-lg"
+              style={{ fontFamily: "Noto Sans Mongolian, sans-serif" }}
+            >
+              Биеийн бүтэц
+            </h1>
           </div>
-        )}
+          <button
+            onClick={handleReset}
+            className="p-2 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200"
+          >
+            <RotateCcw size={20} />
+          </button>
+        </header>
 
-        {/* Info Modal */}
-        {selectedInfo && (
+        <div className="bg-white border-b border-gray-100 px-5 py-3 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-indigo-700 font-mono text-xl font-bold bg-indigo-50 px-3 py-1 rounded-full shadow-inner">
+            <Clock size={20} /> {formatTime(elapsedTime)}
+          </div>
+          <div className="flex items-center gap-3 text-sm text-gray-600">
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 size={16} className="text-green-500" />{" "}
+              {completedCount}
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Award size={16} className="text-red-500" /> {incorrectAttempts}
+            </div>
+          </div>
+        </div>
+
+        <div className="h-1 bg-gray-100 w-full">
           <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-6"
-            onClick={() => setSelectedInfo(null)}
+            className="h-1 bg-indigo-600 transition-all duration-300"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+
+        <main className="flex-grow flex items-center justify-center p-4 relative overflow-hidden bg-gray-100">
+          <div
+            ref={canvasRef}
+            className="relative bg-white rounded-3xl shadow-2xl border-4 border-indigo-200 overflow-hidden w-full max-w-[450px]"
+            style={{ aspectRatio: "2 / 3" }}
+          >
+            <SkeletonSVG />
+
+            {ORGANS_DATA.map((organ) => (
+              <OrganDropZone
+                key={`zone-${organ.id}`}
+                organ={organ}
+                activeOrganType={activeOrgan?.type || null}
+                isPlaced={placedOrgans.has(organ.id)}
+                onShowInfo={() => setSelectedInfoType(organ.type)}
+              />
+            ))}
+          </div>
+        </main>
+
+        <footer className="bg-white border-t border-gray-100 shadow-lg px-2 pt-3 pb-6 z-10 relative">
+          <div className="flex items-center gap-2 mb-2.5 px-3">
+            <BookOpenText size={18} className="text-indigo-400" />
+            <h2
+              className="font-bold text-gray-700 text-sm"
+              style={{ fontFamily: "Noto Sans Mongolian, sans-serif" }}
+            >
+              Эрхтнүүдийг байрлуул
+            </h2>
+          </div>
+
+          <div className="flex gap-3 overflow-x-auto pb-2 px-1 scrollbar-thin scrollbar-thumb-indigo-100 scrollbar-track-transparent">
+            {availableOrgans.length > 0 ? (
+              availableOrgans.map((organ) => (
+                <DraggableOrganCard key={organ.id} organ={organ} />
+              ))
+            ) : (
+              <div className="w-full flex flex-col items-center justify-center h-36 gap-3 text-center py-6 text-green-700 font-bold bg-green-50 rounded-2xl border border-green-200">
+                <CheckCircle2
+                  size={48}
+                  className="text-green-500 animate-bounce"
+                />
+                <span style={{ fontFamily: "Noto Sans Mongolian, sans-serif" }}>
+                  Тоглоом дууслаа! Гоё байна!
+                </span>
+              </div>
+            )}
+          </div>
+        </footer>
+
+        <DragOverlay modifiers={[restrictToWindowEdges]} dropAnimation={null}>
+          {activeOrgan ? (
+            <div className="opacity-80 scale-125 rotate-3 transition-transform cursor-grabbing shadow-2xl">
+              <OrganSVG
+                type={activeOrgan.type}
+                size={80}
+                isPlaced={false}
+                className="drop-shadow-2xl"
+              />
+            </div>
+          ) : null}
+        </DragOverlay>
+
+        {selectedInfoType && (
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+            onClick={() => setSelectedInfoType(null)}
           >
             <div
-              className="bg-white rounded-3xl p-6 sm:p-8 max-w-md shadow-2xl animate-in zoom-in-95"
+              className="bg-white rounded-3xl p-8 max-w-sm shadow-2xl animate-in zoom-in-95"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex justify-center mb-4 sm:mb-6">
-                <OrganSVG type={selectedInfo.type} size={120} />
+              <div className="flex justify-center mb-6">
+                <OrganSVG type={selectedInfoType} size={96} isPlaced={false} />
               </div>
               <h3
-                className="text-xl sm:text-2xl font-bold mb-3 text-center"
-                style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
+                className="text-3xl font-extrabold mb-2 text-center text-gray-950"
+                style={{ fontFamily: "Noto Sans Mongolian, sans-serif" }}
               >
-                {organInfo[selectedInfo.type].nameMn}
+                {organInfo[selectedInfoType].nameMn}
               </h3>
-              <p className="text-center text-gray-600 mb-2">
-                {organInfo[selectedInfo.type].name}
+              <p className="text-sm text-center text-gray-500 uppercase tracking-widest font-bold mb-4">
+                {organInfo[selectedInfoType].nameEn}
               </p>
               <p
-                className="text-gray-700 leading-relaxed mb-4 text-center text-sm sm:text-base"
-                style={{ fontFamily: "Noto Sans Mongolian, Nunito" }}
+                className="text-gray-700 leading-relaxed text-center mb-6"
+                style={{ fontFamily: "Noto Sans Mongolian, sans-serif" }}
               >
-                {organInfo[selectedInfo.type].descriptionMn}
+                {organInfo[selectedInfoType].descriptionMn}
               </p>
               <button
-                onClick={() => setSelectedInfo(null)}
-                className="w-full py-3 bg-linear-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-bold hover:opacity-90 transition-all"
+                onClick={() => setSelectedInfoType(null)}
+                className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200"
               >
-                Ойлголоо
+                Хаах
               </button>
             </div>
           </div>
         )}
       </div>
-      <DragOverlay modifiers={[restrictToWindowEdges]}>
-        {activeId ? (
-          <div className="bg-white rounded-2xl p-3 shadow-2xl border-4 border-indigo-400 relative overflow-hidden opacity-90 rotate-3 scale-105">
-            <div className="relative z-10 flex justify-center mb-2">
-              <OrganSVG
-                type={organs.find((o) => o.id === activeId)?.type || "brain"}
-                size={90}
-              />
-            </div>
-            <p
-              className="text-center font-bold text-sm relative z-10"
-              style={{
-                fontFamily: "Noto Sans Mongolian, Nunito",
-                color: "#1F2937",
-              }}
-            >
-              {
-                organInfo[
-                  organs.find((o) => o.id === activeId)?.type || "brain"
-                ].nameMn
-              }
-            </p>
-            <p className="text-center text-xs text-gray-600 relative z-10">
-              {
-                organInfo[
-                  organs.find((o) => o.id === activeId)?.type || "brain"
-                ].name
-              }
-            </p>
-          </div>
-        ) : null}
-      </DragOverlay>
     </DndContext>
   );
 }

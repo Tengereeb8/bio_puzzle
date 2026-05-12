@@ -2,132 +2,98 @@
 
 import Image from "next/image";
 
+// Map types to asset paths. Ensure these SVG files exist!
+const iconPaths = {
+  brain: require("./assets/brain.svg"),
+  heart: require("./assets/heart.svg"),
+  lungs: require("./assets/lungs.svg"),
+  liver: require("./assets/liver.svg"),
+  stomach: require("./assets/stomach.svg"),
+  intestines: require("./assets/intestines.svg"),
+  kidneys: require("./assets/kidneys.svg"),
+  bladder: require("./assets/bladder.svg"),
+  pancreas: require("./assets/pancreas.svg"),
+};
+
+export type OrganType = keyof typeof iconPaths;
+
 interface OrganSVGProps {
-  type:
-    | "brain"
-    | "heart"
-    | "lungs"
-    | "liver"
-    | "stomach"
-    | "intestines"
-    | "kidneys"
-    | "bladder"
-    | "pancreas"
-    | "spleen";
+  type: OrganType;
   size?: number;
+  className?: string;
   isPlaced?: boolean;
 }
 
-// Import SVG components as static assets
-import brainIcon from "./assets/icons/brain.svg";
-import heartIcon from "./assets/icons/heart.svg";
-import lungsIcon from "./assets/icons/lungs.svg";
-import liverIcon from "./assets/icons/liver.svg";
-import stomachIcon from "./assets/icons/stomach.svg";
-import intestinesIcon from "./assets/icons/intestines.svg";
-import kidneysIcon from "./assets/icons/kidneys.svg";
-import bladderIcon from "./assets/icons/bladder.svg";
-import pancreasIcon from "./assets/icons/pancreas.svg";
-import spleenIcon from "./assets/icons/spleen.svg";
-
 export default function OrganSVG({
   type,
-  size = 120,
+  size = 64,
+  className = "",
   isPlaced = false,
 }: OrganSVGProps) {
-  const IconMap = {
-    brain: brainIcon,
-    heart: heartIcon,
-    lungs: lungsIcon,
-    liver: liverIcon,
-    stomach: stomachIcon,
-    intestines: intestinesIcon,
-    kidneys: kidneysIcon,
-    bladder: bladderIcon,
-    pancreas: pancreasIcon,
-    spleen: spleenIcon,
-  };
-
-  const iconSrc = IconMap[type];
-
-  if (!iconSrc) {
-    return null;
-  }
+  const iconSrc = iconPaths[type];
 
   return (
     <Image
       src={iconSrc}
-      alt={`${type} organ icon`}
+      alt={`${type} icon`}
       width={size}
       height={size}
-      style={{
-        filter: isPlaced ? "drop-shadow(0 2px 3px rgba(0,0,0,0.3))" : "none",
-      }}
+      priority
+      className={`transition-all duration-300 ${
+        isPlaced ? "drop-shadow-lg scale-100" : "drop-shadow-sm scale-110"
+      } ${className}`}
     />
   );
 }
 
-export const organInfo = {
-  // ... your existing organInfo object
-
+// Keeping your organInfo here as it's purely data
+export const organInfo: Record<
+  OrganType,
+  { nameMn: string; nameEn: string; descriptionMn: string }
+> = {
   brain: {
-    name: "Brain",
     nameMn: "Тархи",
-    description: "Controls thinking, memory, and body functions",
+    nameEn: "Brain",
     descriptionMn: "Сэтгэх, санах ой, биеийн үйл ажиллагааг удирддаг",
   },
   heart: {
-    name: "Heart",
     nameMn: "Зүрх",
-    description: "Pumps blood throughout the body",
+    nameEn: "Heart",
     descriptionMn: "Бүх биед цус урсгадаг",
   },
   lungs: {
-    name: "Lungs",
     nameMn: "Уушиг",
-    description: "Help you breathe oxygen",
+    nameEn: "Lungs",
     descriptionMn: "Хүчилтөрөгч авахад тусалдаг",
   },
   liver: {
-    name: "Liver",
     nameMn: "Элэг",
-    description: "Filters blood and helps digestion",
+    nameEn: "Liver",
     descriptionMn: "Цусыг шүүж, хоол боловсруулахад тусалдаг",
   },
   stomach: {
-    name: "Stomach",
     nameMn: "Ходоод",
-    description: "Breaks down food",
+    nameEn: "Stomach",
     descriptionMn: "Хоол задалдаг",
   },
   intestines: {
-    name: "Intestines",
     nameMn: "Гэдэс",
-    description: "Absorbs nutrients from food",
+    nameEn: "Intestines",
     descriptionMn: "Хоолноос шим тэжээл шингээдэг",
   },
   kidneys: {
-    name: "Kidneys",
     nameMn: "Бөөр",
-    description: "Filter waste from blood",
+    nameEn: "Kidneys",
     descriptionMn: "Цуснаас хог хаягдлыг шүүдэг",
   },
   bladder: {
-    name: "Bladder",
     nameMn: "Давсаг",
-    description: "Stores urine",
+    nameEn: "Bladder",
     descriptionMn: "Шээс хадгалдаг",
   },
   pancreas: {
-    name: "Pancreas",
     nameMn: "Нойр булчирхай",
-    description: "Produces insulin and digestive enzymes",
+    nameEn: "Pancreas",
     descriptionMn: "Инсулин ба боловсруулах ферментүүд үйлдвэрлэдэг",
-  },
-  spleen: {
-    name: "Spleen",
-    nameMn: "Дэлүү",
-    description: "Filters blood and fights infection",
-    descriptionMn: "Цус шүүж, халдвараас хамгаалдаг",
   },
 };
