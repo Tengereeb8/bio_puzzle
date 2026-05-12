@@ -6,7 +6,6 @@ import { useProgress } from "@/app/components/context/ProgressContext";
 import { useRouter } from "next/navigation";
 import { AppShell } from "@/app/(app)/app-shell";
 import FullBodySkeletonGame from "./FullBodySkeleton";
-import App from "next/app";
 
 function HomeRoadmap() {
   const router = useRouter();
@@ -18,6 +17,14 @@ function HomeRoadmap() {
       totalPoints={userPoints}
       onChapterClick={(id) => router.push(`/chapter/${encodeURIComponent(id)}`)}
     ></RoadmapScreen>
+    // <FullBodySkeletonGame
+    //   onComplete={function (completionTime: number): void {
+    //     throw new Error("Function not implemented.");
+    //   }}
+    //   onBack={function (): void {
+    //     throw new Error("Function not implemented.");
+    //   }}
+    // />
   );
 }
 
