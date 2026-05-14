@@ -19,6 +19,8 @@ import {
   useSensor,
   useSensors,
   closestCenter,
+  pointerWithin,
+  type CollisionDetection,
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
@@ -119,8 +121,13 @@ interface Props {
   onBack: () => void;
 }
 
+const pointerThenClosest: CollisionDetection = (args) => {
+  const pointerHits = pointerWithin(args);
+  if (pointerHits.length > 0) return pointerHits;
+  return closestCenter(args);
+};
+
 // -- SVG Skeleton Background Component --
-import Image from "next/image";
 
 const SkeletonSVG = () => (
   <img src="/skeleton.png" alt="Skeleton" className="w-full h-full" />
@@ -188,7 +195,6 @@ const OrganDropZone: FC<{
     data: { accepts: organ.id },
   });
 
-  const info = organInfo[organ.type];
   const isCorrectActive = activeOrganType === organ.type;
 
   const stateClasses = useMemo(() => {
@@ -216,7 +222,6 @@ const OrganDropZone: FC<{
         width: `${organ.targetWidth}%`,
         height: `${organ.targetHeight}%`,
         transform: "translate(-50%, -50%)",
-        pointerEvents: isPlaced ? "auto" : "none",
       }}
     >
       {isPlaced ? (
@@ -261,7 +266,6 @@ export default function FullBodySkeletonGame({ onComplete, onBack }: Props) {
   );
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const canvasRef = useRef<HTMLDivElement>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -289,54 +293,19 @@ export default function FullBodySkeletonGame({ onComplete, onBack }: Props) {
     }
   }, [placedOrgans, isRunning, onComplete, elapsedTime]);
 
-  const validatePlacement = (
-    organId: string,
-    clientX: number,
-    clientY: number,
-  ): boolean => {
-    if (!canvasRef.current) return false;
-
-    const canvasRect = canvasRef.current.getBoundingClientRect();
-    const organData = ORGANS_DATA.find((o) => o.id === organId);
-    if (!organData) return false;
-
-    const targetPixelX =
-      canvasRect.left + (organData.targetX / 100) * canvasRect.width;
-    const targetPixelY =
-      canvasRect.top + (organData.targetY / 100) * canvasRect.height;
-
-    const distX = clientX - targetPixelX;
-    const distY = clientY - targetPixelY;
-    const distance = Math.sqrt(distX * distX + distY * distY);
-
-    const thresholdPixelX = (organData.targetWidth / 100) * canvasRect.width;
-    const thresholdPixelY = (organData.targetHeight / 100) * canvasRect.height;
-    const threshold = Math.max(thresholdPixelX, thresholdPixelY) * 0.7;
-
-    return distance < threshold;
-  };
-
   const handleDragStart = (event: DragStartEvent) => {
     const organ = ORGANS_DATA.find((o) => o.id === event.active.id);
     if (organ) setActiveOrgan(organ);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active } = event;
+    const { active, over } = event;
     const organId = active.id.toString();
+    const expectedZoneId = `zone-${organId}`;
 
-    const activator = event.activatorEvent as PointerEvent;
-    if (!activator) return;
-
-    const isCorrect = validatePlacement(
-      organId,
-      activator.clientX,
-      activator.clientY,
-    );
-
-    if (isCorrect) {
+    if (over?.id === expectedZoneId) {
       setPlacedOrgans((prev) => new Set(prev).add(organId));
-    } else {
+    } else if (over?.id?.toString().startsWith("zone-")) {
       setIncorrectAttempts((p) => p + 1);
     }
 
@@ -369,7 +338,7 @@ export default function FullBodySkeletonGame({ onComplete, onBack }: Props) {
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCenter}
+      collisionDetection={pointerThenClosest}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
@@ -421,8 +390,7 @@ export default function FullBodySkeletonGame({ onComplete, onBack }: Props) {
 
         <main className="grow flex items-center justify-center p-4 relative overflow-hidden bg-gray-100">
           <div
-            ref={canvasRef}
-            className="relative bg-white rounded-3xl shadow-2xl border-4 border-indigo-200 overflow-hidden w-full max-w-112.5"
+            className="relative bg-white rounded-3xl shadow-2xl border-4 border-indigo-200 overflow-hidden w-full max-w-md sm:max-w-lg"
             style={{ aspectRatio: "2 / 3" }}
           >
             <SkeletonSVG />
